@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="兩分鐘啟動">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23C43A6E' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23C43A6E'%3E啟%3C/text%3E%3C/svg%3E">
+<title>兩分鐘啟動法則 · Two-Minute Rule Plus</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#C43A6E; --acc-soft:#FBE9F0;
+    --grid:rgba(196,58,110,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#E88BAC; --acc-soft:#3A2029;
+    --grid:rgba(232,139,172,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:56px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .btn.big{padding:15px;font-size:16px}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  /* Type picker */
+  .type-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+  .type-btn{border:1px solid var(--hairline);background:var(--paper);padding:11px 8px;border-radius:6px;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);min-height:52px}
+  .type-btn b{display:block;font-size:13.5px;font-weight:800}
+  .type-btn small{display:block;color:var(--pencil);font-size:11px;margin-top:2px;line-height:1.4}
+  .type-btn.sel[data-type="finish"]{background:var(--green);border-color:transparent}
+  .type-btn.sel[data-type="start"]{background:var(--blue);border-color:transparent}
+  .type-btn.sel b,.type-btn.sel small{color:var(--paper)}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+
+  .trap-box{background:var(--amber-soft);color:var(--amber);border-radius:6px;padding:10px 13px;font-size:12.5px;line-height:1.7;margin:0 0 14px;font-weight:600}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.05em}
+  .tag.finish{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.start{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+
+  .filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .filter-btn{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:6px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;font-weight:700;white-space:nowrap;font-family:inherit;min-height:32px}
+  .filter-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+
+  /* Task items */
+  .task-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:10px;border-left:4px solid var(--hairline)}
+  .task-item.finish{border-left-color:var(--green)}
+  .task-item.start{border-left-color:var(--blue)}
+  .task-item.done{opacity:.55}
+  .task-orig{font-size:12px;color:var(--pencil);margin-bottom:3px}
+  .task-orig s{color:var(--pencil)}
+  .task-entry{font-size:15px;font-weight:700;line-height:1.5;letter-spacing:.01em}
+  .task-item.done .task-entry{text-decoration:line-through}
+  .task-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;align-items:center}
+  .task-anchor{font-size:11.5px;color:var(--pencil);font-weight:600}
+  .task-launches{font-size:11.5px;color:var(--acc);font-weight:800}
+  .task-actions{display:flex;gap:7px;margin-top:11px}
+  .task-actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 4px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;min-height:38px}
+  .task-actions button.go{background:var(--acc);color:var(--paper);border-color:transparent}
+  .task-actions button.done-btn{background:var(--green);color:var(--paper);border-color:transparent}
+  .task-actions button.del{flex:none;width:44px;color:var(--red)}
+
+  /* Launcher timer */
+  .launch-entry{text-align:center;font-family:"Songti TC","Noto Serif TC",serif;font-size:19px;font-weight:900;line-height:1.5;margin:2px 0 4px;min-height:29px;letter-spacing:.02em}
+  .launch-entry.placeholder{color:var(--pencil);font-weight:600;font-size:15px;font-family:inherit}
+  .timer-display{font-family:"Songti TC","Noto Serif TC",serif;font-size:64px;font-weight:900;text-align:center;letter-spacing:.04em;line-height:1;margin:10px 0 4px;color:var(--acc)}
+  .timer-state{text-align:center;font-size:12px;color:var(--pencil);letter-spacing:.1em;margin-bottom:16px;min-height:16px;font-weight:700}
+  .timer-state.five{color:var(--green)}
+
+  .ask-card{background:var(--acc-soft);border:1px solid var(--acc);border-radius:8px;padding:18px;margin-bottom:16px;text-align:center;animation:settle .3s ease}
+  .ask-q{font-family:"Songti TC","Noto Serif TC",serif;font-size:19px;font-weight:900;color:var(--acc);margin-bottom:4px}
+  .ask-sub{font-size:12.5px;color:var(--pencil);margin-bottom:14px;line-height:1.6}
+
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:26px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.08em}
+
+  .log-item{display:flex;justify-content:space-between;align-items:baseline;gap:10px;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:11px 14px;box-shadow:var(--shadow);margin-bottom:8px;border-left:4px solid var(--acc)}
+  .log-entry{font-size:13.5px;font-weight:600;flex:1;line-height:1.5}
+  .log-meta{font-size:11px;color:var(--pencil);white-space:nowrap;text-align:right}
+  .log-meta b{display:block;color:var(--green);font-weight:800}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+  details .body .eg{background:var(--paper2);border-radius:6px;padding:8px 12px;margin:6px 0;font-size:12.5px}
+  details .body .eg s{color:var(--pencil)}
+  details .body .eg b{color:var(--acc)}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.12em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">啟</text></svg>
+      <div>
+        <h1>兩分鐘啟動法則</h1>
+        <small>TWO-MINUTE RULE PLUS</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: ENTRY -->
+  <section class="tab active" id="tab-entry">
+    <div class="hero">
+      <p class="eyebrow">兩分鐘入口</p>
+      <div class="hero-title serif">用最小行動，<br>打開大任務的門。</div>
+      <p class="hero-text">拖延常常不是任務太難，而是「開始」的門檻太高。核心不是只做兩分鐘，而是先讓行動開始，再讓動能接手——把任務縮小成兩分鐘就能起步的版本。</p>
+      <div class="quote-line serif">讓拖延停止在開始之前。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">改寫任務</p>
+      <h2>把大任務縮成兩分鐘入口</h2>
+      <label class="form-label" for="taskOrig">原始任務 *</label>
+      <input type="text" id="taskOrig" placeholder="例如：完成報告、整理房間、開始運動">
+
+      <label class="form-label" for="taskEntry">兩分鐘入口（可以馬上開始的第一步）*</label>
+      <input type="text" id="taskEntry" placeholder="例如：打開文件，寫下三個小標題">
+
+      <label class="form-label">這是哪一種任務？ *</label>
+      <div class="type-row" id="typeRow">
+        <button type="button" class="type-btn" data-type="finish"><b>完成型</b><small>兩分鐘內做得完，直接清掉</small></button>
+        <button type="button" class="type-btn" data-type="start"><b>啟動型</b><small>做不完，但可以開始</small></button>
+      </div>
+      <p class="sub" id="typeHint" style="margin-top:4px">完成型：回訊息、命名檔案、丟垃圾、設提醒。啟動型：寫作、讀書、研究、健身、整理資料。</p>
+
+      <label class="form-label">固定觸發點（可留空，接在習慣後面更穩）</label>
+      <div class="templates-list" id="anchorList">
+        <button type="button" class="template-btn" data-val="打開電腦後">打開電腦後</button>
+        <button type="button" class="template-btn" data-val="午餐後">午餐後</button>
+        <button type="button" class="template-btn" data-val="會議結束後">會議結束後</button>
+        <button type="button" class="template-btn" data-val="睡前充電手機後">睡前充電手機後</button>
+      </div>
+      <input type="text" id="taskAnchor" placeholder="例如：打開電腦後" style="margin-bottom:14px">
+
+      <div class="trap-box">⚠️ 兩分鐘陷阱檢查：現在做它，會<b>推進重要目標</b>，還是只是<b>逃避更重要的事</b>？若小事太多，改批次處理；若會打斷深度工作，先記下來放到固定時段。</div>
+
+      <button class="btn" id="addTaskBtn">加入任務</button>
+    </div>
+
+    <div class="filters" id="taskFilters">
+      <button class="filter-btn active" data-tf="all">全部</button>
+      <button class="filter-btn" data-tf="start">啟動型</button>
+      <button class="filter-btn" data-tf="finish">完成型</button>
+      <button class="filter-btn" data-tf="done">已完成</button>
+    </div>
+
+    <div class="empty" id="taskEmpty" style="display:none">
+      <span class="zh serif">還沒有任務</span>
+      把一個讓你拖延的大任務，<br>改寫成兩分鐘就能起步的版本。
+    </div>
+    <div id="taskList"></div>
+  </section>
+
+  <!-- TAB 2: LAUNCH -->
+  <section class="tab" id="tab-launch">
+    <div class="card">
+      <p class="eyebrow">啟動器</p>
+      <h2>開始，比完成更重要</h2>
+      <label class="form-label" for="launchSelect">要啟動的任務</label>
+      <select id="launchSelect"></select>
+      <input type="text" id="quickEntry" placeholder="快速啟動：直接輸入要開始的第一步" style="display:none">
+
+      <div class="launch-entry placeholder" id="launchEntry">選一個啟動型任務，或用快速啟動</div>
+      <div class="timer-display" id="timerDisplay">02:00</div>
+      <div class="timer-state" id="timerState"></div>
+
+      <div id="askCard" class="ask-card" style="display:none">
+        <div class="ask-q serif">願不願意再做五分鐘？</div>
+        <div class="ask-sub">你有退出權——到這裡就算成功啟動了。<br>很多時候一旦開始，阻力就會下降。</div>
+        <div class="mini-row">
+          <button class="btn" id="extendBtn">再做五分鐘</button>
+          <button class="btn line" id="finishLaunchBtn">到這，算完成</button>
+        </div>
+      </div>
+
+      <div id="timerControls" class="mini-row">
+        <button class="btn big" id="timerStartBtn">開始兩分鐘</button>
+        <button class="btn line" id="timerResetBtn">重設</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">運作邏輯</p>
+      <h2>三層啟動</h2>
+      <p class="sub" style="margin-bottom:0">① 兩分鐘內能完成 → 立刻做（在「入口」用完成型清掉）。② 不能完成 → 縮成兩分鐘啟動版，按上方開始。③ 啟動後有動能就延長；沒有，也算完成啟動。</p>
+    </div>
+  </section>
+
+  <!-- TAB 3: LOG -->
+  <section class="tab" id="tab-log">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stLaunches">0</div><div class="l">總啟動次數</div></div>
+      <div class="stat"><div class="n" id="stExtendRate">—</div><div class="l">延伸率</div></div>
+      <div class="stat"><div class="n" id="stCleared">0</div><div class="l">完成型清掉</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">戰績</p>
+      <h2>你啟動了幾次？</h2>
+      <p class="sub" style="margin-bottom:0">「延伸率」是啟動後動能接手（願意再做五分鐘）的比例。穩定啟動比偶爾爆發更可靠——每一次開始都算數。</p>
+    </div>
+
+    <div class="empty" id="logEmpty" style="display:none">
+      <span class="zh serif">還沒有啟動紀錄</span>
+      到「啟動」分頁按下開始，<br>你的每一次起步都會記在這裡。
+    </div>
+    <div id="logList"></div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">先讓行動開始，<br>再讓動能接手。</div>
+      <p class="hero-text">「兩分鐘法則」源自 David Allen 的 GTD：能在兩分鐘內完成的事就直接做，因為記錄、分類、回頭再處理的成本可能更高。James Clear 在《原子習慣》延伸為：任何新習慣先縮小到兩分鐘可以開始的版本——「讀書」先變成「讀一頁」，「運動」先變成「穿上運動鞋」。</p>
+      <div class="quote-line serif">把重要行動設計成「很容易開始」。</div>
+    </div>
+
+    <details>
+      <summary>三層結構</summary>
+      <div class="body">
+        <ul>
+          <li><b>第一層</b>：兩分鐘內能完成，就立刻做。</li>
+          <li><b>第二層</b>：不能完成，就縮小成兩分鐘啟動版。</li>
+          <li><b>第三層</b>：啟動後若有動能，就自然延長；若沒有，也算完成啟動。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>把任務改寫成兩分鐘入口</summary>
+      <div class="body">
+        兩分鐘入口越清楚，大腦越不容易抗拒：
+        <div class="eg"><s>完成報告</s> → <b>打開文件，寫下三個小標題</b></div>
+        <div class="eg"><s>整理房間</s> → <b>把桌上三樣東西歸位</b></div>
+        <div class="eg"><s>開始運動</s> → <b>換上運動衣，做 5 次深呼吸</b></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>兩分鐘後選擇權</summary>
+      <div class="body">
+        兩分鐘到了，不強迫繼續，只問一句：<b>「我願不願意再做五分鐘？」</b>這個設計降低壓力——大腦知道自己有退出權，就比較願意開始。很多時候一旦開始，阻力會下降，行動就會自然延長。
+      </div>
+    </details>
+
+    <details>
+      <summary>避免兩分鐘陷阱</summary>
+      <div class="body">
+        兩分鐘法則不是讓你整天被小事牽著走。若小任務太多，仍要批次處理；若任務會打斷深度工作，就先記下來，放到固定處理時段。判斷標準：<b>現在做它，會推進重要目標，還是只是逃避更重要的事？</b>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>寫作</b>：先打開文件，寫下標題與三個段落方向，打破空白頁焦慮。</li>
+          <li><b>學習</b>：先讀一頁、畫一個重點、寫一句摘要。穩定啟動比偶爾爆發可靠。</li>
+          <li><b>健身</b>：先換衣服、鋪瑜伽墊、做一組動作。身體進入狀態後繼續的機率大增。</li>
+          <li><b>工作管理</b>：對大專案，從「列出下一個可執行動作」開始，呼應 GTD 明確下一步。</li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">關聯工具</p>
+      <h2>搭配行動觸發</h2>
+      <p class="sub" style="margin-bottom:10px">把兩分鐘行動接在固定情境後面，就和「行動觸發」的習慣堆疊連起來，形成更穩定的行動系統。</p>
+      <a class="btn ghost" href="../action-trigger/">開啟行動觸發</a>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="../action-trigger/">行動觸發</a> ·
+      <a href="../energy-blocking/">能量區塊</a> ·
+      <a href="https://iamkeith001.github.io/mind-offload/">腦袋清空站</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-entry">
+      <svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke-width="2"/></svg>
+      入口
+    </button>
+    <button class="tabbtn" data-tab="tab-launch">
+      <svg viewBox="0 0 24 24"><path d="M5 4.5v15l13-7.5z" fill="currentColor" stroke="none"/></svg>
+      啟動
+    </button>
+    <button class="tabbtn" data-tab="tab-log">
+      <svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-6"/></svg>
+      戰績
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "twomin_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "twomin_v1";
+let db = { tasks: [], launches: [] };
+try {
+  const raw = JSON.parse(localStorage.getItem(storeKey));
+  if (raw && raw.tasks) db = Object.assign(db, raw);
+} catch (e) {}
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(db)); }
+
+const TYPES = {
+  finish: { name: "完成型", cls: "finish" },
+  start:  { name: "啟動型", cls: "start" }
+};
+
+/* ---------- Entry: add task ---------- */
+let curType = null;
+$("typeRow").addEventListener("click", e => {
+  const btn = e.target.closest(".type-btn");
+  if (!btn) return;
+  curType = btn.dataset.type;
+  $("typeRow").querySelectorAll(".type-btn").forEach(b => b.classList.toggle("sel", b === btn));
+});
+$("anchorList").addEventListener("click", e => {
+  const btn = e.target.closest(".template-btn");
+  if (!btn) return;
+  $("taskAnchor").value = btn.dataset.val;
+});
+$("addTaskBtn").addEventListener("click", () => {
+  const original = $("taskOrig").value.trim();
+  const entry = $("taskEntry").value.trim();
+  if (!original) { toast("請填寫原始任務"); $("taskOrig").focus(); return; }
+  if (!entry) { toast("請寫出兩分鐘入口（第一步）"); $("taskEntry").focus(); return; }
+  if (!curType) { toast("請選擇任務類型"); return; }
+  db.tasks.unshift({
+    id: uid(),
+    original,
+    entry,
+    type: curType,
+    anchor: $("taskAnchor").value.trim(),
+    done: false,
+    createdAt: today()
+  });
+  saveAll();
+  $("taskOrig").value = "";
+  $("taskEntry").value = "";
+  $("taskAnchor").value = "";
+  curType = null;
+  $("typeRow").querySelectorAll(".type-btn").forEach(b => b.classList.remove("sel"));
+  toast("已加入任務");
+  renderTasks();
+  fillLaunchSelect();
+});
+
+let taskFilter = "all";
+$("taskFilters").addEventListener("click", e => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  taskFilter = btn.dataset.tf;
+  $("taskFilters").querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+  renderTasks();
+});
+
+function launchCount(taskId){ return db.launches.filter(l => l.taskId === taskId).length; }
+
+function renderTasks(){
+  const list = db.tasks.filter(t => {
+    if (taskFilter === "all") return true;
+    if (taskFilter === "done") return t.done;
+    return t.type === taskFilter && !t.done;
+  });
+  $("taskEmpty").style.display = db.tasks.length ? "none" : "block";
+  const holder = $("taskList");
+  holder.innerHTML = list.map(t => {
+    const ty = TYPES[t.type];
+    const lc = launchCount(t.id);
+    const actions = t.done
+      ? '<button data-reopen="' + t.id + '">重新開啟</button><button class="del" data-del="' + t.id + '" aria-label="刪除">×</button>'
+      : (t.type === "finish"
+          ? '<button class="done-btn" data-done="' + t.id + '">✓ 兩分鐘做掉</button><button class="del" data-del="' + t.id + '" aria-label="刪除">×</button>'
+          : '<button class="go" data-go="' + t.id + '">▶ 啟動</button><button class="del" data-del="' + t.id + '" aria-label="刪除">×</button>');
+    return '<div class="task-item ' + ty.cls + (t.done ? " done" : "") + '">' +
+      '<div class="task-orig"><s>' + esc(t.original) + '</s></div>' +
+      '<div class="task-entry">' + esc(t.entry) + '</div>' +
+      '<div class="task-tags"><span class="tag ' + ty.cls + '">' + ty.name + '</span>' +
+      (t.anchor ? '<span class="task-anchor">觸發：' + esc(t.anchor) + '</span>' : "") +
+      (lc > 0 ? '<span class="task-launches">已啟動 ' + lc + ' 次</span>' : "") +
+      '</div><div class="task-actions">' + actions + '</div></div>';
+  }).join("");
+  if (db.tasks.length && !list.length) {
+    holder.innerHTML = '<div class="empty"><span class="zh serif">沒有這個分類的任務</span>換個篩選看看。</div>';
+  }
+}
+
+$("taskList").addEventListener("click", e => {
+  const doneBtn = e.target.closest("[data-done]");
+  if (doneBtn) {
+    const t = db.tasks.find(x => x.id === doneBtn.dataset.done);
+    if (t) { t.done = true; saveAll(); renderTasks(); renderLog(); toast("清掉一件！"); }
+    return;
+  }
+  const reopenBtn = e.target.closest("[data-reopen]");
+  if (reopenBtn) {
+    const t = db.tasks.find(x => x.id === reopenBtn.dataset.reopen);
+    if (t) { t.done = false; saveAll(); renderTasks(); fillLaunchSelect(); }
+    return;
+  }
+  const goBtn = e.target.closest("[data-go]");
+  if (goBtn) {
+    selectTaskForLaunch(goBtn.dataset.go);
+    switchTab("tab-launch");
+    return;
+  }
+  const delBtn = e.target.closest("[data-del]");
+  if (delBtn) {
+    db.tasks = db.tasks.filter(t => t.id !== delBtn.dataset.del);
+    saveAll();
+    renderTasks();
+    fillLaunchSelect();
+    toast("已刪除任務");
+  }
+});
+
+/* ---------- Launcher ---------- */
+let phase = "idle";      // idle | two | five
+let remain = 120;
+let intervalId = null;
+let extensions = 0;
+let curLaunchTaskId = null;
+
+function fillLaunchSelect(){
+  const sel = $("launchSelect");
+  const prev = sel.value;
+  const startTasks = db.tasks.filter(t => t.type === "start" && !t.done);
+  let html = '<option value="__quick">快速啟動（不綁定任務）</option>';
+  html += startTasks.map(t => '<option value="' + t.id + '">' + esc(t.entry) + '</option>').join("");
+  sel.innerHTML = html;
+  if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+  updateLaunchEntry();
+}
+function selectTaskForLaunch(taskId){
+  fillLaunchSelect();
+  $("launchSelect").value = taskId;
+  updateLaunchEntry();
+  resetTimer();
+}
+function currentEntryText(){
+  const v = $("launchSelect").value;
+  if (v === "__quick") return $("quickEntry").value.trim();
+  const t = db.tasks.find(x => x.id === v);
+  return t ? t.entry : "";
+}
+function updateLaunchEntry(){
+  const isQuick = $("launchSelect").value === "__quick";
+  $("quickEntry").style.display = isQuick ? "block" : "none";
+  const txt = currentEntryText();
+  const el = $("launchEntry");
+  if (txt) { el.textContent = txt; el.classList.remove("placeholder"); }
+  else { el.textContent = isQuick ? "輸入要開始的第一步…" : "選一個啟動型任務，或用快速啟動"; el.classList.add("placeholder"); }
+}
+$("launchSelect").addEventListener("change", () => { updateLaunchEntry(); resetTimer(); });
+$("quickEntry").addEventListener("input", updateLaunchEntry);
+
+function fmt(sec){
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+}
+function renderTimer(){ $("timerDisplay").textContent = fmt(remain); }
+
+function startInterval(){
+  intervalId = setInterval(() => {
+    remain--;
+    renderTimer();
+    if (remain <= 0) {
+      clearInterval(intervalId);
+      intervalId = null;
+      onSegmentEnd();
+    }
+  }, 1000);
+}
+function onSegmentEnd(){
+  $("timerControls").style.display = "none";
+  $("askCard").style.display = "block";
+  $("timerState").textContent = phase === "two" ? "兩分鐘到了" : "又五分鐘完成了";
+  $("timerState").className = "timer-state";
+  if (phase === "two") toast("兩分鐘到 — 你已經成功啟動了");
+  else toast("動能正旺 — 要不要再一段？");
+}
+
+$("timerStartBtn").addEventListener("click", () => {
+  if (phase === "idle") {
+    const txt = currentEntryText();
+    if ($("launchSelect").value === "__quick" && !txt) { toast("請先輸入要開始的第一步"); $("quickEntry").focus(); return; }
+    curLaunchTaskId = $("launchSelect").value === "__quick" ? null : $("launchSelect").value;
+    extensions = 0;
+    phase = "two";
+    remain = 120;
+    renderTimer();
+    $("timerStartBtn").textContent = "暫停";
+    $("timerState").textContent = "啟動中…專注這一件事";
+    $("timerState").className = "timer-state";
+    startInterval();
+  } else if (intervalId) {          // pause
+    clearInterval(intervalId);
+    intervalId = null;
+    $("timerStartBtn").textContent = "繼續";
+    $("timerState").textContent = "已暫停";
+  } else {                           // resume
+    $("timerStartBtn").textContent = "暫停";
+    $("timerState").textContent = phase === "two" ? "啟動中…專注這一件事" : "延伸中…動能接手";
+    $("timerState").className = "timer-state" + (phase === "five" ? " five" : "");
+    startInterval();
+  }
+});
+
+$("extendBtn").addEventListener("click", () => {
+  extensions++;
+  phase = "five";
+  remain = 300;
+  renderTimer();
+  $("askCard").style.display = "none";
+  $("timerControls").style.display = "flex";
+  $("timerStartBtn").textContent = "暫停";
+  $("timerState").textContent = "延伸中…動能接手";
+  $("timerState").className = "timer-state five";
+  startInterval();
+});
+
+$("finishLaunchBtn").addEventListener("click", () => {
+  const ext = extensions;
+  recordLaunch();
+  resetTimer();
+  $("timerState").textContent = ext > 0 ? ("完成啟動 · 延伸了 " + ext + " 段") : "完成啟動 · 每次開始都算數";
+  toast(ext > 0 ? "漂亮，動能接手了！已記錄" : "成功啟動！已記錄");
+});
+
+function recordLaunch(){
+  const entry = currentEntryText() || "（快速啟動）";
+  db.launches.unshift({
+    id: uid(),
+    taskId: curLaunchTaskId,
+    entry,
+    date: today(),
+    extensions
+  });
+  saveAll();
+  renderTasks();
+  renderLog();
+}
+function resetTimer(){
+  clearInterval(intervalId);
+  intervalId = null;
+  phase = "idle";
+  remain = 120;
+  extensions = 0;
+  renderTimer();
+  $("askCard").style.display = "none";
+  $("timerControls").style.display = "flex";
+  $("timerStartBtn").textContent = "開始兩分鐘";
+}
+$("timerResetBtn").addEventListener("click", () => {
+  resetTimer();
+  $("timerState").textContent = "";
+  $("timerState").className = "timer-state";
+});
+
+/* ---------- Log ---------- */
+function renderLog(){
+  const total = db.launches.length;
+  const extended = db.launches.filter(l => l.extensions > 0).length;
+  const cleared = db.tasks.filter(t => t.type === "finish" && t.done).length;
+  $("stLaunches").textContent = total;
+  $("stExtendRate").textContent = total ? Math.round(extended / total * 100) + "%" : "—";
+  $("stCleared").textContent = cleared;
+
+  $("logEmpty").style.display = total ? "none" : "block";
+  $("logList").innerHTML = db.launches.map(l => {
+    const extLabel = l.extensions > 0 ? ("延伸 " + l.extensions + " 段") : "完成啟動";
+    const mins = 2 + l.extensions * 5;
+    return '<div class="log-item"><span class="log-entry">' + esc(l.entry) + '</span>' +
+      '<span class="log-meta">' + l.date + '<b>' + extLabel + ' · ' + mins + ' 分</b></span></div>';
+  }).join("");
+}
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "two-minute-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.tasks)) {
+        db = { tasks: data.tasks, launches: data.launches || [] };
+        saveAll();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有任務與啟動紀錄嗎？此動作無法復原。")) return;
+  db = { tasks: [], launches: [] };
+  saveAll();
+  renderAll();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-entry") renderTasks();
+  if (id === "tab-launch") fillLaunchSelect();
+  if (id === "tab-log") renderLog();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+function renderAll(){
+  renderTasks();
+  fillLaunchSelect();
+  renderLog();
+}
+renderTimer();
+renderAll();
+</script>
+</body>
+</html>

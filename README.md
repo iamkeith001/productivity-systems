@@ -17,3 +17,4 @@
 - 知識蒸餾：https://iamkeith001.github.io/productivity-systems/knowledge-distill/
 - 資訊飲食：https://iamkeith001.github.io/productivity-systems/info-diet/
 - 能量區塊：https://iamkeith001.github.io/productivity-systems/energy-blocking/
+- 兩分鐘啟動：https://iamkeith001.github.io/productivity-systems/two-minute/
