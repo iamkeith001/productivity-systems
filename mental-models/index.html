@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="心智模型">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%234A5568' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%234A5568'%3E模%3C/text%3E%3C/svg%3E">
+<title>心智模型清單 · Mental Models Library</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --slate:#4A5568; --slate-soft:#EDF2F7;
+    --grid:rgba(74,85,104,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --slate:#A0AEC0; --slate-soft:#2D3748;
+    --grid:rgba(160,174,192,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--slate)}
+  :focus-visible{outline:2px solid var(--slate);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  
+  /* Layout Cards */
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card.gridpaper{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;background-position:center}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--slate)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--slate);letter-spacing:.04em}
+  
+  /* Tabs switching */
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  
+  /* Forms */
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],input[type=date],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:80px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--slate)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--slate);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--slate-soft);color:var(--slate)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+  
+  /* Model Cards List */
+  .model-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px;transition:.2s}
+  .model-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+  .model-title-container{display:flex;align-items:center;gap:8px}
+  .model-title{font-family:"Songti TC","Noto Serif TC",serif;font-size:17.5px;font-weight:900;margin:0;letter-spacing:.04em}
+  .fav-star{background:none;border:none;color:var(--hairline);font-size:19px;cursor:pointer;padding:0;line-height:1;margin-top:-2px}
+  .fav-star.active{color:var(--amber)}
+  .model-oneliner{font-size:13.5px;color:var(--pencil);line-height:1.55;margin-bottom:8px}
+  .model-details{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:10px;display:none;font-size:13px;line-height:1.7}
+  .model-details.expanded{display:block}
+  .model-details p{margin:0 0 10px}
+  .model-details p:last-child{margin-bottom:0}
+  .model-details b{color:var(--ink)}
+  .model-actions{display:flex;gap:8px;margin-top:12px;border-top:1px solid var(--hairline-soft);padding-top:10px}
+  .model-actions .tiny{padding:6px 10px;font-size:12px;font-weight:700;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:4px;cursor:pointer}
+  .model-actions .tiny.primary{background:var(--slate-soft);color:var(--slate);border-color:transparent}
+  .model-actions .tiny.red{color:var(--red)}
+  
+  /* Tag Design */
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 6px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em;text-transform:uppercase}
+  .tag.slate{background:var(--slate-soft);color:var(--slate);border-color:transparent}
+  .tag.blue{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.green{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.amber{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.red{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .tag.purple{background:rgba(155,93,229,.1);color:#9B5DE5;border-color:transparent}
+
+  /* Filters */
+  .filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:6px}
+  .filter-btn{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:6px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;font-weight:700;white-space:nowrap}
+  .filter-btn.active{background:var(--slate-soft);color:var(--slate);border-color:transparent}
+  
+  /* Sandbox Grid Selector */
+  .sandbox-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));gap:8px;margin-bottom:16px;max-height:220px;overflow-y:auto;border:1px solid var(--hairline-soft);padding:10px;border-radius:6px;background:var(--paper)}
+  .sandbox-option{display:flex;align-items:center;gap:6px;font-size:12.8px;cursor:pointer;padding:4px;border-radius:4px}
+  .sandbox-option:hover{background:var(--paper2)}
+  .sandbox-option input{margin:0;width:15px;height:15px;accent-color:var(--slate)}
+  .sandbox-option .star-indicator{color:var(--amber);font-size:10px;margin-left:auto}
+  
+  /* Dynamic Checklist Sandbox */
+  .sandbox-item{border-left:3px solid var(--slate);padding-left:14px;margin-bottom:18px}
+  .sandbox-item h4{margin:0 0 4px;font-size:14.5px;font-weight:800;color:var(--slate)}
+  .sandbox-item p{margin:0 0 6px;font-size:12px;color:var(--pencil)}
+  
+  /* Stats & History */
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.12em}
+  
+  .history-log{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:12px}
+  .history-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--hairline-soft);padding-bottom:8px;margin-bottom:10px}
+  .history-title{font-size:15px;font-weight:800;margin:0;word-break:break-word}
+  .history-date{font-size:11.5px;color:var(--pencil)}
+  .history-body{font-size:13px;line-height:1.7}
+  .history-answers{background:var(--paper2);padding:10px 12px;border-radius:6px;margin-bottom:10px;font-size:12.5px}
+  
+  /* Toast and footer */
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\u2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\u2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.7}
+  
+  /* Tab Bar navigation */
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.14em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--slate)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--slate)}
+  
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--slate)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--slate)">模</text></svg>
+      <div>
+        <h1>心智模型清單</h1>
+        <small>Mental Models Library</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- TAB 1: SANDBOX (DEFAULT STARTING SCREEN) -->
+  <section class="tab active" id="tab-sandbox">
+    <div class="hero">
+      <p class="eyebrow">Checklist Sandbox</p>
+      <div class="hero-title">利用思考沙盒，<br>套用多元模型決策。</div>
+      <p class="hero-text">不要只用一種角度思考。在面對重大專案、職涯或個人取捨時，選取多個心智模型，強迫自己回答其核心問題，拆解認知盲點與隱藏成本。</p>
+      <div class="quote-line">「如果你的工具箱裡只有鐵錘，那你看什麼都像釘子。」</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">沙盒工作區</p>
+      <h2>進行多維度思考分析</h2>
+      <div class="sub">輸入你想分析的主題，並在下方勾選適合的模型。</div>
+      
+      <label class="form-label" for="sandTitle">1. 分析的主題 / 面臨的抉擇 *</label>
+      <input type="text" id="sandTitle" placeholder="例如：是否接受新創公司的轉職邀請？、是否要投入開發新專案？">
+
+      <label class="form-label">2. 勾選要套用的心智模型 *</label>
+      <div class="sub">
+        點擊下方模型加入檢核。
+        <button class="btn line" id="sandLoadFavsBtn" style="padding:4px 8px; font-size:11.5px; width:auto; display:inline-block; margin-left:8px">+ 快速載入所有「核心模型」</button>
+      </div>
+      <div class="sandbox-grid" id="sandboxModelsGrid">
+        <!-- Dyn checkboxes -->
+      </div>
+
+      <div id="sandboxChecklistArea">
+        <!-- Dyn question fields generated here -->
+      </div>
+
+      <label class="form-label" for="sandConclusion" style="margin-top:16px">3. 最終結論與抉擇 *</label>
+      <textarea id="sandConclusion" placeholder="綜合上述模型維度的反思，您最後的推論與行動方案是什麼..."></textarea>
+
+      <div class="mini-row" style="margin-top:20px">
+        <button class="btn line" id="sandResetBtn">重設沙盒</button>
+        <button class="btn ghost" id="sandCopyBtn">複製 Markdown</button>
+        <button class="btn" id="sandSaveBtn">儲存思考日誌</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: LIBRARY -->
+  <section class="tab" id="tab-library">
+    <div class="card">
+      <p class="eyebrow">庫</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
+        <h2 style="margin:0">心智模型工具箱</h2>
+        <button class="btn ghost" style="width:auto; padding:6px 12px; font-size:12.5px" onclick="document.querySelector('.tabbtn[data-tab=\'create\']').click()">+ 新增自訂模型</button>
+      </div>
+      <div class="sub" style="margin-bottom:0">查閱不同範疇的核心思維模板，標記「★」加入核心清單。</div>
+    </div>
+
+    <div class="filters" id="libFilters">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="favorite">核心模型 ★</button>
+      <button class="filter-btn" data-filter="decision">決策</button>
+      <button class="filter-btn" data-filter="system">系統</button>
+      <button class="filter-btn" data-filter="learning">學習</button>
+      <button class="filter-btn" data-filter="behavior">行為</button>
+      <button class="filter-btn" data-filter="risk">風險</button>
+      <button class="filter-btn" data-filter="custom">自訂</button>
+    </div>
+
+    <div id="modelsContainer"></div>
+  </section>
+
+  <!-- TAB 3: CREATE / EDIT -->
+  <section class="tab" id="tab-create">
+    <div class="card">
+      <p class="eyebrow" id="createFormTitleEyebrow">設計</p>
+      <h2 id="createFormTitle">新增自訂心智模型</h2>
+      <div class="sub">為您的思考工具箱添加新的思維透鏡，幫助您以後分析問題。</div>
+
+      <label class="form-label" for="mmName">模型名稱 *</label>
+      <input type="text" id="mmName" placeholder="例如：機會成本、第一性原理">
+
+      <label class="form-label" for="mmCategory">分類 *</label>
+      <select id="mmCategory">
+        <option value="decision">決策模型（用來幫助做選擇、權衡）</option>
+        <option value="system">系統模型（用來理解複雜結構、反饋與瓶頸）</option>
+        <option value="learning">學習模型（用來提升學習與知識吸收）</option>
+        <option value="behavior">行為模型（用來理解習慣與人類行動心理）</option>
+        <option value="risk">風險模型（用來防範失誤、進行風險管理）</option>
+        <option value="custom" selected>自訂模型（其他思考透鏡）</option>
+      </select>
+
+      <label class="form-label" for="mmOneLiner">一句話解釋 *</label>
+      <input type="text" id="mmOneLiner" placeholder="用簡單的話說明核心邏輯">
+
+      <label class="form-label" for="mmContexts">適用情境 *</label>
+      <textarea id="mmContexts" placeholder="例如：當面臨重大職涯選擇時、專案開發進度卡住時..."></textarea>
+
+      <label class="form-label" for="mmQuestions">核心提醒問題 *</label>
+      <div class="sub">在沙盒分析時，此問題將用來引導您反思。例如：「如果我要讓這件事徹底失敗，我該怎麼做？」</div>
+      <input type="text" id="mmQuestions" placeholder="例如：我做這個選擇，到底放棄了什麼最佳替代方案？">
+
+      <label class="form-label" for="mmPitfalls">常見誤用偏誤</label>
+      <textarea id="mmPitfalls" placeholder="例如：容易忽略無形或心理上的代價、只關注容易量化的指標..."></textarea>
+
+      <div class="mini-row" style="margin-top:20px">
+        <button class="btn line" id="cancelCreateBtn">取消</button>
+        <button class="btn" id="saveModelBtn">儲存思維透鏡</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4: HISTORY & STATS -->
+  <section class="tab" id="tab-analytics">
+    <div class="card">
+      <p class="eyebrow">日誌統計</p>
+      <h2>歷史思維分析指標</h2>
+      <div class="sub">您的思考深度與多維度框架分析的足跡統計。</div>
+      <div class="stats">
+        <div class="stat"><div class="n" id="stModelTotal">0</div><div class="l">模型庫總數</div></div>
+        <div class="stat"><div class="n" id="stFavTotal">0</div><div class="l">核心模型 ★</div></div>
+        <div class="stat"><div class="n" id="stLogTotal">0</div><div class="l">已寫思考日誌</div></div>
+      </div>
+    </div>
+
+    <!-- Frequently used models diagnostic -->
+    <div class="card gridpaper" id="frequentModelsCard" style="display:none">
+      <p class="eyebrow">思維偏好</p>
+      <h2>最常使用的心智模型</h2>
+      <div class="sub">這代表了您最依賴的分析框架。如果僅依賴少數模型，記得多嘗試其他視角。</div>
+      <div id="frequentModelsList"></div>
+    </div>
+
+    <!-- History list card -->
+    <div class="card">
+      <p class="eyebrow">歷史</p>
+      <h2>思考日誌清單</h2>
+      <div class="sub">過去在思考沙盒記錄的所有決策分析。</div>
+      <div id="historyLogsContainer"></div>
+    </div>
+
+    <!-- Backup & Restore -->
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>備份與還原</h2>
+      <div class="sub">所有資料只存在於您的裝置。清空瀏覽器快取前，請下載備份。</div>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <button class="btn danger" id="wipeBtn" style="margin-top:9px; width:100%">清除全部資料</button>
+    </div>
+
+    <div class="foot">
+      心智模型清單 · Mental Models Library<br>
+      系列入口：<a href="../index.html">提升生產力系統</a><br>
+      同系列：<a href="https://iamkeith001.github.io/energy-first/">能量儀表板</a> · <a href="https://iamkeith001.github.io/mind-offload/">腦袋清空站</a> · <a href="https://iamkeith001.github.io/choice-loop/">選擇迴圈</a> · <a href="https://iamkeith001.github.io/premortem-thinking/">情境預演</a> · <a href="https://iamkeith001.github.io/productivity-systems/decision-journal/">決策日誌</a> · <a href="https://iamkeith001.github.io/productivity-systems/action-trigger/">行動觸發</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="sandbox" aria-label="沙盒"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>沙盒</button>
+    <button class="tabbtn" data-tab="library" aria-label="模型庫"><svg viewBox="0 0 24 24"><path d="M4 19.5h16M6 17V4h12v13M10 7h4M10 11h4"/></svg>模型庫</button>
+    <button class="tabbtn" data-tab="create" aria-label="記模型"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>記模型</button>
+    <button class="tabbtn" data-tab="analytics" aria-label="日誌統計"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>日誌統計</button>
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const esc = s => (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+};
+
+// 15 Default Mental Models
+const DEFAULT_MODELS = [
+  {
+    id: "m-opp-cost",
+    name: "機會成本",
+    category: "decision",
+    oneLiner: "選擇某件事時，被放棄的最佳替代選項就是成本。",
+    contexts: "時間管理、重大開銷、職涯選擇與策略布局。",
+    questions: "我選擇做這件事，代表我放棄了什麼更有價值的事情？",
+    pitfalls: "只看眼前收益，忽略被犧牲、難以被量化的時間或心智頻寬代價。",
+    isFavorite: true,
+    isCustom: false
+  },
+  {
+    id: "m-sec-order",
+    name: "二階思考",
+    category: "decision",
+    oneLiner: "不只預測決策的立即結果，更要思考由此結果引發的長期連鎖反應。",
+    contexts: "政策改革、團隊制度調整、重大個人決策。",
+    questions: "這個決策在 10 分鐘、10 個月與 10 年後，會帶來什麼衍生效果？",
+    pitfalls: "追求短期效益，卻在未來幾步後引發更大的災難性二階或三階代價。",
+    isFavorite: true,
+    isCustom: false
+  },
+  {
+    id: "m-exp-val",
+    name: "期望值",
+    category: "decision",
+    oneLiner: "每一種可能結果的數值乘以其發生機率的總和，藉此評估綜合勝率。",
+    contexts: "投資理財、風險試錯、創業規劃。",
+    questions: "這個選擇成功的機率和回報是多少？失敗機率與損失是多少？綜合期望值是正的嗎？",
+    pitfalls: "只關注成功時的巨大回報，忽視機率極低時帶來的毀滅性失敗風險（不要在賠率不利時下重注）。",
+    isFavorite: false,
+    isCustom: false
+  },
+  {
+    id: "m-sys-thinking",
+    name: "系統思維",
+    category: "system",
+    oneLiner: "將問題視為互相連結、互相影響的整體結構，而非單一的孤立事件。",
+    contexts: "解決團隊衝突、優化運營流程、尋找問題根本原因。",
+    questions: "這個問題背後是由哪些要素連結構成的？系統的反饋迴路與延遲效應在哪裡？",
+    pitfalls: "治標不治本，僅靠解決表面上的「害群之馬」來掩蓋整個架構、獎懲制度或溝通流程上的缺陷。",
+    isFavorite: true,
+    isCustom: false
+  },
+  {
+    id: "m-bottleneck",
+    name: "瓶頸理論",
+    category: "system",
+    oneLiner: "任何系統的產出量都受限於其中產能最慢、最薄弱的環節。",
+    contexts: "專案時程加速、流程優化、排除開發卡點。",
+    questions: "目前卡住整個工作流程的最慢瓶頸在哪？我現在做的事是在優化瓶頸，還是在做白工？",
+    pitfalls: "在瓶頸以外的環節進行優化，不僅無法提升系統的總產出，還會累積庫存與混亂。",
+    isFavorite: false,
+    isCustom: false
+  },
+  {
+    id: "m-compound",
+    name: "複利效應",
+    category: "system",
+    oneLiner: "將產出的成果重新投入系統中，隨時間累積產生非線性的指數增長。",
+    contexts: "個人資產配置、知識卡片積累、技能熟練度提升。",
+    questions: "我目前的習慣是在賺取時間帶來的長線複利，還是在日漸消耗未來？",
+    pitfalls: "前期增長極度緩慢，因失去耐心而在臨界點前輕易放棄，忽略長線的時間槓桿效應。",
+    isFavorite: true,
+    isCustom: false
+  },
+  {
+    id: "m-feynman",
+    name: "費曼學習法",
+    category: "learning",
+    oneLiner: "試圖用最直白、無術語的通俗語言向十歲小孩解釋概念，藉此檢驗理解盲區。",
+    contexts: "理解新技術、消化繁瑣書籍、向他人簡報。",
+    questions: "我能不能不用任何專業術語，把這個觀念的核心邏輯解釋得一清二楚？哪裡卡住了？",
+    pitfalls: "用高深的術語、名詞自我合理化，誤以為會背诵定義就等於理解了其本質。",
+    isFavorite: true,
+    isCustom: false
+  },
+  {
+    id: "m-deliberate",
+    name: "刻意練習",
+    category: "learning",
+    oneLiner: "在舒適區邊緣進行目標明確、高度專注、有反饋並重複修正弱點的訓練。",
+    contexts: "專業技能突破、學習複雜新學科。",
+    questions: "我現在是在舒適區進行無腦的機械式重複，還是在邊緣挑戰特定弱點並獲得即時反饋？",
+    pitfalls: "把累積的「年資」或「時間長度」直接當成能力的指標，卻無視無反饋的重複只會固化平庸。",
+    isFavorite: false,
+    isCustom: false
+  },
+  {
+    id: "m-output",
+    name: "輸出導向學習",
+    category: "learning",
+    oneLiner: "以實際應用、解決問題、寫作（輸出）為起點，反推需要輸入哪些知識。",
+    contexts: "技能養成、自學計畫、撰寫論文。",
+    questions: "我最後需要解決什麼問題或做什麼產出？為了這個目標，我今天應該只看哪些資料？",
+    pitfalls: "陷入「囤積知識」的無盡輸入拖延中（只買書不讀、只收藏資料不實做）。",
+    isFavorite: false,
+    isCustom: false
+  },
+  {
+    id: "m-habit-loop",
+    name: "習慣迴圈",
+    category: "behavior",
+    oneLiner: "行為習慣由「提示 ➔ 渴望 ➔ 回應 ➔ 獎賞」四步構成的自動化反射。",
+    contexts: "建立好習慣、改掉不良壞習慣。",
+    questions: "我要怎麼讓好習慣的提示極度顯眼、動作極其簡單，並在完成時獲得滿足？",
+    pitfalls: "高估自己的意志力，在佈滿干擾的環境中試圖用意志力壓抑壞習慣。",
+    isFavorite: false,
+    isCustom: false
+  },
+  {
+    id: "m-loss-av",
+    name: "損失規避",
+    category: "behavior",
+    oneLiner: "個體面對「失去」的痛苦感受，通常是「得到」同等利益的兩倍感受。",
+    contexts: "談判、定價策略、戰勝放棄與轉職焦慮。",
+    questions: "我遲遲不肯跨出這一步，是理性評估沒機會，還是過度放大了可能失去的微小安全感？",
+    pitfalls: "為了死守已投入的沉沒成本或邊際效益極低的現狀，而拒絕期望值極佳的新賽道。",
+    isFavorite: false,
+    isCustom: false
+  },
+  {
+    id: "m-social-proof",
+    name: "社會認同",
+    category: "behavior",
+    oneLiner: "在不確定性中，傾向模仿大多數人的舉動來降低風險與決策成本。",
+    contexts: "產品定位、市場分析、避免羊群跟風盲點。",
+    questions: "這個論點我是經過第一性原理推論，還是因為周遭大家或網路上熱烈談論而盲從？",
+    pitfalls: "盲信專家或多數人意見，在市場頂端跟風買入，在底部恐慌殺跌，喪失獨立思辨能力。",
+    isFavorite: false,
+    isCustom: false
+  },
+  {
+    id: "m-safety-margin",
+    name: "安全邊際",
+    category: "risk",
+    oneLiner: "在預測與毀滅邊緣留出足夠的容錯緩衝空間，以抵禦隨機性意外。",
+    contexts: "預算編列、估算專案工期、投資買入。",
+    questions: "如果最壞情境發生（例如收入少一半、工期延遲兩倍），我還安全嗎？我有幾成把握？",
+    pitfalls: "做計劃時毫無彈性，把最理想狀態當作基準點，一旦遇到隨機的壞運氣便全面崩潰。",
+    isFavorite: true,
+    isCustom: false
+  },
+  {
+    id: "m-redundancy",
+    name: "冗餘設計",
+    category: "risk",
+    oneLiner: "增加備份組件。當主要模組故障時，系統能自動切換接管，防範單點崩潰。",
+    contexts: "伺服器配置、核心團隊組建、個人職涯多重收入來源。",
+    questions: "我的專案或人生系統中，有什麼是唯一的「單點故障源」？我該如何增加冗餘備份？",
+    pitfalls: "追求極度的「精簡無冗餘」，卻忽視了脆弱的單一來源一旦斷裂，會導致整個系統癱瘓。",
+    isFavorite: false,
+    isCustom: false
+  },
+  {
+    id: "m-premortem",
+    name: "預演失敗",
+    category: "risk",
+    oneLiner: "在行動開始前先假設計畫已經徹底慘敗，倒推原因並轉為預防行動。",
+    contexts: "計畫啟動、新專案上線前、重大決定前夕。",
+    questions: "假設三個月後這件事徹底砸了。最可能毀在什麼地方？我現在如何提前預防？",
+    pitfalls: "團隊內一團和氣的盲目樂觀，不願提出反面質疑，等到失敗發生才說「我當初就覺得不行」。",
+    isFavorite: true,
+    isCustom: false
+  }
+];
+
+const store = {
+  get(k, def) {
+    try {
+      const v = JSON.parse(localStorage.getItem("mm_" + k));
+      return v == null ? def : v;
+    } catch (e) {
+      return def;
+    }
+  },
+  set(k, v) {
+    localStorage.setItem("mm_" + k, JSON.stringify(v));
+  }
+};
+
+let models = store.get("models", DEFAULT_MODELS);
+let logs = store.get("logs", []);
+let editingId = null;
+
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+function saveAll() {
+  store.set("models", models);
+  store.set("logs", logs);
+}
+
+// Tab Switching
+document.querySelectorAll(".tabbtn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+    
+    b.classList.add("active");
+    $("tab-" + b.dataset.tab).classList.add("active");
+    
+    renderAll();
+    window.scrollTo({top: 0});
+  });
+});
+
+// Theme Management
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  store.set("theme", t);
+}
+applyTheme(store.get("theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+
+/* --- TAB 1: THINKING CHECKLIST SANDBOX --- */
+
+// Load models into sandbox selection grid
+function renderSandboxGrid() {
+  const grid = $("sandboxModelsGrid");
+  // Sort: favorites first, then alphabetically
+  const sorted = [...models].sort((a,b) => {
+    if (a.isFavorite && !b.isFavorite) return -1;
+    if (!a.isFavorite && b.isFavorite) return 1;
+    return a.name.localeCompare(b.name, "zh-Hant");
+  });
+
+  grid.innerHTML = sorted.map(m => `
+    <label class="sandbox-option">
+      <input type="checkbox" value="${m.id}" data-action="toggle-sandbox">
+      <span>${esc(m.name)}</span>
+      ${m.isFavorite ? '<span class="star-indicator">★</span>' : ''}
+    </label>
+  `).join("");
+
+  grid.querySelectorAll('[data-action="toggle-sandbox"]').forEach(cb => {
+    cb.addEventListener("change", updateSandboxWorksheet);
+  });
+}
+
+// Automatically load all starred/favorite models
+$("sandLoadFavsBtn").addEventListener("click", () => {
+  const grid = $("sandboxModelsGrid");
+  const starredIds = models.filter(m => m.isFavorite).map(m => m.id);
+  
+  grid.querySelectorAll('[data-action="toggle-sandbox"]').forEach(cb => {
+    cb.checked = starredIds.includes(cb.value);
+  });
+
+  updateSandboxWorksheet();
+  toast("已載入所有核心模型");
+});
+
+// Update worksheet questions fields dynamically
+function updateSandboxWorksheet() {
+  const container = $("sandboxChecklistArea");
+  const checkedCheckboxes = $("sandboxModelsGrid").querySelectorAll('input[data-action="toggle-sandbox"]:checked');
+  const checkedIds = Array.from(checkedCheckboxes).map(cb => cb.value);
+
+  // Preserve existing inputs if any before rebuilding
+  const existingAnswers = {};
+  container.querySelectorAll(".sandbox-item").forEach(item => {
+    const mmId = item.dataset.mm;
+    const txtarea = item.querySelector("textarea");
+    if (txtarea) {
+      existingAnswers[mmId] = txtarea.value;
+    }
+  });
+
+  if (checkedIds.length === 0) {
+    container.innerHTML = '<div class="empty-hint" style="padding:15px 0">請在上方勾選想要套用的心智模型，系統將動態生成思考檢核表。</div>';
+    return;
+  }
+
+  container.innerHTML = checkedIds.map(id => {
+    const m = models.find(x => x.id === id);
+    if (!m) return "";
+    const prevVal = existingAnswers[id] || "";
+    
+    return `
+      <div class="sandbox-item" data-mm="${m.id}">
+        <h4>${esc(m.name)}</h4>
+        <p><b>提醒問題：</b>${esc(m.questions)}</p>
+        <textarea placeholder="寫下您在這個思維模型下的思考與分析..." style="margin-bottom:0">${esc(prevVal)}</textarea>
+      </div>
+    `;
+  }).join("");
+}
+
+// Reset Sandbox
+$("sandResetBtn").addEventListener("click", () => {
+  if (!confirm("確定要重設沙盒、清除目前輸入的所有分析內容嗎？")) return;
+  $("sandTitle").value = "";
+  $("sandConclusion").value = "";
+  $("sandboxModelsGrid").querySelectorAll('input[data-action="toggle-sandbox"]').forEach(cb => cb.checked = false);
+  updateSandboxWorksheet();
+  toast("沙盒已重設");
+});
+
+// Copy Sandbox analysis in Markdown
+$("sandCopyBtn").addEventListener("click", async () => {
+  const title = $("sandTitle").value.trim() || "未命名思考主題";
+  const checkedCheckboxes = $("sandboxModelsGrid").querySelectorAll('input[data-action="toggle-sandbox"]:checked');
+  const conclusion = $("sandConclusion").value.trim();
+
+  if (checkedCheckboxes.length === 0) {
+    toast("請先在沙盒勾選模型進行分析！");
+    return;
+  }
+
+  const lines = [
+    `# 思考分析沙盒：${title}`,
+    `- 分析日期：${today()}`,
+    ``,
+    `## 思考維度分析`
+  ];
+
+  const items = $("sandboxChecklistArea").querySelectorAll(".sandbox-item");
+  items.forEach(item => {
+    const mmId = item.dataset.mm;
+    const m = models.find(x => x.id === mmId);
+    const ans = item.querySelector("textarea").value.trim() || "(尚未輸入分析內容)";
+    if (m) {
+      lines.push(
+        `### 模組 ─ ${m.name}`,
+        `* **核心提醒**：${m.questions}`,
+        `* **思維分析**：`,
+        `${ans}`,
+        ``
+      );
+    }
+  });
+
+  lines.push(
+    `## 最終結論與抉擇`,
+    conclusion || "(無結論內容)"
+  );
+
+  try {
+    await navigator.clipboard.writeText(lines.join("\n"));
+    toast("已成功複製 Markdown 摘要！");
+  } catch (err) {
+    toast("複製失敗，請手動複製");
+  }
+});
+
+// Save Thinking Log
+$("sandSaveBtn").addEventListener("click", () => {
+  const title = $("sandTitle").value.trim();
+  const checkedCheckboxes = $("sandboxModelsGrid").querySelectorAll('input[data-action="toggle-sandbox"]:checked');
+  const conclusion = $("sandConclusion").value.trim();
+
+  if (!title) {
+    toast("請輸入分析的主題 / 面臨的抉擇！");
+    return;
+  }
+  if (checkedCheckboxes.length === 0) {
+    toast("請至少選擇一個心智模型進行剖析！");
+    return;
+  }
+  if (!conclusion) {
+    toast("請填寫最終的決策結論！");
+    return;
+  }
+
+  // Gather answers
+  const answers = {};
+  const items = $("sandboxChecklistArea").querySelectorAll(".sandbox-item");
+  items.forEach(item => {
+    const mmId = item.dataset.mm;
+    const ans = item.querySelector("textarea").value.trim();
+    if (ans) {
+      answers[mmId] = ans;
+    }
+  });
+
+  const selectedModelIds = Array.from(checkedCheckboxes).map(cb => cb.value);
+
+  const newLog = {
+    id: uid(),
+    title,
+    createdAt: today(),
+    selectedModelIds,
+    answers,
+    conclusion
+  };
+
+  logs.unshift(newLog);
+  saveAll();
+  toast("已儲存至思考日誌清單！");
+
+  // Reset Sandbox
+  $("sandTitle").value = "";
+  $("sandConclusion").value = "";
+  checkedCheckboxes.forEach(cb => cb.checked = false);
+  updateSandboxWorksheet();
+  
+  // Go to Stats/History tab
+  document.querySelector('.tabbtn[data-tab="analytics"]').click();
+});
+
+
+/* --- TAB 2: LIBRARY BROWSER --- */
+
+let currentFilter = "all";
+function buildFiltersList() {
+  document.querySelectorAll("#libFilters .filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#libFilters .filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = btn.dataset.filter;
+      renderLibrary();
+    });
+  });
+}
+
+function renderLibrary() {
+  const el = $("modelsContainer");
+  
+  let filtered = models;
+  if (currentFilter === "favorite") {
+    filtered = models.filter(m => m.isFavorite);
+  } else if (currentFilter === "custom") {
+    filtered = models.filter(m => m.isCustom);
+  } else if (currentFilter !== "all") {
+    filtered = models.filter(m => m.category === currentFilter);
+  }
+
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty-hint">無此篩選分類下的心智模型。</div>';
+    return;
+  }
+
+  // Sort: Favorite first, then Custom, then Name
+  const sorted = [...filtered].sort((a,b) => {
+    if (a.isFavorite && !b.isFavorite) return -1;
+    if (!a.isFavorite && b.isFavorite) return 1;
+    if (a.isCustom && !b.isCustom) return -1;
+    if (!a.isCustom && b.isCustom) return 1;
+    return a.name.localeCompare(b.name, "zh-Hant");
+  });
+
+  const catMap = {
+    "decision": "決策模型",
+    "system": "系統模型",
+    "learning": "學習模型",
+    "behavior": "行為模型",
+    "risk": "風險模型",
+    "custom": "自訂模型"
+  };
+
+  el.innerHTML = sorted.map(m => `
+    <div class="model-card" data-id="${m.id}">
+      <div class="model-header">
+        <div class="model-title-container">
+          <button class="fav-star ${m.isFavorite ? 'active' : ''}" onclick="toggleFavorite('${m.id}')" title="核心星等標記">★</button>
+          <h3 class="model-title" onclick="toggleDetails('${m.id}')" style="cursor:pointer">${esc(m.name)}</h3>
+        </div>
+        <span class="tag slate">${catMap[m.category] || m.category}</span>
+      </div>
+      <div class="model-oneliner" onclick="toggleDetails('${m.id}')" style="cursor:pointer">${esc(m.oneLiner)}</div>
+      
+      <div class="model-details" id="details-${m.id}">
+        <p><b>適用情境：</b>${esc(m.contexts)}</p>
+        <p><b>核心提問：</b><span style="color:var(--slate); font-weight:700">${esc(m.questions)}</span></p>
+        ${m.pitfalls ? `<p><b>常見誤用：</b>${esc(m.pitfalls)}</p>` : ""}
+      </div>
+
+      <div class="model-actions">
+        <button class="tiny primary" onclick="addModelToSandboxDirect('${m.id}')">+ 加入沙盒</button>
+        <button class="tiny" onclick="toggleDetails('${m.id}')">展開說明</button>
+        ${m.isCustom ? `
+          <button class="tiny" onclick="editModel('${m.id}')">編輯</button>
+          <button class="tiny red" onclick="deleteModel('${m.id}')">刪除</button>
+        ` : ""}
+      </div>
+    </div>
+  `).join("");
+}
+
+window.toggleFavorite = function(id) {
+  const m = models.find(x => x.id === id);
+  if (m) {
+    m.isFavorite = !m.isFavorite;
+    saveAll();
+    renderAll();
+    toast(m.isFavorite ? `已將「${m.name}」標記為核心模型` : `已取消標記「${m.name}」`);
+  }
+};
+
+window.toggleDetails = function(id) {
+  const det = $("details-" + id);
+  if (det) {
+    det.classList.toggle("expanded");
+  }
+};
+
+window.addModelToSandboxDirect = function(id) {
+  const m = models.find(x => x.id === id);
+  if (!m) return;
+
+  // Jump to Sandbox tab
+  document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+  document.querySelector('.tabbtn[data-tab="sandbox"]').classList.add("active");
+  $("tab-sandbox").classList.add("active");
+
+  renderAll(); // Rebuild sandbox grid
+
+  // Check the model checkbox
+  const cb = Array.from($("sandboxModelsGrid").querySelectorAll('input[data-action="toggle-sandbox"]')).find(x => x.value === id);
+  if (cb) {
+    cb.checked = true;
+    updateSandboxWorksheet();
+  }
+
+  toast(`已將「${m.name}」加入沙盒檢核`);
+};
+
+window.deleteModel = function(id) {
+  const m = models.find(x => x.id === id);
+  if (!m) return;
+  if (!confirm(`確定要刪除自訂模型「${m.name}」嗎？`)) return;
+  
+  models = models.filter(x => x.id !== id);
+  saveAll();
+  renderAll();
+  toast("自訂模型已刪除");
+};
+
+
+/* --- TAB 3: CREATE / EDIT MODELS --- */
+
+function initCreateForm(mmId = null) {
+  editingId = mmId;
+  if (mmId === null) {
+    $("createFormTitle").textContent = "新增自訂心智模型";
+    $("createFormTitleEyebrow").textContent = "設計";
+    $("mmName").value = "";
+    $("mmCategory").value = "custom";
+    $("mmOneLiner").value = "";
+    $("mmContexts").value = "";
+    $("mmQuestions").value = "";
+    $("mmPitfalls").value = "";
+  } else {
+    const m = models.find(x => x.id === mmId);
+    if (!m) return;
+    $("createFormTitle").textContent = "編輯自訂心智模型";
+    $("createFormTitleEyebrow").textContent = "編輯";
+    $("mmName").value = m.name || "";
+    $("mmCategory").value = m.category || "custom";
+    $("mmOneLiner").value = m.oneLiner || "";
+    $("mmContexts").value = m.contexts || "";
+    $("mmQuestions").value = m.questions || "";
+    $("mmPitfalls").value = m.pitfalls || "";
+  }
+}
+
+window.editModel = function(id) {
+  initCreateForm(id);
+  document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+  document.querySelector('.tabbtn[data-tab="create"]').classList.add("active");
+  $("tab-create").classList.add("active");
+  window.scrollTo({top: 0});
+};
+
+$("saveModelBtn").addEventListener("click", () => {
+  const name = $("mmName").value.trim();
+  const category = $("mmCategory").value;
+  const oneLiner = $("mmOneLiner").value.trim();
+  const contexts = $("mmContexts").value.trim();
+  const questions = $("mmQuestions").value.trim();
+  const pitfalls = $("mmPitfalls").value.trim();
+
+  if (!name) {
+    toast("請輸入心智模型名稱！");
+    return;
+  }
+  if (!oneLiner) {
+    toast("請填寫一句話解釋！");
+    return;
+  }
+  if (!contexts) {
+    toast("請填寫適用情境！");
+    return;
+  }
+  if (!questions) {
+    toast("請設定核心提問問題！");
+    return;
+  }
+
+  if (editingId === null) {
+    // New
+    const newModel = {
+      id: "custom-" + uid(),
+      name,
+      category,
+      oneLiner,
+      contexts,
+      questions,
+      pitfalls,
+      isFavorite: false,
+      isCustom: true
+    };
+    models.push(newModel);
+    toast(`已成功新增模型「${name}」！`);
+  } else {
+    // Edit
+    const idx = models.findIndex(x => x.id === editingId);
+    if (idx !== -1) {
+      const orig = models[idx];
+      models[idx] = {
+        ...orig,
+        name,
+        category,
+        oneLiner,
+        contexts,
+        questions,
+        pitfalls
+      };
+      toast(`模型「${name}」已更新！`);
+    }
+  }
+
+  saveAll();
+  document.querySelector('.tabbtn[data-tab="library"]').click();
+});
+
+$("cancelCreateBtn").addEventListener("click", () => {
+  document.querySelector('.tabbtn[data-tab="library"]').click();
+});
+
+
+/* --- TAB 4: HISTORY LOGS & ANALYTICS --- */
+
+function renderHistoryLogs() {
+  const container = $("historyLogsContainer");
+  if (logs.length === 0) {
+    container.innerHTML = '<div class="empty-hint">尚未有任何已儲存的思維分析日誌。</div>';
+    return;
+  }
+
+  container.innerHTML = logs.map(l => {
+    // Compile models used summary
+    const modelsNames = l.selectedModelIds.map(id => {
+      const m = models.find(x => x.id === id);
+      return m ? `<span class="tag slate" style="margin:2px">${esc(m.name)}</span>` : "";
+    }).join("");
+
+    // Compile answer text details
+    const answersText = Object.keys(l.answers).map(id => {
+      const m = models.find(x => x.id === id);
+      return m ? `<div style="margin-bottom:8px"><b>${esc(m.name)}</b> ─ <i>問題：${esc(m.questions)}</i><br><span style="opacity:0.9">${esc(l.answers[id])}</span></div>` : "";
+    }).join("");
+
+    return `
+      <div class="history-log">
+        <div class="history-header">
+          <h3 class="history-title">${esc(l.title)}</h3>
+          <span class="history-date">${l.createdAt}</span>
+        </div>
+        
+        <div class="history-body">
+          <div style="margin-bottom:10px"><b>套用的思維視角：</b>${modelsNames}</div>
+          
+          <details>
+            <summary>查看多維度分析過程</summary>
+            <div class="body history-answers">
+              ${answersText}
+            </div>
+          </details>
+
+          <div style="background:var(--paper2); border-left:3px solid var(--slate); padding:10px; border-radius:0 6px 6px 0; margin-top:8px">
+            <b>決策結論：</b><br>${esc(l.conclusion)}
+          </div>
+
+          <div class="dec-actions" style="margin-top:12px; border-top:none; padding-top:0">
+            <button class="tiny" onclick="copyLogMarkdown('${l.id}')">複製 Markdown</button>
+            <button class="tiny" onclick="reloadLogToSandbox('${l.id}')">載入沙盒修改</button>
+            <button class="tiny red" onclick="deleteLog('${l.id}')" style="margin-left:auto">刪除日誌</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// Reload Log to Sandbox
+window.reloadLogToSandbox = function(id) {
+  const l = logs.find(x => x.id === id);
+  if (!l) return;
+
+  // Jump to Sandbox Tab
+  document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+  document.querySelector('.tabbtn[data-tab="sandbox"]').classList.add("active");
+  $("tab-sandbox").classList.add("active");
+
+  renderAll(); // Build sandbox elements
+
+  // Set title and conclusion
+  $("sandTitle").value = l.title;
+  $("sandConclusion").value = l.conclusion;
+
+  // Check the model checkboxes
+  $("sandboxModelsGrid").querySelectorAll('input[data-action="toggle-sandbox"]').forEach(cb => {
+    cb.checked = l.selectedModelIds.includes(cb.value);
+  });
+
+  // Re-generate worksheet structure
+  updateSandboxWorksheet();
+
+  // Populate answers in worksheets
+  const container = $("sandboxChecklistArea");
+  container.querySelectorAll(".sandbox-item").forEach(item => {
+    const mmId = item.dataset.mm;
+    const txtarea = item.querySelector("textarea");
+    if (txtarea && l.answers[mmId]) {
+      txtarea.value = l.answers[mmId];
+    }
+  });
+
+  toast("已將思考日誌載入沙盒！");
+};
+
+// Copy specific log
+window.copyLogMarkdown = async function(id) {
+  const l = logs.find(x => x.id === id);
+  if (!l) return;
+
+  const lines = [
+    `# 思考分析日誌：${l.title}`,
+    `- 決策日期：${l.createdAt}`,
+    ``,
+    `## 思考維度分析`
+  ];
+
+  Object.keys(l.answers).forEach(mmId => {
+    const m = models.find(x => x.id === mmId);
+    const ans = l.answers[mmId];
+    if (m) {
+      lines.push(
+        `### ${m.name}`,
+        `* **核心提問**：${m.questions}`,
+        `* **分析思考**：`,
+        `${ans}`,
+        ``
+      );
+    }
+  });
+
+  lines.push(
+    `## 最終結論`,
+    l.conclusion
+  );
+
+  try {
+    await navigator.clipboard.writeText(lines.join("\n"));
+    toast("日誌已複製為 Markdown！");
+  } catch (err) {
+    toast("複製失敗，請手動複製");
+  }
+};
+
+window.deleteLog = function(id) {
+  if (!confirm("確定要刪除這筆思維分析日誌嗎？")) return;
+  logs = logs.filter(x => x.id !== id);
+  saveAll();
+  renderAll();
+  toast("日誌已刪除");
+};
+
+function renderStatsAndFrequencies() {
+  $("stModelTotal").textContent = models.length;
+  $("stFavTotal").textContent = models.filter(m => m.isFavorite).length;
+  $("stLogTotal").textContent = logs.length;
+
+  // 4. Calculate most frequent models used in logs
+  const mmCounts = {};
+  logs.forEach(l => {
+    l.selectedModelIds.forEach(id => {
+      mmCounts[id] = (mmCounts[id] || 0) + 1;
+    });
+  });
+
+  // Sort by count
+  const freqList = Object.keys(mmCounts).map(id => {
+    const m = models.find(x => x.id === id);
+    return {
+      name: m ? m.name : "未知模型",
+      count: mmCounts[id]
+    };
+  }).sort((a,b) => b.count - a.count);
+
+  const freqCard = $("frequentModelsCard");
+  const freqContainer = $("frequentModelsList");
+
+  if (freqList.length === 0) {
+    freqCard.style.display = "none";
+  } else {
+    freqCard.style.display = "block";
+    // Show top 3
+    const topThree = freqList.slice(0, 3);
+    freqContainer.innerHTML = topThree.map((item, idx) => `
+      <div class="checklist-item" style="border-bottom: 1px solid var(--hairline-soft); padding:8px 0; display:flex; justify-content:space-between">
+        <span class="checklist-desc"><b>No.${idx+1} ${esc(item.name)}</b></span>
+        <span class="tag slate">${item.count} 次使用</span>
+      </div>
+    `).join("");
+  }
+}
+
+
+/* --- DATA BACKUP & RESTORE --- */
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify({ models, logs, exportedAt: new Date().toISOString() }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "mental-models-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+$("importBtn").addEventListener("click", () => $("importFile").click());
+
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.models) && Array.isArray(data.logs)) {
+        models = data.models;
+        logs = data.logs;
+        saveAll();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有自訂模型與思考分析日誌嗎？此動作無法復原。")) return;
+  models = DEFAULT_MODELS; // Reset to default 15 models
+  logs = [];
+  saveAll();
+  renderAll();
+  toast("資料已重設為出廠狀態");
+});
+
+
+/* --- RENDER ALL & RUN --- */
+
+function renderAll() {
+  renderSandboxGrid();
+  renderLibrary();
+  renderHistoryLogs();
+  renderStatsAndFrequencies();
+}
+
+// Initial Run
+buildFiltersList();
+renderAll();
+
+</script>
+</body>
+</html>

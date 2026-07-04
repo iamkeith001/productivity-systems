@@ -12,3 +12,4 @@
 - 情境預演：https://iamkeith001.github.io/premortem-thinking/
 - 決策日誌：https://iamkeith001.github.io/productivity-systems/decision-journal/
 - 行動觸發：https://iamkeith001.github.io/productivity-systems/action-trigger/
+- 心智模型：https://iamkeith001.github.io/productivity-systems/mental-models/
