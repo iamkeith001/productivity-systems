@@ -46,7 +46,7 @@
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--amber);margin:0 0 4px}
   .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:30px;font-weight:900;letter-spacing:.05em;line-height:1.35;margin:0 0 10px}
   .hero-text{color:var(--ink);opacity:.86;font-size:14px;line-height:1.85;margin:0;max-width:35em}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:16px}
   .card{
     display:flex;flex-direction:column;min-height:238px;text-decoration:none;color:inherit;
     background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);
@@ -116,10 +116,18 @@
       <p>在不確定環境中，先探索可能性，再選擇方向，最後承諾一段時間創造成果。</p>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
+
+    <a class="card" style="--c:var(--blue)" href="https://iamkeith001.github.io/premortem-thinking/">
+      <div class="mark">預</div>
+      <h2>情境預演</h2>
+      <div class="en">PREMORTEM THINKING</div>
+      <p>在行動前先假設計畫已經失敗，提前看見風險，並轉成可追蹤的預防行動。</p>
+      <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </a>
   </main>
 
   <div class="note">
-    <b>入口網站是需要的。</b>從第三個系統開始，就值得建立入口；之後新增頁面時，只要補一張卡片，使用者不必記每個工具的資料夾或網址。
+    <b>入口網站是需要的。</b>系列會持續增加；之後新增頁面時，只要補一張卡片，使用者不必記每個工具的資料夾或網址。
   </div>
 
   <footer>提升生產力系列 · 本機入口網站</footer>
