@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="微習慣堆疊">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%236F4E37' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%236F4E37'%3E疊%3C/text%3E%3C/svg%3E">
+<title>微習慣堆疊法 · Habit Stacking</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#6F4E37; --acc-soft:#EFE7E0;
+    --grid:rgba(111,78,55,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#C3A084; --acc-soft:#2E2620;
+    --grid:rgba(195,160,132,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+
+  /* Formula preview */
+  .formula{background:var(--acc-soft);border-radius:6px;padding:13px 15px;margin-bottom:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:15.5px;font-weight:900;line-height:1.7;color:var(--ink)}
+  .formula .fa,.formula .fb{color:var(--acc);text-decoration:underline;text-underline-offset:3px}
+  .formula .ph{color:var(--pencil);font-weight:600;text-decoration:none}
+
+  /* Stack cards */
+  .stack-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+  .stack-name{font-weight:800;font-size:14.5px;letter-spacing:.03em;margin-bottom:2px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .stack-name .del-stack{border:none;background:none;color:var(--red);cursor:pointer;font-size:12px;font-weight:700;flex:none}
+  .anchor-pill{display:inline-block;background:var(--ink);color:var(--desk);border-radius:6px;padding:5px 11px;font-size:12.5px;font-weight:800;margin-bottom:2px}
+  .chain{position:relative;padding-left:14px;margin-top:10px}
+  .chain::before{content:"";position:absolute;left:4px;top:6px;bottom:14px;width:2px;background:var(--hairline)}
+  .chain-step{position:relative;padding:9px 0 9px 16px;border-bottom:1px dashed var(--hairline-soft)}
+  .chain-step:last-child{border-bottom:none}
+  .chain-step::before{content:"";position:absolute;left:-13px;top:15px;width:9px;height:9px;border-radius:50%;background:var(--acc);border:2px solid var(--paper)}
+  .step-action{font-size:14px;font-weight:700;line-height:1.5}
+  .step-meta{font-size:11.5px;color:var(--pencil);margin-top:3px;line-height:1.6}
+  .step-meta .k{font-weight:800;color:var(--acc)}
+  .step-streak{font-size:11px;font-weight:800;color:var(--green);margin-top:3px}
+  .step-del{position:absolute;right:0;top:9px;border:none;background:none;color:var(--red);cursor:pointer;font-size:15px;font-weight:800;padding:0 2px}
+  .stack-add{margin-top:12px}
+  .stack-add .btn{padding:10px;font-size:13px}
+
+  /* inline add-step form */
+  .addstep-form{background:var(--paper2);border-radius:6px;padding:14px;margin-top:12px;border:1px dashed var(--hairline)}
+  .addstep-form .formula{background:var(--paper);margin-bottom:12px}
+
+  /* Today check-off */
+  .progress-ring{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:16px}
+  .ring{flex:none}
+  .ring-txt{flex:1}
+  .ring-txt .big{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;line-height:1.1}
+  .ring-txt .small{font-size:12px;color:var(--pencil);margin-top:3px}
+
+  .today-stack{margin-bottom:16px}
+  .today-stack-head{font-weight:800;font-size:13px;color:var(--pencil);letter-spacing:.05em;margin-bottom:8px;padding-left:2px}
+  .today-item{display:flex;align-items:flex-start;gap:11px;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:8px;border-left:4px solid var(--acc);cursor:pointer}
+  .today-item.done{border-left-color:var(--green)}
+  .today-check{flex:none;width:24px;height:24px;border-radius:7px;border:1.6px solid var(--hairline);background:var(--paper);display:grid;place-items:center;margin-top:1px}
+  .today-check.on{background:var(--green);border-color:transparent}
+  .today-check svg{width:14px;height:14px;stroke:var(--paper);stroke-width:2.8;fill:none;display:none}
+  .today-check.on svg{display:block}
+  .today-body{flex:1;min-width:0}
+  .today-after{font-size:11.5px;color:var(--pencil);font-weight:600}
+  .today-action{font-size:14.5px;font-weight:700;line-height:1.5;margin-top:1px}
+  .today-item.done .today-action{color:var(--pencil)}
+  .today-streak{font-size:11px;font-weight:800;color:var(--green);margin-top:3px}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:26px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.08em}
+
+  /* Progress per-habit */
+  .prog-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:14px 15px;box-shadow:var(--shadow);margin-bottom:10px}
+  .prog-action{font-size:13.5px;font-weight:700;margin-bottom:2px}
+  .prog-anchor{font-size:11.5px;color:var(--pencil);margin-bottom:9px}
+  .prog-dots{display:flex;gap:5px;margin-bottom:8px;align-items:center}
+  .prog-dots .dot{width:20px;height:20px;border-radius:5px;background:var(--paper2);border:1px solid var(--hairline-soft);display:grid;place-items:center;font-size:9px;color:var(--pencil);font-weight:700}
+  .prog-dots .dot.on{background:var(--green);border-color:transparent;color:var(--paper)}
+  .prog-dots .dot.today{outline:2px solid var(--acc);outline-offset:1px}
+  .prog-streaks{display:flex;gap:16px;font-size:12px}
+  .prog-streaks b{font-family:"Songti TC","Noto Serif TC",serif;font-size:18px;font-weight:900;color:var(--acc)}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+  details .body .eg{background:var(--paper2);border-radius:6px;padding:8px 12px;margin:6px 0;font-size:12.5px;font-family:"Songti TC",serif;font-weight:700}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.12em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">疊</text></svg>
+      <div>
+        <h1>微習慣堆疊法</h1>
+        <small>HABIT STACKING</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: BUILD -->
+  <section class="tab active" id="tab-build">
+    <div class="hero">
+      <p class="eyebrow">習慣堆疊</p>
+      <div class="hero-title serif">把新習慣，<br>接在舊習慣後面。</div>
+      <p class="hero-text">很多習慣失敗，不是因為沒動機，而是觸發點不清楚、行動太大、環境不支持。用一個已經穩定的舊行為當開關，把小到不費力的新行動掛在它後面。</p>
+      <div class="quote-line serif">在我完成 A 之後，我會立刻做 B。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">建立堆疊</p>
+      <h2>用公式寫下第一個微習慣</h2>
+
+      <label class="form-label" for="stackName">堆疊名稱（可留空，例如「晨間堆疊」）</label>
+      <input type="text" id="stackName" placeholder="晨間堆疊、下班收尾、睡前儀式">
+
+      <label class="form-label">既有習慣 A（越穩定越好）*</label>
+      <div class="templates-list" id="anchorList">
+        <button type="button" class="template-btn" data-val="刷牙後">刷牙後</button>
+        <button type="button" class="template-btn" data-val="泡好咖啡後">泡好咖啡後</button>
+        <button type="button" class="template-btn" data-val="打開電腦後">打開電腦後</button>
+        <button type="button" class="template-btn" data-val="吃完午餐後">吃完午餐後</button>
+        <button type="button" class="template-btn" data-val="睡前充電手機後">睡前充電手機後</button>
+      </div>
+      <input type="text" id="anchorInput" placeholder="例如：泡好咖啡後">
+
+      <label class="form-label" for="actionInput">新習慣 B（小到不抗拒）*</label>
+      <input type="text" id="actionInput" placeholder="例如：寫下今天最重要的一件事">
+
+      <div class="formula" id="formulaPreview"></div>
+
+      <label class="form-label" for="cueInput">環境設計（讓它出現在最容易發生的位置，可留空）</label>
+      <input type="text" id="cueInput" placeholder="例如：把書放枕邊、瑜伽墊放看得到的地方">
+
+      <label class="form-label" for="rewardInput">完成後的小回饋（可留空）</label>
+      <input type="text" id="rewardInput" placeholder="例如：對自己說「我正在變穩定」">
+
+      <button class="btn" id="createStackBtn">建立堆疊</button>
+    </div>
+
+    <div class="empty" id="buildEmpty" style="display:none">
+      <span class="zh serif">還沒有堆疊</span>
+      挑一個每天都會做的舊習慣，<br>把一個小新習慣掛在它後面。
+    </div>
+    <div id="stackList"></div>
+  </section>
+
+  <!-- TAB 2: TODAY -->
+  <section class="tab" id="tab-today">
+    <div class="progress-ring" id="progressRing">
+      <svg class="ring" width="60" height="60" viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="25" fill="none" stroke="var(--hairline-soft)" stroke-width="7"/>
+        <circle id="ringProg" cx="30" cy="30" r="25" fill="none" stroke="var(--green)" stroke-width="7" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157" transform="rotate(-90 30 30)"/>
+      </svg>
+      <div class="ring-txt">
+        <div class="big serif" id="ringLabel">0 / 0</div>
+        <div class="small" id="ringSub">今天的微習慣完成度</div>
+      </div>
+    </div>
+
+    <div class="empty" id="todayEmpty" style="display:none">
+      <span class="zh serif">今天沒有微習慣</span>
+      先到「堆疊」分頁建立你的<br>第一個習慣堆疊。
+    </div>
+    <div id="todayList"></div>
+  </section>
+
+  <!-- TAB 3: PROGRESS -->
+  <section class="tab" id="tab-progress">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stHabits">0</div><div class="l">微習慣數</div></div>
+      <div class="stat"><div class="n" id="stTodayRate">0%</div><div class="l">今日完成率</div></div>
+      <div class="stat"><div class="n" id="stBestStreak">0</div><div class="l">最長連續</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">連續進度</p>
+      <h2>每天一點，堆疊成身份</h2>
+      <p class="sub" style="margin-bottom:0">真正有效的習慣，不是靠一次巨大改變，而是每天自然發生的小行動。下方是近 7 天打卡與連續天數。</p>
+    </div>
+
+    <div class="empty" id="progressEmpty" style="display:none">
+      <span class="zh serif">還沒有可追蹤的習慣</span>
+      建立堆疊並開始每日打卡，<br>連續天數會顯示在這裡。
+    </div>
+    <div id="progressList"></div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">不靠意志力硬撐，<br>靠既有行為觸發。</div>
+      <p class="hero-text">BJ Fogg 的 Tiny Habits 強調：新行為接在既有日常行為之後，更容易被觸發。James Clear 在《原子習慣》將它普及為 Habit Stacking——「在我做完既有習慣之後，我會做新的小行動」。新習慣不需要重新尋找開始時機，直接掛在既有行為後面。</p>
+      <div class="quote-line serif">讓改變從小到幾乎不費力開始。</div>
+    </div>
+
+    <details>
+      <summary>公式與例子</summary>
+      <div class="body">
+        公式：<b>在我完成 A 之後，我會立刻做 B。</b>A 是既有習慣，B 是新的小習慣。
+        <div class="eg">刷牙後，做 10 下深蹲。</div>
+        <div class="eg">泡好咖啡後，寫下今天最重要的一件事。</div>
+        <div class="eg">吃完午餐後，走路 5 分鐘。</div>
+        <div class="eg">睡前充電手機後，閱讀 1 頁書。</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>五個步驟</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 找出穩定的既有習慣</b>：起床、刷牙、吃早餐、開電腦、午休、洗澡、睡前關燈——越穩定，新習慣越容易被觸發。</li>
+          <li><b>2. 設計小到不抗拒的新行動</b>：先「讀一頁」而非「讀一小時」，先「做 5 下伏地挺身」而非「運動 30 分鐘」。</li>
+          <li><b>3. 使用清楚句型</b>：「在我＿＿之後，我會＿＿。」句子越具體，執行越穩定。</li>
+          <li><b>4. 把環境一起設計好</b>：想閱讀就把書放枕邊，想運動就把瑜伽墊放看得到的地方。</li>
+          <li><b>5. 完成後給自己小回饋</b>：「完成了」「我正在變穩定」——立即回饋強化正面連結。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>工作效率</b>：打開電腦後，先寫下今日最重要任務，而不是直接開信箱。</li>
+          <li><b>知識管理</b>：讀完一篇文章後，立刻記下一句摘要或一個關鍵概念。</li>
+          <li><b>健康管理</b>：刷牙後做 10 下深蹲、午餐後走 5 分鐘、睡前做 3 次深呼吸。</li>
+          <li><b>團隊管理</b>：每次會議結束後，立刻確認下一步負責人與截止時間。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        微習慣堆疊法把「開始」自動化。它結合了<b>行為提示、低摩擦設計與連續性累積</b>：當新行為小到不需太多意志力，又被穩定舊行為觸發，就更容易進入日常節奏，慢慢堆疊出新的身份與能力。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">關聯工具</p>
+      <h2>搭配行動觸發與兩分鐘啟動</h2>
+      <p class="sub" style="margin-bottom:10px">堆疊決定「接在哪個舊習慣後面」；「兩分鐘啟動」幫你把 B 縮到最小、跨過開始門檻；「行動觸發」用 If-Then 與每週回顧優化單一觸發。三者可組合。</p>
+      <div class="mini-row">
+        <a class="btn ghost" href="../two-minute/">兩分鐘啟動</a>
+        <a class="btn ghost" href="../action-trigger/">行動觸發</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="../two-minute/">兩分鐘啟動</a> ·
+      <a href="../action-trigger/">行動觸發</a> ·
+      <a href="../energy-blocking/">能量區塊</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-build">
+      <svg viewBox="0 0 24 24"><rect x="4" y="14" width="16" height="6" rx="1.5"/><rect x="6" y="8.5" width="12" height="5" rx="1.5"/><rect x="8" y="3.5" width="8" height="4" rx="1.5"/></svg>
+      堆疊
+    </button>
+    <button class="tabbtn" data-tab="tab-today">
+      <svg viewBox="0 0 24 24"><path d="M4 12.5l5 5 11-11"/></svg>
+      今日
+    </button>
+    <button class="tabbtn" data-tab="tab-progress">
+      <svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-6"/></svg>
+      進度
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const iso = d => d.toISOString().slice(0, 10);
+const today = () => iso(new Date());
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "habitstack_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "habitstack_v1";
+let db = { stacks: [], checks: {} };   // checks: {date: {stepId:true}}
+try {
+  const raw = JSON.parse(localStorage.getItem(storeKey));
+  if (raw && raw.stacks) db = Object.assign(db, raw);
+} catch (e) {}
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(db)); }
+
+/* ---------- Formula preview (builder) ---------- */
+function updateFormula(){
+  const a = $("anchorInput").value.trim();
+  const b = $("actionInput").value.trim();
+  $("formulaPreview").innerHTML = "在我 " +
+    (a ? '<span class="fa">' + esc(a) + '</span>' : '<span class="ph">＿＿</span>') +
+    " ，我會立刻 " +
+    (b ? '<span class="fb">' + esc(b) + '</span>' : '<span class="ph">＿＿</span>') + " 。";
+}
+["anchorInput", "actionInput"].forEach(id => $(id).addEventListener("input", updateFormula));
+$("anchorList").addEventListener("click", e => {
+  const btn = e.target.closest(".template-btn");
+  if (!btn) return;
+  $("anchorInput").value = btn.dataset.val;
+  updateFormula();
+});
+
+/* ---------- Create stack ---------- */
+$("createStackBtn").addEventListener("click", () => {
+  const anchor = $("anchorInput").value.trim();
+  const action = $("actionInput").value.trim();
+  if (!anchor) { toast("請填寫既有習慣 A"); $("anchorInput").focus(); return; }
+  if (!action) { toast("請填寫新習慣 B"); $("actionInput").focus(); return; }
+  db.stacks.unshift({
+    id: uid(),
+    name: $("stackName").value.trim(),
+    anchor,
+    createdAt: today(),
+    steps: [{ id: uid(), action, cue: $("cueInput").value.trim(), reward: $("rewardInput").value.trim() }]
+  });
+  saveAll();
+  ["stackName", "anchorInput", "actionInput", "cueInput", "rewardInput"].forEach(id => { $(id).value = ""; });
+  updateFormula();
+  toast("堆疊已建立！");
+  renderStacks();
+});
+
+/* ---------- Stacks list + inline add step ---------- */
+let expandedStackId = null;
+function currentStreak(stepId){
+  let count = 0;
+  const d = new Date();
+  if (!(db.checks[iso(d)] && db.checks[iso(d)][stepId])) d.setDate(d.getDate() - 1);
+  while (db.checks[iso(d)] && db.checks[iso(d)][stepId]) { count++; d.setDate(d.getDate() - 1); }
+  return count;
+}
+function renderStacks(){
+  $("buildEmpty").style.display = db.stacks.length ? "none" : "block";
+  $("stackList").innerHTML = db.stacks.map(st => {
+    const steps = st.steps.map(s => {
+      const streak = currentStreak(s.id);
+      return '<div class="chain-step">' +
+        '<div class="step-action">' + esc(s.action) + '</div>' +
+        (s.cue ? '<div class="step-meta"><span class="k">環境</span> ' + esc(s.cue) + '</div>' : "") +
+        (s.reward ? '<div class="step-meta"><span class="k">回饋</span> ' + esc(s.reward) + '</div>' : "") +
+        (streak > 0 ? '<div class="step-streak">🔥 連續 ' + streak + ' 天</div>' : "") +
+        (st.steps.length > 1 ? '<button class="step-del" data-delstep="' + st.id + '|' + s.id + '" aria-label="刪除這一層">×</button>' : "") +
+        '</div>';
+    }).join("");
+    const addForm = expandedStackId === st.id
+      ? '<div class="addstep-form">' +
+          '<label class="form-label">再疊一個微習慣（接在同一個「' + esc(st.anchor) + '」後面）</label>' +
+          '<input type="text" class="addAction" placeholder="新的小動作 *">' +
+          '<input type="text" class="addCue" placeholder="環境設計（可留空）">' +
+          '<input type="text" class="addReward" placeholder="小回饋（可留空）">' +
+          '<div class="mini-row"><button class="btn line" data-canceladd="1">取消</button><button class="btn" data-confirmadd="' + st.id + '">加入這一層</button></div>' +
+        '</div>'
+      : '<div class="stack-add"><button class="btn ghost" data-addstep="' + st.id + '">＋ 再疊一層</button></div>';
+    return '<div class="stack-card">' +
+      '<div class="stack-name">' + (st.name ? esc(st.name) : "習慣堆疊") +
+        '<button class="del-stack" data-delstack="' + st.id + '">刪除整組</button></div>' +
+      '<span class="anchor-pill">' + esc(st.anchor) + '</span>' +
+      '<div class="chain">' + steps + '</div>' +
+      addForm +
+      '</div>';
+  }).join("");
+}
+$("stackList").addEventListener("click", e => {
+  const addBtn = e.target.closest("[data-addstep]");
+  if (addBtn) { expandedStackId = addBtn.dataset.addstep; renderStacks(); return; }
+  const cancelBtn = e.target.closest("[data-canceladd]");
+  if (cancelBtn) { expandedStackId = null; renderStacks(); return; }
+  const confirmBtn = e.target.closest("[data-confirmadd]");
+  if (confirmBtn) {
+    const card = confirmBtn.closest(".stack-card");
+    const action = card.querySelector(".addAction").value.trim();
+    if (!action) { toast("請填寫新的小動作"); return; }
+    const st = db.stacks.find(x => x.id === confirmBtn.dataset.confirmadd);
+    if (st) {
+      st.steps.push({ id: uid(), action, cue: card.querySelector(".addCue").value.trim(), reward: card.querySelector(".addReward").value.trim() });
+      saveAll();
+      expandedStackId = null;
+      toast("又疊了一層！");
+      renderStacks();
+    }
+    return;
+  }
+  const delStepBtn = e.target.closest("[data-delstep]");
+  if (delStepBtn) {
+    const [stackId, stepId] = delStepBtn.dataset.delstep.split("|");
+    const st = db.stacks.find(x => x.id === stackId);
+    if (st) { st.steps = st.steps.filter(s => s.id !== stepId); saveAll(); renderStacks(); }
+    return;
+  }
+  const delStackBtn = e.target.closest("[data-delstack]");
+  if (delStackBtn) {
+    if (!confirm("刪除整組堆疊？打卡紀錄也會一併清除。")) return;
+    db.stacks = db.stacks.filter(x => x.id !== delStackBtn.dataset.delstack);
+    saveAll();
+    renderStacks();
+  }
+});
+
+/* ---------- Today check-off ---------- */
+function allSteps(){
+  const out = [];
+  db.stacks.forEach(st => st.steps.forEach(s => out.push({ stack: st, step: s })));
+  return out;
+}
+function renderToday(){
+  const t = today();
+  const steps = allSteps();
+  $("todayEmpty").style.display = steps.length ? "none" : "block";
+  const doneCount = steps.filter(({ step }) => db.checks[t] && db.checks[t][step.id]).length;
+
+  // ring
+  const total = steps.length;
+  const frac = total ? doneCount / total : 0;
+  $("ringProg").style.strokeDashoffset = String(157 * (1 - frac));
+  $("ringLabel").textContent = doneCount + " / " + total;
+  $("ringSub").textContent = total && doneCount === total ? "今天全部完成，漂亮！" : "今天的微習慣完成度";
+
+  $("todayList").innerHTML = db.stacks.map(st => {
+    const items = st.steps.map(s => {
+      const done = !!(db.checks[t] && db.checks[t][s.id]);
+      const streak = currentStreak(s.id);
+      return '<div class="today-item' + (done ? " done" : "") + '" data-check="' + s.id + '">' +
+        '<div class="today-check' + (done ? " on" : "") + '"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div>' +
+        '<div class="today-body"><div class="today-after">' + esc(st.anchor) + '　▸</div>' +
+        '<div class="today-action">' + esc(s.action) + '</div>' +
+        (streak > 0 ? '<div class="today-streak">🔥 連續 ' + streak + ' 天</div>' : "") +
+        '</div></div>';
+    }).join("");
+    return '<div class="today-stack"><div class="today-stack-head">' + (st.name ? esc(st.name) + " · " : "") + esc(st.anchor) + '</div>' + items + '</div>';
+  }).join("");
+}
+$("todayList").addEventListener("click", e => {
+  const item = e.target.closest("[data-check]");
+  if (!item) return;
+  const stepId = item.dataset.check;
+  const t = today();
+  if (!db.checks[t]) db.checks[t] = {};
+  if (db.checks[t][stepId]) {
+    delete db.checks[t][stepId];
+    if (Object.keys(db.checks[t]).length === 0) delete db.checks[t];
+  } else {
+    db.checks[t][stepId] = true;
+    let step = null;
+    db.stacks.forEach(st => st.steps.forEach(s => { if (s.id === stepId) step = s; }));
+    toast(step && step.reward ? step.reward : "完成了！");
+  }
+  saveAll();
+  renderToday();
+});
+
+/* ---------- Progress ---------- */
+function bestStreak(stepId){
+  const dates = Object.keys(db.checks).filter(d => db.checks[d][stepId]).sort();
+  let best = 0, cur = 0, prev = null;
+  dates.forEach(d => {
+    if (prev) {
+      const gap = (new Date(d) - new Date(prev)) / 86400000;
+      cur = gap === 1 ? cur + 1 : 1;
+    } else cur = 1;
+    best = Math.max(best, cur);
+    prev = d;
+  });
+  return best;
+}
+function last7(stepId){
+  const out = [];
+  const t = today();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const ds = iso(d);
+    out.push({ label: "日一二三四五六"[d.getDay()], on: !!(db.checks[ds] && db.checks[ds][stepId]), isToday: ds === t });
+  }
+  return out;
+}
+function renderProgress(){
+  const steps = allSteps();
+  $("progressEmpty").style.display = steps.length ? "none" : "block";
+
+  const t = today();
+  const doneToday = steps.filter(({ step }) => db.checks[t] && db.checks[t][step.id]).length;
+  let best = 0;
+  steps.forEach(({ step }) => { best = Math.max(best, bestStreak(step.id)); });
+
+  $("stHabits").textContent = steps.length;
+  $("stTodayRate").textContent = steps.length ? Math.round(doneToday / steps.length * 100) + "%" : "0%";
+  $("stBestStreak").textContent = best;
+
+  $("progressList").innerHTML = steps.map(({ stack, step }) => {
+    const dots = last7(step.id).map(x =>
+      '<span class="dot' + (x.on ? " on" : "") + (x.isToday ? " today" : "") + '">' + x.label + '</span>'
+    ).join("");
+    return '<div class="prog-item">' +
+      '<div class="prog-action">' + esc(step.action) + '</div>' +
+      '<div class="prog-anchor">' + esc(stack.anchor) + ' 之後</div>' +
+      '<div class="prog-dots">' + dots + '</div>' +
+      '<div class="prog-streaks"><span>目前連續 <b>' + currentStreak(step.id) + '</b> 天</span>' +
+      '<span>最長連續 <b>' + bestStreak(step.id) + '</b> 天</span></div>' +
+      '</div>';
+  }).join("");
+}
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "habit-stacking-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.stacks)) {
+        db = { stacks: data.stacks, checks: data.checks || {} };
+        saveAll();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有堆疊與打卡紀錄嗎？此動作無法復原。")) return;
+  db = { stacks: [], checks: {} };
+  saveAll();
+  renderAll();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-build") renderStacks();
+  if (id === "tab-today") renderToday();
+  if (id === "tab-progress") renderProgress();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+function renderAll(){
+  renderStacks();
+  renderToday();
+  renderProgress();
+}
+updateFormula();
+renderAll();
+</script>
+</body>
+</html>

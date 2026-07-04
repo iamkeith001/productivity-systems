@@ -18,3 +18,4 @@
 - 資訊飲食：https://iamkeith001.github.io/productivity-systems/info-diet/
 - 能量區塊：https://iamkeith001.github.io/productivity-systems/energy-blocking/
 - 兩分鐘啟動：https://iamkeith001.github.io/productivity-systems/two-minute/
+- 微習慣堆疊：https://iamkeith001.github.io/productivity-systems/habit-stacking/
