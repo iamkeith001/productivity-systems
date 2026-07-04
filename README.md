@@ -22,3 +22,4 @@
 - 預先決策：https://iamkeith001.github.io/productivity-systems/pre-decision/
 - 最小可行進展：https://iamkeith001.github.io/productivity-systems/mvp-progress/
 - 時間分塊：https://iamkeith001.github.io/productivity-systems/time-blocking/
+- 決策樹思維：https://iamkeith001.github.io/productivity-systems/decision-tree/

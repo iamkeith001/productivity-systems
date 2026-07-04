@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="決策樹">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%230B8457' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%230B8457'%3E樹%3C/text%3E%3C/svg%3E">
+<title>決策樹思維 · Decision Tree Thinking</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#0B8457; --acc-soft:#E1F1EA;
+    --grid:rgba(11,132,87,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#4FB98A; --acc-soft:#143026;
+    --grid:rgba(79,185,138,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .wizard-progress{display:flex;justify-content:space-between;gap:3px;border-bottom:1px solid var(--hairline-soft);padding-bottom:10px;margin-bottom:18px}
+  .wiz-step{font-size:10px;font-weight:700;color:var(--pencil);text-align:center;flex:1;padding:4px 0;transition:.2s;letter-spacing:.02em}
+  .wiz-step.active{color:var(--acc);border-bottom:2px solid var(--acc)}
+  .wizard-step-panel{display:none}
+  .wizard-step-panel.active{display:block}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:52px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .template-btn.on{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .reframe{background:var(--acc-soft);border-radius:6px;padding:11px 13px;font-size:12.5px;line-height:1.7;margin-bottom:14px;color:var(--ink)}
+  .reframe b{color:var(--acc)}
+
+  /* Criteria chips w/ weight */
+  .crit-item{display:flex;align-items:center;gap:10px;background:var(--paper2);border-radius:6px;padding:9px 12px;margin-bottom:8px}
+  .crit-name{flex:1;font-weight:700;font-size:13.5px}
+  .weight-stepper{display:flex;align-items:center;gap:7px}
+  .weight-stepper button{width:28px;height:28px;border-radius:6px;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  .weight-stepper .wv{font-family:"Songti TC",serif;font-size:15px;font-weight:900;min-width:34px;text-align:center;color:var(--acc)}
+  .crit-del{border:none;background:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:800;padding:0 2px}
+
+  /* Options */
+  .opt-item{display:flex;align-items:center;gap:9px;background:var(--paper2);border-radius:6px;padding:10px 12px;margin-bottom:8px}
+  .opt-item .on{flex:1;font-weight:700;font-size:13.5px}
+  .opt-del{border:none;background:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:800;padding:0 2px}
+
+  /* Scoring matrix */
+  .score-card{border:1px solid var(--hairline-soft);border-radius:6px;background:var(--paper);margin-bottom:12px;overflow:hidden}
+  .score-head{padding:11px 14px;background:var(--paper2);font-weight:800;font-size:14px;border-bottom:1px solid var(--hairline-soft)}
+  .score-body{padding:12px 14px}
+  .score-row{margin-bottom:11px}
+  .score-row .cn{font-size:12.5px;font-weight:700;color:var(--pencil);margin-bottom:5px;display:flex;justify-content:space-between}
+  .score-row .cn .cw{color:var(--acc);font-weight:800}
+  .score-btns{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+  .sc-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:8px 2px;border-radius:6px;font-size:14px;font-weight:800;cursor:pointer;text-align:center;font-family:"Songti TC",serif;min-height:38px}
+  .sc-btn.sel{background:var(--acc);color:var(--paper);border-color:transparent}
+  .score-cases{margin-top:10px}
+  .score-cases textarea{min-height:40px;margin-bottom:8px}
+
+  /* Results ranking */
+  .rank-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:10px;border-left:4px solid var(--hairline);cursor:pointer}
+  .rank-item.top{border-left-color:var(--acc);background:var(--acc-soft)}
+  .rank-item.chosen{outline:2px solid var(--acc);outline-offset:-1px}
+  .rank-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .rank-name{font-weight:800;font-size:14.5px}
+  .rank-name .badge{font-size:10.5px;font-weight:800;background:var(--acc);color:var(--paper);border-radius:4px;padding:1px 6px;margin-left:6px;letter-spacing:.04em}
+  .rank-pct{font-family:"Songti TC","Noto Serif TC",serif;font-size:20px;font-weight:900;color:var(--acc)}
+  .rank-bar{height:7px;background:var(--paper2);border-radius:4px;overflow:hidden;margin:8px 0 6px}
+  .rank-bar i{display:block;height:100%;background:var(--acc);border-radius:4px}
+  .rank-cases{font-size:11.5px;color:var(--pencil);line-height:1.6;margin-top:6px}
+  .rank-cases .b{color:var(--green);font-weight:700}
+  .rank-cases .w{color:var(--red);font-weight:700}
+  .rank-choose{font-size:11px;color:var(--acc);font-weight:800;margin-top:6px}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.05em}
+
+  /* Checkpoints */
+  .cp-item{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-top:1px solid var(--hairline-soft)}
+  .cp-item:first-child{border-top:none}
+  .cp-check{flex:none;width:22px;height:22px;border-radius:6px;border:1.6px solid var(--hairline);background:var(--paper);cursor:pointer;display:grid;place-items:center;margin-top:1px}
+  .cp-check.on{background:var(--acc);border-color:transparent}
+  .cp-check svg{width:13px;height:13px;stroke:var(--paper);stroke-width:2.8;fill:none;display:none}
+  .cp-check.on svg{display:block}
+  .cp-text{flex:1;font-size:13.5px;line-height:1.5}
+  .cp-item.done .cp-text{text-decoration:line-through;color:var(--pencil)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  /* Library cards */
+  .dec-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px;border-left:4px solid var(--acc)}
+  .dec-problem{font-family:"Songti TC","Noto Serif TC",serif;font-size:15.5px;font-weight:900;line-height:1.55;margin-bottom:8px}
+  .dec-chosen{font-size:12.5px;color:var(--acc);font-weight:800;margin-bottom:4px}
+  .dec-meta{font-size:11.5px;color:var(--pencil);margin-bottom:8px;letter-spacing:.03em}
+  .dec-crits{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+  .dec-cp{font-size:11.5px;color:var(--pencil);font-weight:700}
+  .dec-actions{display:flex;gap:7px;margin-top:10px}
+  .dec-actions button{border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .dec-actions button.del{color:var(--red)}
+  .dec-actions .spacer{flex:1}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+  details .body .eg{background:var(--paper2);border-radius:6px;padding:8px 12px;margin:6px 0;font-size:12.5px;line-height:1.8}
+  details .body .eg s{color:var(--pencil)} details .body .eg b{color:var(--acc)}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">樹</text></svg>
+      <div>
+        <h1>決策樹思維</h1>
+        <small>DECISION TREE</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: ANALYZE WIZARD -->
+  <section class="tab active" id="tab-analyze">
+    <div class="hero" id="analyzeHero">
+      <p class="eyebrow">決策分析</p>
+      <div class="hero-title serif">把模糊選擇，<br>拆成清楚路徑。</div>
+      <p class="hero-text">很多錯誤決策不是資訊不足，而是問題沒被清楚拆解。決策樹把複雜選擇畫成結構——問題、條件、選項、結果，讓你看見關鍵分歧點，分辨哪些因素真正重要、哪些只是情緒噪音。</p>
+      <div class="quote-line serif">讓判斷更理性、行動更果斷。</div>
+    </div>
+
+    <div class="card">
+      <div class="wizard-progress">
+        <div class="wiz-step active" id="wizInd-1">1 問題</div>
+        <div class="wiz-step" id="wizInd-2">2 條件</div>
+        <div class="wiz-step" id="wizInd-3">3 選項</div>
+        <div class="wiz-step" id="wizInd-4">4 評估</div>
+        <div class="wiz-step" id="wizInd-5">5 決定</div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="wizard-step-panel active" id="wizPanel-1">
+        <p class="eyebrow">步驟一 · 定義真正的問題</p>
+        <label class="form-label" for="origQ">原本冒出的問題（可留空）</label>
+        <input type="text" id="origQ" placeholder="例如：我要不要換工具？">
+        <div class="reframe">別急著問「選 A 還是 B」。先問<b>「我真正想解決的是什麼？」</b>——問題定義錯，後面分析就會偏。</div>
+        <label class="form-label" for="realProblem">我真正要解決的決策問題 *</label>
+        <textarea id="realProblem" placeholder="例如：目前工具是否限制了團隊效率？該如何解除這個限制？"></textarea>
+        <button class="btn" id="toStep2">下一步：找關鍵條件 →</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="wizard-step-panel" id="wizPanel-2">
+        <p class="eyebrow">步驟二 · 找關鍵判斷條件</p>
+        <p class="sub">點選會影響結果的核心因素（建議 3–5 個），並替每個設定重要程度權重（1–5）。</p>
+        <div class="templates-list" id="critPresets">
+          <button type="button" class="template-btn" data-c="時間成本">時間成本</button>
+          <button type="button" class="template-btn" data-c="金錢成本">金錢成本</button>
+          <button type="button" class="template-btn" data-c="風險程度">風險程度</button>
+          <button type="button" class="template-btn" data-c="長期價值">長期價值</button>
+          <button type="button" class="template-btn" data-c="可逆性">可逆性</button>
+          <button type="button" class="template-btn" data-c="執行難度">執行難度</button>
+          <button type="button" class="template-btn" data-c="對他人影響">對他人影響</button>
+          <button type="button" class="template-btn" data-c="與目標關聯">與目標關聯</button>
+        </div>
+        <div class="mini-row" style="margin-bottom:12px">
+          <input type="text" id="critCustom" placeholder="自訂條件…" style="margin-bottom:0">
+          <button class="btn ghost" id="addCritBtn" style="flex:none;width:auto;padding:0 16px">加入</button>
+        </div>
+        <div id="critList"></div>
+        <div class="mini-row" style="margin-top:6px">
+          <button class="btn line" id="backTo1">← 上一步</button>
+          <button class="btn" id="toStep3">下一步：展開選項 →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="wizard-step-panel" id="wizPanel-3">
+        <p class="eyebrow">步驟三 · 展開不同選項</p>
+        <p class="sub">不要只看二選一。點下方常見的「中間選項」，或自己加入——多看見中間路徑，決策才不會非黑即白。</p>
+        <div class="templates-list" id="optPresets">
+          <button type="button" class="template-btn" data-o="縮小範圍">縮小範圍</button>
+          <button type="button" class="template-btn" data-o="延後交付">延後交付</button>
+          <button type="button" class="template-btn" data-o="增加資源">增加資源</button>
+          <button type="button" class="template-btn" data-o="分階段上線">分階段上線</button>
+          <button type="button" class="template-btn" data-o="先推出 MVP">先推出 MVP</button>
+        </div>
+        <div class="mini-row" style="margin-bottom:12px">
+          <input type="text" id="optCustom" placeholder="輸入一個選項…" style="margin-bottom:0">
+          <button class="btn ghost" id="addOptBtn" style="flex:none;width:auto;padding:0 16px">加入</button>
+        </div>
+        <div id="optList"></div>
+        <div class="mini-row" style="margin-top:6px">
+          <button class="btn line" id="backTo2">← 上一步</button>
+          <button class="btn" id="toStep4">下一步：評估每條路徑 →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="wizard-step-panel" id="wizPanel-4">
+        <p class="eyebrow">步驟四 · 評估每條路徑</p>
+        <p class="sub">替每個選項在各條件上打分（1–5，分數越高＝在這個條件上表現越好），並寫下最好與最壞的結果。</p>
+        <div id="scoreMatrix"></div>
+        <div class="mini-row" style="margin-top:6px">
+          <button class="btn line" id="backTo3">← 上一步</button>
+          <button class="btn" id="toStep5">算出建議路徑 →</button>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="wizard-step-panel" id="wizPanel-5">
+        <p class="eyebrow">步驟五 · 選擇路徑並設檢查點</p>
+        <p class="sub">加權後的建議排序如下。點選你決定要走的路徑（可以不同於系統建議）。</p>
+        <div id="rankResult"></div>
+
+        <label class="form-label" style="margin-top:6px">檢查點（決策不是一次定生死，設定回頭檢視的時機）</label>
+        <div class="templates-list" id="cpPresets">
+          <button type="button" class="template-btn" data-cp="兩週後檢視成效">兩週後檢視成效</button>
+          <button type="button" class="template-btn" data-cp="達不到指標就調整策略">達不到指標就調整</button>
+          <button type="button" class="template-btn" data-cp="成本超過上限就暫停">成本超上限就暫停</button>
+          <button type="button" class="template-btn" data-cp="使用者回饋不佳就改版">回饋不佳就改版</button>
+        </div>
+        <div class="mini-row" style="margin-bottom:12px">
+          <input type="text" id="cpCustom" placeholder="自訂檢查點…" style="margin-bottom:0">
+          <button class="btn ghost" id="addCpBtn" style="flex:none;width:auto;padding:0 16px">加入</button>
+        </div>
+        <div id="cpList"></div>
+        <div class="mini-row" style="margin-top:6px">
+          <button class="btn line" id="backTo4">← 上一步</button>
+          <button class="btn" id="saveDecisionBtn">存入決策庫</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: LIBRARY -->
+  <section class="tab" id="tab-library">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stDecisions">0</div><div class="l">決策數</div></div>
+      <div class="stat"><div class="n" id="stFollowedRec">0</div><div class="l">採用建議</div></div>
+      <div class="stat"><div class="n" id="stOpenCp">0</div><div class="l">待檢查點</div></div>
+    </div>
+    <div class="empty" id="libEmpty" style="display:none">
+      <span class="zh serif">決策庫是空的</span>
+      到「分析」分頁走一遍五步驟，<br>把一個決策拆成清楚結構並存下來。
+    </div>
+    <div id="decList"></div>
+  </section>
+
+  <!-- TAB 3: CHECKPOINTS -->
+  <section class="tab" id="tab-checkpoints">
+    <div class="card">
+      <p class="eyebrow">檢查點</p>
+      <h2>回頭檢視，讓決策有彈性</h2>
+      <p class="sub" style="margin-bottom:0">好的決策會保留檢查點，而不是僵硬走到底。到了時機就回來確認——沒達標就調整策略。</p>
+    </div>
+    <div class="empty" id="cpEmpty" style="display:none">
+      <span class="zh serif">沒有待辦檢查點</span>
+      存決策時設定的檢查點會列在這裡，<br>供你回頭勾選與追蹤。
+    </div>
+    <div id="allCpList"></div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">把模糊選擇，<br>變成清楚結構。</div>
+      <p class="hero-text">決策樹源自統計學、運籌學與決策分析，廣泛用於管理決策、醫療判斷、風險評估與機器學習。在個人與管理決策中，它是把複雜問題拆解成「條件、選項、結果與風險」的思考工具。核心價值：把模糊選擇變成清楚結構。</p>
+      <div class="quote-line serif">由上而下，看見關鍵分歧點。</div>
+    </div>
+
+    <details>
+      <summary>四個元素</summary>
+      <div class="body">
+        <ul>
+          <li><b>問題</b>：目前要做什麼決定？</li>
+          <li><b>條件</b>：哪些因素會影響判斷？</li>
+          <li><b>選項</b>：有哪些可行路徑？</li>
+          <li><b>結果</b>：每條路徑可能帶來什麼後果？</li>
+        </ul>
+        這能避免只憑直覺或情緒做決定，讓決策更透明、可討論、可事後檢討。
+      </div>
+    </details>
+
+    <details>
+      <summary>五個步驟</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 先定義真正的決策問題</b>：不是「選 A 還是 B」，而是「我真正想解決的是什麼」。<div class="eg"><s>我要不要換工具？</s> → <b>目前工具是否限制了團隊效率？</b></div></li>
+          <li><b>2. 找出關鍵判斷條件</b>：時間、金錢、風險、長期價值、可逆性、執行難度、對他人影響、與目標關聯——通常 3–5 個最重要即可。</li>
+          <li><b>3. 展開不同選項</b>：不只二選一。專案延遲時還能縮小範圍、延後交付、增加資源、分階段上線、先推 MVP。</li>
+          <li><b>4. 預測每條路徑的可能結果</b>：最可能／最好／最壞？失敗代價多大？成功價值多高？是否容易修正？</li>
+          <li><b>5. 選擇路徑並保留檢查點</b>：兩週後檢視、達不到指標就調整、成本超上限就暫停——讓決策有彈性。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>專案管理</b>：進度落後時分析是需求過大、資源不足、溝通延遲還是技術風險，再選縮小範圍/延後/加人/調優先級。</li>
+          <li><b>產品開發</b>：比較使用者需求、開發成本、維護負擔、商業價值與失敗風險，別只因「看起來很酷」就投入。</li>
+          <li><b>學習規劃</b>：評估興趣、職涯價值、可用時間、實作機會與短期需求，找最值得投入的方向。</li>
+          <li><b>團隊決策</b>：把討論從「誰聲量大」拉回條件、證據與結果，讓選擇更客觀。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        決策樹的價值不在保證選到完美答案，而在讓決策過程<b>可視化、可討論、可修正</b>。當你把複雜選擇畫成樹狀結構，大腦更容易看見關鍵分歧點，也能分辨哪些因素真正重要、哪些只是情緒噪音，減少反覆猶豫與低效討論。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">關聯工具</p>
+      <h2>搭配決策日誌與心智模型</h2>
+      <p class="sub" style="margin-bottom:10px">「決策樹」幫你當下做結構化選擇；「決策日誌」記錄當下的假設與信心供事後複盤；「心智模型」提供多元思維模板。三者互補。</p>
+      <div class="mini-row">
+        <a class="btn ghost" href="../decision-journal/">決策日誌</a>
+        <a class="btn ghost" href="../mental-models/">心智模型</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="../decision-journal/">決策日誌</a> ·
+      <a href="../mental-models/">心智模型</a> ·
+      <a href="../pre-decision/">預先決策</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-analyze">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="2"/><circle cx="6" cy="19.5" r="2"/><circle cx="18" cy="19.5" r="2"/><path d="M12 6.5v4M12 10.5H6.5A0 0 0 0 0 6 11v6.5M12 10.5h5.5a0 0 0 0 1 .5.5v6.5"/></svg>
+      分析
+    </button>
+    <button class="tabbtn" data-tab="tab-library">
+      <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 5V3.5M16 5V3.5M8 13.5h8M8 16.5h5"/></svg>
+      決策庫
+    </button>
+    <button class="tabbtn" data-tab="tab-checkpoints">
+      <svg viewBox="0 0 24 24"><path d="M9 11l2 2 4-4"/><rect x="4" y="4" width="16" height="16" rx="2.5"/></svg>
+      檢查點
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "dectree_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "dectree_v1";
+let db = { decisions: [] };
+try {
+  const raw = JSON.parse(localStorage.getItem(storeKey));
+  if (raw && raw.decisions) db = Object.assign(db, raw);
+} catch (e) {}
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(db)); }
+
+/* ---------- Wizard draft ---------- */
+let draft = null;
+function newDraft(){
+  return { origQ: "", problem: "", criteria: [], options: [], chosenOptionId: null, checkpoints: [] };
+}
+draft = newDraft();
+let wizStep = 1;
+function gotoStep(n){
+  wizStep = n;
+  for (let i = 1; i <= 5; i++) {
+    $("wizInd-" + i).classList.toggle("active", i === n);
+    $("wizPanel-" + i).classList.toggle("active", i === n);
+  }
+  if (n === 4) renderMatrix();
+  if (n === 5) renderRank();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ----- Step 1 ----- */
+$("toStep2").addEventListener("click", () => {
+  draft.origQ = $("origQ").value.trim();
+  draft.problem = $("realProblem").value.trim();
+  if (!draft.problem) { toast("請寫下你真正要解決的決策問題"); $("realProblem").focus(); return; }
+  renderCrits();
+  gotoStep(2);
+});
+
+/* ----- Step 2: criteria ----- */
+function addCriteria(name){
+  name = name.trim();
+  if (!name) return;
+  if (draft.criteria.length >= 6) { toast("條件別太多，最多 6 個（建議 3–5）"); return; }
+  if (draft.criteria.some(c => c.name === name)) { toast("已經有這個條件了"); return; }
+  draft.criteria.push({ id: uid(), name, weight: 3 });
+  renderCrits();
+}
+$("critPresets").addEventListener("click", e => {
+  const b = e.target.closest(".template-btn");
+  if (b) addCriteria(b.dataset.c);
+});
+$("addCritBtn").addEventListener("click", () => { addCriteria($("critCustom").value); $("critCustom").value = ""; });
+function renderCrits(){
+  $("critList").innerHTML = draft.criteria.map(c =>
+    '<div class="crit-item"><span class="crit-name">' + esc(c.name) + '</span>' +
+    '<div class="weight-stepper"><button data-cw="' + c.id + '|-">−</button>' +
+    '<span class="wv">' + c.weight + '</span>' +
+    '<button data-cw="' + c.id + '|+">＋</button></div>' +
+    '<button class="crit-del" data-delc="' + c.id + '" aria-label="刪除">×</button></div>'
+  ).join("");
+  $("critPresets").querySelectorAll(".template-btn").forEach(b =>
+    b.classList.toggle("on", draft.criteria.some(c => c.name === b.dataset.c)));
+}
+$("critList").addEventListener("click", e => {
+  const cw = e.target.closest("[data-cw]");
+  if (cw) {
+    const [id, dir] = cw.dataset.cw.split("|");
+    const c = draft.criteria.find(x => x.id === id);
+    if (c) { c.weight = dir === "+" ? Math.min(5, c.weight + 1) : Math.max(1, c.weight - 1); renderCrits(); }
+    return;
+  }
+  const del = e.target.closest("[data-delc]");
+  if (del) { draft.criteria = draft.criteria.filter(c => c.id !== del.dataset.delc); renderCrits(); }
+});
+$("backTo1").addEventListener("click", () => gotoStep(1));
+$("toStep3").addEventListener("click", () => {
+  if (draft.criteria.length < 2) { toast("至少選 2 個判斷條件（建議 3–5）"); return; }
+  renderOpts();
+  gotoStep(3);
+});
+
+/* ----- Step 3: options ----- */
+function addOption(name){
+  name = name.trim();
+  if (!name) return;
+  if (draft.options.some(o => o.name === name)) { toast("已經有這個選項了"); return; }
+  draft.options.push({ id: uid(), name, scores: {}, bestCase: "", worstCase: "" });
+  renderOpts();
+}
+$("optPresets").addEventListener("click", e => {
+  const b = e.target.closest(".template-btn");
+  if (b) addOption(b.dataset.o);
+});
+$("addOptBtn").addEventListener("click", () => { addOption($("optCustom").value); $("optCustom").value = ""; });
+function renderOpts(){
+  $("optList").innerHTML = draft.options.map(o =>
+    '<div class="opt-item"><span class="on">' + esc(o.name) + '</span>' +
+    '<button class="opt-del" data-delo="' + o.id + '" aria-label="刪除">×</button></div>'
+  ).join("");
+}
+$("optList").addEventListener("click", e => {
+  const del = e.target.closest("[data-delo]");
+  if (del) { draft.options = draft.options.filter(o => o.id !== del.dataset.delo); renderOpts(); }
+});
+$("backTo2").addEventListener("click", () => gotoStep(2));
+$("toStep4").addEventListener("click", () => {
+  if (draft.options.length < 2) { toast("至少展開 2 個選項"); return; }
+  renderMatrix();
+  gotoStep(4);
+});
+
+/* ----- Step 4: scoring ----- */
+function renderMatrix(){
+  $("scoreMatrix").innerHTML = draft.options.map(o => {
+    const rows = draft.criteria.map(c => {
+      const cur = o.scores[c.id];
+      const btns = [1, 2, 3, 4, 5].map(v =>
+        '<button type="button" class="sc-btn' + (cur === v ? " sel" : "") + '" data-score="' + o.id + '|' + c.id + '|' + v + '">' + v + '</button>'
+      ).join("");
+      return '<div class="score-row"><div class="cn"><span>' + esc(c.name) + '</span><span class="cw">權重 ' + c.weight + '</span></div>' +
+        '<div class="score-btns">' + btns + '</div></div>';
+    }).join("");
+    return '<div class="score-card"><div class="score-head">' + esc(o.name) + '</div><div class="score-body">' + rows +
+      '<div class="score-cases">' +
+      '<textarea class="bestCase" data-best="' + o.id + '" placeholder="最好的結果是什麼？（可留空）">' + esc(o.bestCase) + '</textarea>' +
+      '<textarea class="worstCase" data-worst="' + o.id + '" placeholder="最壞的結果 / 失敗代價？（可留空）">' + esc(o.worstCase) + '</textarea>' +
+      '</div></div></div>';
+  }).join("");
+}
+$("scoreMatrix").addEventListener("click", e => {
+  const b = e.target.closest("[data-score]");
+  if (!b) return;
+  const [oid, cid, v] = b.dataset.score.split("|");
+  const o = draft.options.find(x => x.id === oid);
+  if (o) { o.scores[cid] = +v; renderMatrix(); }
+});
+$("scoreMatrix").addEventListener("input", e => {
+  const best = e.target.closest("[data-best]");
+  if (best) { const o = draft.options.find(x => x.id === best.dataset.best); if (o) o.bestCase = best.value; }
+  const worst = e.target.closest("[data-worst]");
+  if (worst) { const o = draft.options.find(x => x.id === worst.dataset.worst); if (o) o.worstCase = worst.value; }
+});
+$("backTo3").addEventListener("click", () => gotoStep(3));
+$("toStep5").addEventListener("click", () => {
+  for (const o of draft.options) {
+    for (const c of draft.criteria) {
+      if (!o.scores[c.id]) { toast("「" + o.name + "」在「" + c.name + "」還沒評分"); return; }
+    }
+  }
+  renderRank();
+  gotoStep(5);
+});
+
+/* ----- Step 5: results + checkpoints ----- */
+function scoreOf(o){
+  let sum = 0, max = 0;
+  draft.criteria.forEach(c => { sum += (o.scores[c.id] || 0) * c.weight; max += 5 * c.weight; });
+  return { sum, pct: max ? Math.round(sum / max * 100) : 0 };
+}
+function rankedOptions(){
+  return draft.options.map(o => ({ o, s: scoreOf(o) })).sort((a, b) => b.s.pct - a.s.pct);
+}
+function renderRank(){
+  const ranked = rankedOptions();
+  const topId = ranked.length ? ranked[0].o.id : null;
+  if (draft.chosenOptionId === null && topId) draft.chosenOptionId = topId;
+  $("rankResult").innerHTML = ranked.map(({ o, s }, i) => {
+    const isTop = o.id === topId;
+    const isChosen = o.id === draft.chosenOptionId;
+    return '<div class="rank-item' + (isTop ? " top" : "") + (isChosen ? " chosen" : "") + '" data-choose="' + o.id + '">' +
+      '<div class="rank-top"><span class="rank-name">' + esc(o.name) + (isTop ? '<span class="badge">建議</span>' : "") + '</span>' +
+      '<span class="rank-pct">' + s.pct + '%</span></div>' +
+      '<div class="rank-bar"><i style="width:' + s.pct + '%"></i></div>' +
+      ((o.bestCase || o.worstCase) ? '<div class="rank-cases">' +
+        (o.bestCase ? '<span class="b">最好</span> ' + esc(o.bestCase) + '<br>' : "") +
+        (o.worstCase ? '<span class="w">最壞</span> ' + esc(o.worstCase) : "") + '</div>' : "") +
+      '<div class="rank-choose">' + (isChosen ? "✓ 我決定走這條" : "點此選為決定路徑") + '</div>' +
+      '</div>';
+  }).join("");
+}
+$("rankResult").addEventListener("click", e => {
+  const b = e.target.closest("[data-choose]");
+  if (!b) return;
+  draft.chosenOptionId = b.dataset.choose;
+  renderRank();
+});
+function addCheckpoint(text){
+  text = text.trim();
+  if (!text) return;
+  if (draft.checkpoints.some(c => c.text === text)) { toast("已有這個檢查點"); return; }
+  draft.checkpoints.push({ id: uid(), text, done: false });
+  renderCps();
+}
+$("cpPresets").addEventListener("click", e => {
+  const b = e.target.closest(".template-btn");
+  if (b) addCheckpoint(b.dataset.cp);
+});
+$("addCpBtn").addEventListener("click", () => { addCheckpoint($("cpCustom").value); $("cpCustom").value = ""; });
+function renderCps(){
+  $("cpList").innerHTML = draft.checkpoints.map(c =>
+    '<div class="opt-item"><span class="on">☑ ' + esc(c.text) + '</span>' +
+    '<button class="opt-del" data-delcp="' + c.id + '" aria-label="刪除">×</button></div>'
+  ).join("");
+}
+$("cpList").addEventListener("click", e => {
+  const del = e.target.closest("[data-delcp]");
+  if (del) { draft.checkpoints = draft.checkpoints.filter(c => c.id !== del.dataset.delcp); renderCps(); }
+});
+$("backTo4").addEventListener("click", () => gotoStep(4));
+
+$("saveDecisionBtn").addEventListener("click", () => {
+  if (!draft.chosenOptionId) { toast("請選一條決定路徑"); return; }
+  const ranked = rankedOptions();
+  const recId = ranked[0].o.id;
+  db.decisions.unshift({
+    id: uid(),
+    problem: draft.problem,
+    origQ: draft.origQ,
+    criteria: draft.criteria.map(c => ({ name: c.name, weight: c.weight })),
+    options: draft.options.map(o => ({ name: o.name, pct: scoreOf(o).pct, bestCase: o.bestCase, worstCase: o.worstCase, chosen: o.id === draft.chosenOptionId, recommended: o.id === recId })),
+    checkpoints: draft.checkpoints.map(c => ({ id: uid(), text: c.text, done: false })),
+    createdAt: today()
+  });
+  saveAll();
+  toast("決策已存入決策庫！");
+  draft = newDraft();
+  $("origQ").value = ""; $("realProblem").value = "";
+  renderCrits(); renderOpts(); renderCps();
+  gotoStep(1);
+  renderLibrary();
+  renderAllCps();
+  switchTab("tab-library");
+});
+
+/* ---------- Library ---------- */
+function renderLibrary(){
+  $("libEmpty").style.display = db.decisions.length ? "none" : "block";
+  const followedRec = db.decisions.filter(d => d.options.some(o => o.chosen && o.recommended)).length;
+  let openCp = 0;
+  db.decisions.forEach(d => openCp += d.checkpoints.filter(c => !c.done).length);
+  $("stDecisions").textContent = db.decisions.length;
+  $("stFollowedRec").textContent = followedRec;
+  $("stOpenCp").textContent = openCp;
+
+  $("decList").innerHTML = db.decisions.map(d => {
+    const chosen = d.options.find(o => o.chosen);
+    const rec = d.options.find(o => o.recommended);
+    const diff = chosen && rec && chosen.name !== rec.name;
+    const cpDone = d.checkpoints.filter(c => c.done).length;
+    const optsSorted = [...d.options].sort((a, b) => b.pct - a.pct);
+    return '<div class="dec-card">' +
+      '<div class="dec-problem serif">' + esc(d.problem) + '</div>' +
+      (chosen ? '<div class="dec-chosen">▸ 決定路徑：' + esc(chosen.name) + '（' + chosen.pct + '%）' + (diff ? ' · 未採用建議「' + esc(rec.name) + '」' : ' · 即系統建議') + '</div>' : "") +
+      '<div class="dec-crits">' + d.criteria.map(c => '<span class="tag">' + esc(c.name) + '×' + c.weight + '</span>').join("") + '</div>' +
+      '<div class="dec-meta">' + d.createdAt + '　·　' + d.options.length + ' 個選項' +
+      (d.checkpoints.length ? '　·　檢查點 ' + cpDone + '/' + d.checkpoints.length : "") + '</div>' +
+      '<details><summary>各選項評分與最好/最壞結果</summary><div class="body">' +
+        optsSorted.map(o => '<div class="eg"><b>' + esc(o.name) + '　' + o.pct + '%</b>' + (o.chosen ? "（已選）" : "") +
+          (o.bestCase ? '<br>最好：' + esc(o.bestCase) : "") +
+          (o.worstCase ? '<br>最壞：' + esc(o.worstCase) : "") + '</div>').join("") +
+      '</div></details>' +
+      '<div class="dec-actions"><span class="dec-cp">' + (d.checkpoints.length ? "到「檢查點」追蹤進度" : "未設檢查點") + '</span><span class="spacer"></span>' +
+      '<button class="del" data-deld="' + d.id + '">刪除</button></div>' +
+      '</div>';
+  }).join("");
+}
+$("decList").addEventListener("click", e => {
+  const del = e.target.closest("[data-deld]");
+  if (!del) return;
+  if (!confirm("刪除這個決策？檢查點也會一併清除。")) return;
+  db.decisions = db.decisions.filter(d => d.id !== del.dataset.deld);
+  saveAll();
+  renderLibrary();
+  renderAllCps();
+  toast("已刪除決策");
+});
+
+/* ---------- Checkpoints ---------- */
+function renderAllCps(){
+  const withCp = db.decisions.filter(d => d.checkpoints.length);
+  const anyOpen = withCp.some(d => d.checkpoints.some(c => !c.done));
+  $("cpEmpty").style.display = withCp.length ? "none" : "block";
+  $("allCpList").innerHTML = withCp.map(d => {
+    const items = d.checkpoints.map(c =>
+      '<div class="cp-item' + (c.done ? " done" : "") + '" data-cp="' + d.id + '|' + c.id + '">' +
+      '<div class="cp-check' + (c.done ? " on" : "") + '"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div>' +
+      '<div class="cp-text">' + esc(c.text) + '</div></div>'
+    ).join("");
+    const chosen = d.options.find(o => o.chosen);
+    return '<div class="dec-card"><div class="dec-problem serif" style="font-size:14px">' + esc(d.problem) + '</div>' +
+      (chosen ? '<div class="dec-chosen">▸ ' + esc(chosen.name) + '</div>' : "") +
+      items + '</div>';
+  }).join("");
+}
+$("allCpList").addEventListener("click", e => {
+  const item = e.target.closest("[data-cp]");
+  if (!item) return;
+  const [did, cid] = item.dataset.cp.split("|");
+  const d = db.decisions.find(x => x.id === did);
+  if (!d) return;
+  const c = d.checkpoints.find(x => x.id === cid);
+  if (!c) return;
+  c.done = !c.done;
+  saveAll();
+  renderAllCps();
+  renderLibrary();
+});
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "decision-tree-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.decisions)) {
+        db = { decisions: data.decisions };
+        saveAll();
+        renderLibrary();
+        renderAllCps();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有決策與檢查點嗎？此動作無法復原。")) return;
+  db = { decisions: [] };
+  saveAll();
+  renderLibrary();
+  renderAllCps();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-library") renderLibrary();
+  if (id === "tab-checkpoints") renderAllCps();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+renderCrits(); renderOpts(); renderCps();
+renderLibrary(); renderAllCps();
+</script>
+</body>
+</html>
