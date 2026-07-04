@@ -96,7 +96,7 @@
   }
 
   .search-wrapper{
-    position:relative; flex:1; min-width:240px; max-width:320px;
+    position:relative; flex:1; min-width:200px; max-width:320px;
   }
   .search-wrapper svg{
     position:absolute; left:14px; top:50%; transform:translateY(-50%);
@@ -131,6 +131,30 @@
     transform:translateY(-6px); box-shadow:var(--shadow-hover), 0 10px 30px -10px var(--c-soft);
     border-color:var(--hairline);
   }
+
+  /* Pinned styling */
+  .card .pin-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--hairline);
+    transition: color 0.2s, transform 0.2s;
+    z-index: 10;
+    padding: 4px;
+    line-height: 1;
+  }
+  .card .pin-btn:hover {
+    transform: scale(1.2);
+    color: var(--amber);
+  }
+  .card.pinned .pin-btn {
+    color: var(--amber);
+  }
+
   .card .mark{
     width:38px; height:38px; border-radius:50%; background:var(--c-soft);
     color:var(--c); display:grid; place-items:center;
@@ -140,13 +164,24 @@
   .card:hover .mark{
     transform:scale(1.15) rotate(3deg);
   }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .card-header-texts {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+  }
   .card h2{
     font-family:"Songti TC","Noto Serif TC","PMingLiU",serif; font-size:20px;
-    margin:0 0 4px; letter-spacing:.04em; color:var(--ink);
+    margin:0; letter-spacing:.04em; color:var(--ink); line-height:1.3;
   }
   .card .en{
     font-family:'Outfit', sans-serif; font-size:10.5px; font-weight:700;
-    color:var(--pencil); letter-spacing:.12em; margin-bottom:13px; text-transform:uppercase;
+    color:var(--pencil); letter-spacing:.12em; margin-top:4px; text-transform:uppercase;
   }
   .card p{
     font-size:13px; color:var(--pencil); line-height:1.75; margin:0 0 16px; flex:1;
@@ -165,6 +200,62 @@
     transform:translateX(5px);
   }
 
+  /* List View Overrides */
+  .grid.list-view {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .grid.list-view .card {
+    min-height: auto;
+    padding: 10px 16px;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 8px;
+  }
+  .grid.list-view .card::before {
+    left: 0; top: 0; bottom: 0; width: 4px; height: 100%;
+  }
+  .grid.list-view .card .mark {
+    width: 32px; height: 32px; font-size: 15px;
+    margin-bottom: 0; margin-right: 14px;
+    flex-shrink: 0;
+  }
+  .grid.list-view .card-body {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+  }
+  .grid.list-view .card-header-texts {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    min-width: 150px;
+  }
+  .grid.list-view .card h2 {
+    font-size: 15.5px;
+  }
+  .grid.list-view .card .en {
+    font-size: 9px; margin-top: 1px;
+  }
+  .grid.list-view .card p {
+    font-size: 12.5px; margin: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex: 1;
+  }
+  .grid.list-view .card .open {
+    border-top: none; padding-top: 0; font-size: 0;
+    flex-shrink: 0;
+  }
+  .grid.list-view .card .open svg {
+    margin-left: 0;
+  }
+  .grid.list-view .card .pin-btn {
+    position: static;
+    margin-left: 8px;
+    order: 10;
+  }
+
   .empty-hint{
     grid-column: 1 / -1; text-align:center; padding:48px 16px;
     background:var(--paper); border:1px solid var(--hairline-soft);
@@ -172,10 +263,19 @@
   }
 
   footer{text-align:center;color:var(--pencil);font-size:11px;line-height:1.8;letter-spacing:.06em;margin-top:36px}
+  
   @media (max-width:720px){
     .controls-bar{flex-direction:column; align-items:stretch}
     .search-wrapper{max-width:none}
     .hero-title{font-size:27px}
+    .grid.list-view .card-header-texts {
+      min-width: 110px;
+    }
+  }
+  @media (max-width:600px) {
+    .grid.list-view .card p {
+      display: none;
+    }
   }
 </style>
 </head>
@@ -207,66 +307,106 @@
       <button class="filter-btn" data-filter="thinking">思維與決策</button>
       <button class="filter-btn" data-filter="management">精力與行動</button>
     </div>
-    <div class="search-wrapper">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" class="search-input" id="searchInput" placeholder="搜尋工具或關鍵字...">
+    <div style="display:flex; gap:8px; align-items:center; flex:1; justify-content:flex-end">
+      <div class="search-wrapper">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜尋工具或關鍵字...">
+      </div>
+      <button class="icon-btn" id="viewToggleBtn" title="切換檢視模式" aria-label="切換檢視模式">
+        <svg id="viewToggleIcon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </button>
     </div>
   </div>
 
   <main class="grid" id="toolsGrid">
-    <a class="card" style="--c:var(--green); --c-soft:var(--green-soft)" href="https://iamkeith001.github.io/energy-first/" data-category="management">
+    <a class="card" style="--c:var(--green); --c-soft:var(--green-soft)" href="https://iamkeith001.github.io/energy-first/" data-category="management" data-id="energy-first">
+      <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">能</div>
-      <h2>能量儀表板</h2>
-      <div class="en">ENERGY FIRST</div>
-      <p>先讀能量，再排時間。記錄身體、專注、情緒與意義能量，找出自己的黃金時段。</p>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>能量儀表板</h2>
+          <span class="en">ENERGY FIRST</span>
+        </div>
+        <p>先讀能量，再排時間。記錄身體、專注、情緒與意義能量，找出自己的黃金時段。</p>
+      </div>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--red); --c-soft:var(--red-soft)" href="https://iamkeith001.github.io/mind-offload/" data-category="management">
+    <a class="card" style="--c:var(--red); --c-soft:var(--red-soft)" href="https://iamkeith001.github.io/mind-offload/" data-category="management" data-id="mind-offload">
+      <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">空</div>
-      <h2>腦袋清空站</h2>
-      <div class="en">MIND OFFLOAD</div>
-      <p>把腦中的待辦、等待、靈感與煩惱倒出來，分流到可信任的外部系統。</p>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>腦袋清空站</h2>
+          <span class="en">MIND OFFLOAD</span>
+        </div>
+        <p>把腦中的待辦、等待、靈感與煩惱倒出來，分流到可信任的外部系統。</p>
+      </div>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--amber); --c-soft:var(--amber-soft)" href="https://iamkeith001.github.io/choice-loop/" data-category="thinking">
+    <a class="card" style="--c:var(--amber); --c-soft:var(--amber-soft)" href="https://iamkeith001.github.io/choice-loop/" data-category="thinking" data-id="choice-loop">
+      <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">循</div>
-      <h2>選擇迴圈</h2>
-      <div class="en">EXPLORE CHOOSE COMMIT</div>
-      <p>在不確定環境中，先探索可能性，再選擇方向，最後承諾一段時間創造成果。</p>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>選擇迴圈</h2>
+          <span class="en">EXPLORE CHOOSE COMMIT</span>
+        </div>
+        <p>在不確定環境中，先探索可能性，再選擇方向，最後承諾一段時間創造成果。</p>
+      </div>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--blue); --c-soft:var(--blue-soft)" href="https://iamkeith001.github.io/premortem-thinking/" data-category="thinking">
+    <a class="card" style="--c:var(--blue); --c-soft:var(--blue-soft)" href="https://iamkeith001.github.io/premortem-thinking/" data-category="thinking" data-id="premortem-thinking">
+      <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">預</div>
-      <h2>情境預演</h2>
-      <div class="en">PREMORTEM THINKING</div>
-      <p>在行動前先假設計畫已經失敗，提前看見風險，並轉成可追蹤的預防行動。</p>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>情境預演</h2>
+          <span class="en">PREMORTEM THINKING</span>
+        </div>
+        <p>在行動前先假設計畫已經失敗，提前看見風險，並轉成可追蹤的預防行動。</p>
+      </div>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--purple); --c-soft:var(--purple-soft)" href="./decision-journal/" data-category="thinking">
+    <a class="card" style="--c:var(--purple); --c-soft:var(--purple-soft)" href="./decision-journal/" data-category="thinking" data-id="decision-journal">
+      <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">誌</div>
-      <h2>決策日誌</h2>
-      <div class="en">DECISION JOURNALING</div>
-      <p>記錄決策當下的假設、選項與信心程度。在未來複盤實際結果，區分實力與運氣，校準判斷精準度。</p>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>決策日誌</h2>
+          <span class="en">DECISION JOURNALING</span>
+        </div>
+        <p>記錄決策當下的假設、選項與信心程度。在未來複盤實際結果，區分實力與運氣，校準判斷精準度。</p>
+      </div>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--teal); --c-soft:var(--teal-soft)" href="./action-trigger/" data-category="management">
+    <a class="card" style="--c:var(--teal); --c-soft:var(--teal-soft)" href="./action-trigger/" data-category="management" data-id="action-trigger">
+      <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">觸</div>
-      <h2>行動觸發</h2>
-      <div class="en">ACTION TRIGGER</div>
-      <p>設計具體的習慣觸發點與最小啟動動作。透過 If-Then 語句與每週回顧，讓好習慣自然啟動而不消耗意志力。</p>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>行動觸發</h2>
+          <span class="en">ACTION TRIGGER</span>
+        </div>
+        <p>設計具體的習慣觸發點與最小啟動動作。透過 If-Then 語句與每週回顧，讓好習慣自然啟動而不消耗意志力。</p>
+      </div>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--slate); --c-soft:var(--slate-soft)" href="./mental-models/" data-category="thinking">
+    <a class="card" style="--c:var(--slate); --c-soft:var(--slate-soft)" href="./mental-models/" data-category="thinking" data-id="mental-models">
+      <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">模</div>
-      <h2>心智模型</h2>
-      <div class="en">MENTAL MODELS</div>
-      <p>建立與運用多元心智模型工具箱。在面對複雜問題與重大決策時，藉由思維模板檢核多重維度，提升思考品質。</p>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>心智模型</h2>
+          <span class="en">MENTAL MODELS</span>
+        </div>
+        <p>建立與運用多元心智模型工具箱。在面對複雜問題與重大決策時，藉由思維模板檢核多重維度，提升思考品質。</p>
+      </div>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
@@ -307,7 +447,7 @@ function filterTools() {
   cards.forEach(card => {
     const title = card.querySelector('h2').textContent.toLowerCase();
     const enTitle = card.querySelector('.en').textContent.toLowerCase();
-    const desc = card.querySelector('p').textContent.toLowerCase();
+    const desc = card.querySelector('p') ? card.querySelector('p').textContent.toLowerCase() : '';
     const category = card.dataset.category;
 
     const matchesSearch = title.includes(query) || enTitle.includes(query) || desc.includes(query);
@@ -333,6 +473,68 @@ filterBtns.forEach(btn => {
     filterTools();
   });
 });
+
+/* --- View Toggle Logic --- */
+const grid = document.getElementById('toolsGrid');
+const viewToggleBtn = document.getElementById('viewToggleBtn');
+const viewToggleIcon = document.getElementById('viewToggleIcon');
+const viewStoreKey = "prod_portal_view";
+
+function setViewMode(mode) {
+  if (mode === 'list') {
+    grid.classList.add('list-view');
+    viewToggleIcon.innerHTML = '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>';
+  } else {
+    grid.classList.remove('list-view');
+    viewToggleIcon.innerHTML = '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>';
+  }
+  localStorage.setItem(viewStoreKey, mode);
+  filterTools(); // Run filter/search layout update
+}
+
+setViewMode(localStorage.getItem(viewStoreKey) || 'grid');
+
+viewToggleBtn.addEventListener('click', () => {
+  const currentMode = grid.classList.contains('list-view') ? 'list' : 'grid';
+  setViewMode(currentMode === 'grid' ? 'list' : 'grid');
+});
+
+/* --- Pinned/Favorite Tools Logic --- */
+const pinStoreKey = "prod_portal_pinned";
+let pinnedTools = JSON.parse(localStorage.getItem(pinStoreKey)) || [];
+
+function updatePinnedUI() {
+  cards.forEach(card => {
+    const id = card.dataset.id;
+    if (pinnedTools.includes(id)) {
+      card.classList.add('pinned');
+      card.style.order = '-1';
+    } else {
+      card.classList.remove('pinned');
+      card.style.order = '0';
+    }
+  });
+}
+
+// Add event listener to all pin buttons
+document.querySelectorAll('.pin-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const card = btn.closest('.card');
+    const id = card.dataset.id;
+    const idx = pinnedTools.indexOf(id);
+    if (idx !== -1) {
+      pinnedTools.splice(idx, 1);
+    } else {
+      pinnedTools.push(id);
+    }
+    localStorage.setItem(pinStoreKey, JSON.stringify(pinnedTools));
+    updatePinnedUI();
+  });
+});
+
+updatePinnedUI();
 </script>
 </body>
 </html>
