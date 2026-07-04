@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="能量區塊">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%236B7A2E' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%236B7A2E'%3E律%3C/text%3E%3C/svg%3E">
+<title>能量區塊優化 · Energy Blocking</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --teal:#0F8F92; --teal-soft:#E4F2F2;
+    --acc:#6B7A2E; --acc-soft:#EDF0DE;
+    --grid:rgba(107,122,46,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --teal:#43B3B5; --teal-soft:#173231;
+    --acc:#AFBE63; --acc-soft:#2A2E19;
+    --grid:rgba(175,190,99,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  /* Score picker 1-5 */
+  .slot-log{border-top:1px solid var(--hairline-soft);padding:12px 0 4px}
+  .slot-log:first-of-type{border-top:none}
+  .slot-log-name{font-weight:800;font-size:13.5px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+  .slot-log-name small{color:var(--pencil);font-weight:600;font-size:11.5px}
+  .score-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .score-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:9px 2px;border-radius:6px;font-size:15px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;min-height:42px;font-family:"Songti TC",serif}
+  .score-btn.sel{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  /* Energy map */
+  .map-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+  .map-slot{flex:none;width:52px;font-size:13px;font-weight:800}
+  .map-track{flex:1;height:16px;background:var(--paper2);border:1px solid var(--hairline-soft);border-radius:8px;overflow:hidden}
+  .map-fill{height:100%;border-radius:8px;transition:width .5s ease}
+  .map-level{flex:none;width:64px;text-align:right;font-size:12px;font-weight:800}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.05em}
+  .tag.high{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.mid{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.low{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.rec{background:var(--teal-soft);color:var(--teal);border-color:transparent}
+
+  /* Demand picker */
+  .demand-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
+  .demand-btn{border:1px solid var(--hairline);background:var(--paper);padding:9px 2px;border-radius:6px;font-size:12.5px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;color:var(--pencil);min-height:40px}
+  .demand-btn.sel[data-demand="high"]{background:var(--green);color:var(--paper);border-color:transparent}
+  .demand-btn.sel[data-demand="mid"]{background:var(--blue);color:var(--paper);border-color:transparent}
+  .demand-btn.sel[data-demand="low"]{background:var(--amber);color:var(--paper);border-color:transparent}
+  .demand-btn.sel[data-demand="recovery"]{background:var(--teal);color:var(--paper);border-color:transparent}
+  .demand-hint{font-size:12px;color:var(--pencil);margin:0 0 12px}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:14px 4px 11px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.08em}
+
+  .filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .filter-btn{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:6px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;font-weight:700;white-space:nowrap;font-family:inherit;min-height:32px}
+  .filter-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+
+  /* Task items */
+  .task-item{display:flex;align-items:flex-start;gap:10px;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:9px;border-left:4px solid var(--hairline)}
+  .task-item.high{border-left-color:var(--green)}
+  .task-item.mid{border-left-color:var(--blue)}
+  .task-item.low{border-left-color:var(--amber)}
+  .task-item.recovery{border-left-color:var(--teal)}
+  .task-check{flex:none;width:22px;height:22px;border-radius:6px;border:1.6px solid var(--hairline);background:var(--paper);cursor:pointer;display:grid;place-items:center;margin-top:1px}
+  .task-check.on{background:var(--acc);border-color:transparent}
+  .task-check svg{width:13px;height:13px;stroke:var(--paper);stroke-width:2.6;fill:none;display:none}
+  .task-check.on svg{display:block}
+  .task-body{flex:1;min-width:0}
+  .task-title{font-size:14px;font-weight:600;line-height:1.5}
+  .task-item.done .task-title{text-decoration:line-through;color:var(--pencil)}
+  .task-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center}
+  .task-slot-mini{font-size:11px;color:var(--pencil);font-weight:700}
+  .task-del{flex:none;border:none;background:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:800;padding:0 2px}
+
+  /* Schedule slot blocks */
+  .unassigned{margin-bottom:16px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--hairline);border-radius:20px;padding:6px 10px;font-size:12.5px;font-weight:700;margin:0 6px 6px 0}
+  .chip .assign-mini{display:flex;gap:3px;margin-left:2px}
+  .chip .assign-mini button{border:1px solid var(--hairline-soft);background:var(--paper2);color:var(--pencil);border-radius:5px;width:26px;height:26px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit}
+  .slot-block{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+  .slot-head{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-left:4px solid var(--hairline)}
+  .slot-block.high .slot-head{border-left-color:var(--green)}
+  .slot-block.mid .slot-head{border-left-color:var(--blue)}
+  .slot-block.low .slot-head{border-left-color:var(--amber)}
+  .slot-block.rec .slot-head{border-left-color:var(--teal)}
+  .slot-head-name{font-weight:800;font-size:15px;letter-spacing:.03em}
+  .slot-head-name small{display:block;color:var(--pencil);font-size:11px;font-weight:600;letter-spacing:.05em;margin-top:2px}
+  .slot-tasks{padding:4px 15px 12px}
+  .slot-task{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--hairline-soft);font-size:13.5px}
+  .slot-task:first-child{border-top:none}
+  .slot-task .st-title{flex:1}
+  .slot-task .st-warn{font-size:11px;font-weight:800;padding:2px 6px;border-radius:4px}
+  .slot-task .st-warn.over{background:var(--red-soft);color:var(--red)}
+  .slot-task .st-warn.waste{background:var(--amber-soft);color:var(--amber)}
+  .slot-task button{flex:none;border:none;background:none;color:var(--pencil);cursor:pointer;font-size:15px;font-weight:800;padding:0 2px}
+  .slot-empty{padding:10px 0 4px;color:var(--pencil);font-size:12.5px;font-style:normal}
+
+  /* Sprint timer */
+  .timer-display{font-family:"Songti TC","Noto Serif TC",serif;font-size:52px;font-weight:900;text-align:center;letter-spacing:.04em;line-height:1;margin:6px 0 4px;color:var(--acc)}
+  .timer-state{text-align:center;font-size:12px;color:var(--pencil);letter-spacing:.1em;margin-bottom:14px;min-height:16px}
+  .timer-state.rest{color:var(--teal);font-weight:800}
+  .preset-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+  .preset-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:9px 2px;border-radius:6px;font-size:13px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;min-height:40px}
+  .preset-btn.sel{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.12em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">律</text></svg>
+      <div>
+        <h1>能量區塊優化</h1>
+        <small>ENERGY BLOCKING</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: RHYTHM -->
+  <section class="tab active" id="tab-rhythm">
+    <div class="hero">
+      <p class="eyebrow">能量節律</p>
+      <div class="hero-title serif">高能量的一小時，<br>勝過低能量的三小時。</div>
+      <p class="hero-text">從「時間管理」走向「狀態管理」。先花一週記錄自己的能量曲線——不要套用別人的作息，找出你何時最清醒、何時最疲乏，這是排程的地基。</p>
+      <div class="quote-line serif">在對的能量時段做對的事。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow" id="logDateLabel">今日紀錄</p>
+      <h2>今天各時段的精神狀態</h2>
+      <p class="sub">用 1–5 分記錄（1 最疲乏、5 最清醒）。同一天可隨時修改。</p>
+      <div id="slotLogArea"></div>
+      <button class="btn" id="saveLogBtn" style="margin-top:14px">儲存今日紀錄</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">你的能量地圖</p>
+      <h2 id="mapTitle">依紀錄推算的節律</h2>
+      <p class="sub" id="mapSub">記錄越多天，地圖越準。這份地圖會用來替各時段標上能量等級，供排程對位。</p>
+      <div id="energyMap"></div>
+    </div>
+  </section>
+
+  <!-- TAB 2: TASKS -->
+  <section class="tab" id="tab-tasks">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stHigh">0</div><div class="l">高能量</div></div>
+      <div class="stat"><div class="n" id="stMid">0</div><div class="l">中能量</div></div>
+      <div class="stat"><div class="n" id="stLow">0</div><div class="l">低能量</div></div>
+      <div class="stat"><div class="n" id="stRec">0</div><div class="l">恢復</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">新增任務</p>
+      <h2>依能量需求分類</h2>
+      <label class="form-label" for="taskTitle">任務內容 *</label>
+      <input type="text" id="taskTitle" placeholder="例如：寫論文 Discussion、回覆廠商信、整理報帳單據">
+
+      <label class="form-label">這件事需要多少能量？ *</label>
+      <div class="demand-row" id="demandRow">
+        <button type="button" class="demand-btn" data-demand="high">高能量</button>
+        <button type="button" class="demand-btn" data-demand="mid">中能量</button>
+        <button type="button" class="demand-btn" data-demand="low">低能量</button>
+        <button type="button" class="demand-btn" data-demand="recovery">恢復</button>
+      </div>
+      <p class="demand-hint" id="demandHint">高能量：寫作、研究、程式設計、策略決策、簡報架構。</p>
+
+      <button class="btn" id="addTaskBtn">加入任務</button>
+    </div>
+
+    <div class="filters" id="taskFilters">
+      <button class="filter-btn active" data-df="all">全部</button>
+      <button class="filter-btn" data-df="high">高能量</button>
+      <button class="filter-btn" data-df="mid">中能量</button>
+      <button class="filter-btn" data-df="low">低能量</button>
+      <button class="filter-btn" data-df="recovery">恢復</button>
+    </div>
+
+    <div class="empty" id="taskEmpty" style="display:none">
+      <span class="zh serif">還沒有任務</span>
+      把待辦依「需要多少能量」分類，<br>之後才好排進對的時段。
+    </div>
+    <div id="taskList"></div>
+  </section>
+
+  <!-- TAB 3: SCHEDULE -->
+  <section class="tab" id="tab-schedule">
+    <div class="card">
+      <p class="eyebrow">能量對任務排程</p>
+      <h2>把對的任務放進對的區塊</h2>
+      <p class="sub" style="margin-bottom:0">最重要、最需要判斷力的工作放高能量時段；雜務放中低能量時段。放錯了會提醒你。</p>
+    </div>
+
+    <div class="unassigned card" id="unassignedCard">
+      <p class="eyebrow">待排入的任務</p>
+      <div id="unassignedList"></div>
+    </div>
+
+    <div id="scheduleSlots"></div>
+
+    <div class="card">
+      <p class="eyebrow">專注衝刺</p>
+      <h2>60–90 分鐘一段，再恢復</h2>
+      <p class="sub">注意力呈週期性波動。用一段專注衝刺工作，結束後安排短暫恢復。</p>
+      <div class="timer-display" id="timerDisplay">60:00</div>
+      <div class="timer-state" id="timerState"></div>
+      <div class="preset-row" id="presetRow">
+        <button type="button" class="preset-btn sel" data-min="60">60 分</button>
+        <button type="button" class="preset-btn" data-min="75">75 分</button>
+        <button type="button" class="preset-btn" data-min="90">90 分</button>
+      </div>
+      <div class="mini-row">
+        <button class="btn" id="timerStartBtn">開始</button>
+        <button class="btn line" id="timerResetBtn">重設</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">管理能量，<br>而不是只管理時間。</div>
+      <p class="hero-text">2007 年 Tony Schwartz 與 Catherine McCarthy 在《哈佛商業評論》提出：時間有限，但體力、情緒、心智與精神能量可以透過儀式與恢復週期補充。近年 chronotype（晨型／夜型）研究也指出，不同人的高效時段不同，工作狀態與一天的生理節奏有關。</p>
+      <div class="quote-line serif">承認每小時的價值並不相同。</div>
+    </div>
+
+    <details>
+      <summary>四種能量區段</summary>
+      <div class="body">
+        <ul>
+          <li><b>高能量</b>：適合深度思考、創作、決策與分析。</li>
+          <li><b>中能量</b>：適合會議、協作、回覆與整理。</li>
+          <li><b>低能量</b>：適合例行行政、歸檔、檢查清單。</li>
+          <li><b>恢復</b>：休息、運動、散步或放空。</li>
+        </ul>
+        核心不是把任務塞進空檔，而是把任務放進最適合的能量狀態。
+      </div>
+    </details>
+
+    <details>
+      <summary>五個方法</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 先記錄一週能量曲線</b>：每天用 1–5 分記錄精神狀態，找出自己的節律，不要直接套用別人的作息。</li>
+          <li><b>2. 把任務依能量需求分類</b>：高（寫作、研究、決策）、中（會議、回信、追蹤）、低（歸檔、排程、格式）、恢復（散步、伸展、冥想）。</li>
+          <li><b>3. 建立能量對任務排程</b>：最困難、最需判斷力的工作放高能量時段，別把黃金時間浪費在低價值雜務上。</li>
+          <li><b>4. 用 60–90 分鐘專注衝刺</b>：注意力呈週期性波動，用一段專注再安排短暫恢復。不必迷信「固定 90 分鐘」。</li>
+          <li><b>5. 保留恢復區塊</b>：恢復不是偷懶，是維持高品質輸出的必要成本。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>知識工作者</b>：上午寫作、研究、分析；下午開會、回信、追蹤；傍晚整理資料與規劃明天。</li>
+          <li><b>學生</b>：清醒時讀最難的科目或解題；疲乏時整理筆記、複習卡片、收斂錯題。</li>
+          <li><b>管理者</b>：重要決策與策略思考放個人高能量區；平穩時段留給同步、協調與行政。</li>
+          <li><b>創作者</b>：靈感高峰時創作初稿；中低能量時修圖、排版、整理素材、發布內容。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        能量區塊優化結合了<b>時間區塊化、節律管理、深度工作與恢復設計</b>。最重要的不是把每天排得更滿，而是讓重要任務出現在你<b>最有判斷力、最有創造力、最能承受複雜度</b>的時段。高能量的一小時，可能比低能量的三小時更有產出。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">關聯工具</p>
+      <h2>搭配能量儀表板</h2>
+      <p class="sub" style="margin-bottom:10px">「能量儀表板」幫你找出黃金時段（記錄身體／專注／情緒／意義能量）；本工具則把任務排進那些時段。兩者互補。</p>
+      <a class="btn ghost" href="https://iamkeith001.github.io/energy-first/">開啟能量儀表板</a>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="https://iamkeith001.github.io/energy-first/">能量儀表板</a> ·
+      <a href="../cognitive-load/">認知負荷</a> ·
+      <a href="../info-diet/">資訊飲食</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-rhythm">
+      <svg viewBox="0 0 24 24"><path d="M3 12h4l2.5-7 5 14 2.5-7H21"/></svg>
+      節律
+    </button>
+    <button class="tabbtn" data-tab="tab-tasks">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M2.5 6h.01M2.5 12h.01M2.5 18h.01"/></svg>
+      任務
+    </button>
+    <button class="tabbtn" data-tab="tab-schedule">
+      <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/><rect x="6.5" y="12" width="5" height="2.4" rx="1" fill="currentColor" stroke="none"/></svg>
+      排程
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "energyblock_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "energyblock_v1";
+let db = { logs: {}, tasks: [] };   // logs: {date: {morning,noon,afternoon,evening}}
+try {
+  const raw = JSON.parse(localStorage.getItem(storeKey));
+  if (raw && raw.tasks) db = Object.assign(db, raw);
+} catch (e) {}
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(db)); }
+
+const SLOTS = [
+  { id: "morning",   name: "早上", en: "MORNING" },
+  { id: "noon",      name: "中午", en: "NOON" },
+  { id: "afternoon", name: "下午", en: "AFTERNOON" },
+  { id: "evening",   name: "晚上", en: "EVENING" }
+];
+const DEMANDS = {
+  high:     { name: "高能量", cls: "high", rank: 3, hint: "高能量：寫作、研究、程式設計、策略決策、簡報架構。" },
+  mid:      { name: "中能量", cls: "mid",  rank: 2, hint: "中能量：會議、回信、資料整理、專案追蹤。" },
+  low:      { name: "低能量", cls: "low",  rank: 1, hint: "低能量：歸檔、排程、格式修正、例行檢查。" },
+  recovery: { name: "恢復",   cls: "rec",  rank: 0, hint: "恢復：散步、伸展、午休、冥想、無輸入休息。" }
+};
+// level from average score (1-5)
+const LEVELS = {
+  high: { name: "高能量", cls: "high", rank: 3, color: "var(--green)" },
+  mid:  { name: "中能量", cls: "mid",  rank: 2, color: "var(--blue)" },
+  low:  { name: "低能量", cls: "low",  rank: 1, color: "var(--amber)" },
+  rec:  { name: "恢復區", cls: "rec",  rank: 0, color: "var(--teal)" }
+};
+const DEFAULT_MAP = { morning: "high", noon: "mid", afternoon: "low", evening: "rec" };
+
+function levelFromAvg(avg){
+  if (avg >= 4) return "high";
+  if (avg >= 3) return "mid";
+  if (avg >= 2) return "low";
+  return "rec";
+}
+
+/* ---------- Rhythm: today log ---------- */
+let logDraft = {};
+function initLogDraft(){
+  const t = today();
+  logDraft = Object.assign({}, db.logs[t] || {});
+}
+function renderSlotLog(){
+  $("logDateLabel").textContent = "今日紀錄 · " + today();
+  $("slotLogArea").innerHTML = SLOTS.map(s => {
+    const cur = logDraft[s.id];
+    const btns = [1, 2, 3, 4, 5].map(v =>
+      '<button type="button" class="score-btn' + (cur === v ? " sel" : "") + '" data-slot="' + s.id + '" data-score="' + v + '">' + v + '</button>'
+    ).join("");
+    return '<div class="slot-log"><div class="slot-log-name">' + s.name + ' <small>' + s.en + '</small></div><div class="score-row">' + btns + '</div></div>';
+  }).join("");
+}
+$("slotLogArea").addEventListener("click", e => {
+  const btn = e.target.closest(".score-btn");
+  if (!btn) return;
+  logDraft[btn.dataset.slot] = +btn.dataset.score;
+  renderSlotLog();
+});
+$("saveLogBtn").addEventListener("click", () => {
+  if (Object.keys(logDraft).length === 0) { toast("請至少為一個時段評分"); return; }
+  db.logs[today()] = Object.assign({}, logDraft);
+  saveAll();
+  toast("今日能量紀錄已儲存");
+  renderEnergyMap();
+});
+
+/* ---------- Rhythm: energy map ---------- */
+function computeMap(){
+  const sums = {}, counts = {};
+  SLOTS.forEach(s => { sums[s.id] = 0; counts[s.id] = 0; });
+  Object.values(db.logs).forEach(day => {
+    SLOTS.forEach(s => {
+      if (typeof day[s.id] === "number") { sums[s.id] += day[s.id]; counts[s.id]++; }
+    });
+  });
+  const map = {}, avgs = {};
+  SLOTS.forEach(s => {
+    if (counts[s.id] > 0) {
+      const avg = sums[s.id] / counts[s.id];
+      avgs[s.id] = avg;
+      map[s.id] = levelFromAvg(avg);
+    } else {
+      avgs[s.id] = null;
+      map[s.id] = DEFAULT_MAP[s.id];
+    }
+  });
+  return { map, avgs, dayCount: Object.keys(db.logs).length };
+}
+function renderEnergyMap(){
+  const { map, avgs, dayCount } = computeMap();
+  const hasData = dayCount > 0;
+  $("mapTitle").textContent = hasData ? ("依 " + dayCount + " 天紀錄推算的節律") : "尚無紀錄（以下為預設假設）";
+  $("mapSub").textContent = hasData
+    ? "記錄越多天，地圖越準。這份地圖會用來替各時段標上能量等級，供排程對位。"
+    : "還沒有紀錄，先用常見型態當預設。開始記錄後會替換成你自己的節律。";
+  $("energyMap").innerHTML = SLOTS.map(s => {
+    const lvl = LEVELS[map[s.id]];
+    const avg = avgs[s.id];
+    const pct = avg !== null ? (avg / 5 * 100) : (lvl.rank + 1) / 4 * 100;
+    return '<div class="map-row"><span class="map-slot">' + s.name + '</span>' +
+      '<div class="map-track"><div class="map-fill" style="width:' + pct + '%;background:' + lvl.color + '"></div></div>' +
+      '<span class="map-level" style="color:' + lvl.color + '">' + lvl.name + (avg !== null ? ' ' + avg.toFixed(1) : '') + '</span></div>';
+  }).join("");
+}
+
+/* ---------- Tasks ---------- */
+let curDemand = null;
+$("demandRow").addEventListener("click", e => {
+  const btn = e.target.closest(".demand-btn");
+  if (!btn) return;
+  curDemand = btn.dataset.demand;
+  $("demandRow").querySelectorAll(".demand-btn").forEach(b => b.classList.toggle("sel", b === btn));
+  $("demandHint").textContent = DEMANDS[curDemand].hint;
+});
+$("addTaskBtn").addEventListener("click", () => {
+  const title = $("taskTitle").value.trim();
+  if (!title) { toast("請填寫任務內容"); $("taskTitle").focus(); return; }
+  if (!curDemand) { toast("請選擇能量需求"); return; }
+  db.tasks.unshift({
+    id: uid(),
+    title,
+    demand: curDemand,
+    slot: null,
+    done: false,
+    createdAt: today()
+  });
+  saveAll();
+  $("taskTitle").value = "";
+  curDemand = null;
+  $("demandRow").querySelectorAll(".demand-btn").forEach(b => b.classList.remove("sel"));
+  $("demandHint").textContent = DEMANDS.high.hint;
+  toast("已加入任務");
+  renderTasks();
+  renderSchedule();
+});
+
+let taskFilter = "all";
+$("taskFilters").addEventListener("click", e => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  taskFilter = btn.dataset.df;
+  $("taskFilters").querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+  renderTasks();
+});
+function renderTasks(){
+  const counts = { high: 0, mid: 0, low: 0, recovery: 0 };
+  db.tasks.forEach(t => { if (!t.done) counts[t.demand]++; });
+  $("stHigh").textContent = counts.high;
+  $("stMid").textContent = counts.mid;
+  $("stLow").textContent = counts.low;
+  $("stRec").textContent = counts.recovery;
+
+  const list = db.tasks.filter(t => taskFilter === "all" || t.demand === taskFilter);
+  $("taskEmpty").style.display = db.tasks.length ? "none" : "block";
+  const holder = $("taskList");
+  holder.innerHTML = list.map(t => {
+    const d = DEMANDS[t.demand];
+    const slotName = t.slot ? SLOTS.find(s => s.id === t.slot).name : null;
+    return '<div class="task-item ' + d.cls + (t.done ? " done" : "") + '">' +
+      '<button class="task-check' + (t.done ? " on" : "") + '" data-toggle="' + t.id + '" aria-label="完成"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></button>' +
+      '<div class="task-body"><div class="task-title">' + esc(t.title) + '</div>' +
+      '<div class="task-tags"><span class="tag ' + d.cls + '">' + d.name + '</span>' +
+      (slotName ? '<span class="task-slot-mini">已排：' + slotName + '</span>' : '<span class="task-slot-mini">未排入</span>') +
+      '</div></div>' +
+      '<button class="task-del" data-del="' + t.id + '" aria-label="刪除">×</button></div>';
+  }).join("");
+
+  if (db.tasks.length && !list.length) {
+    holder.innerHTML = '<div class="empty"><span class="zh serif">沒有這個分級的任務</span>換個篩選看看。</div>';
+  }
+}
+$("taskList").addEventListener("click", e => {
+  const toggleBtn = e.target.closest("[data-toggle]");
+  if (toggleBtn) {
+    const t = db.tasks.find(x => x.id === toggleBtn.dataset.toggle);
+    if (t) { t.done = !t.done; saveAll(); renderTasks(); renderSchedule(); }
+    return;
+  }
+  const delBtn = e.target.closest("[data-del]");
+  if (delBtn) {
+    db.tasks = db.tasks.filter(t => t.id !== delBtn.dataset.del);
+    saveAll();
+    renderTasks();
+    renderSchedule();
+    toast("已刪除任務");
+  }
+});
+
+/* ---------- Schedule ---------- */
+function renderSchedule(){
+  const { map } = computeMap();
+  const activeTasks = db.tasks.filter(t => !t.done);
+
+  // Unassigned
+  const unassigned = activeTasks.filter(t => !t.slot);
+  const uHolder = $("unassignedList");
+  if (unassigned.length === 0) {
+    uHolder.innerHTML = '<p class="slot-empty">所有作用中的任務都已排入（或還沒有任務）。</p>';
+  } else {
+    uHolder.innerHTML = unassigned.map(t => {
+      const d = DEMANDS[t.demand];
+      const slotBtns = SLOTS.map(s => '<button data-assign="' + t.id + '" data-slot="' + s.id + '" title="排到' + s.name + '">' + s.name[0] + '</button>').join("");
+      return '<span class="chip"><span class="tag ' + d.cls + '">' + d.name + '</span>' + esc(t.title) +
+        '<span class="assign-mini">' + slotBtns + '</span></span>';
+    }).join("");
+  }
+
+  // Slot blocks
+  $("scheduleSlots").innerHTML = SLOTS.map(s => {
+    const lvl = LEVELS[map[s.id]];
+    const tasksHere = activeTasks.filter(t => t.slot === s.id);
+    let rows;
+    if (tasksHere.length === 0) {
+      rows = '<div class="slot-empty">尚未排入任務。</div>';
+    } else {
+      rows = tasksHere.map(t => {
+        const d = DEMANDS[t.demand];
+        let warn = "";
+        if (d.rank > lvl.rank) warn = '<span class="st-warn over">能量不足</span>';
+        else if (lvl.rank - d.rank >= 2 && lvl.rank >= 2) warn = '<span class="st-warn waste">黃金時段可惜</span>';
+        return '<div class="slot-task"><span class="tag ' + d.cls + '">' + d.name + '</span>' +
+          '<span class="st-title">' + esc(t.title) + '</span>' + warn +
+          '<button data-unassign="' + t.id + '" aria-label="移出">×</button></div>';
+      }).join("");
+    }
+    return '<div class="slot-block ' + lvl.cls + '">' +
+      '<div class="slot-head"><div class="slot-head-name">' + s.name + '<small>' + s.en + '</small></div>' +
+      '<span class="tag ' + lvl.cls + '">' + lvl.name + '</span></div>' +
+      '<div class="slot-tasks">' + rows + '</div></div>';
+  }).join("");
+}
+$("unassignedList").addEventListener("click", e => {
+  const btn = e.target.closest("[data-assign]");
+  if (!btn) return;
+  const t = db.tasks.find(x => x.id === btn.dataset.assign);
+  if (t) {
+    t.slot = btn.dataset.slot;
+    saveAll();
+    renderSchedule();
+    renderTasks();
+    const lvl = LEVELS[computeMap().map[t.slot]];
+    if (DEMANDS[t.demand].rank > lvl.rank) toast("已排入，但這時段能量可能不足 — 留意");
+    else toast("已排入 " + SLOTS.find(s => s.id === t.slot).name);
+  }
+});
+$("scheduleSlots").addEventListener("click", e => {
+  const btn = e.target.closest("[data-unassign]");
+  if (!btn) return;
+  const t = db.tasks.find(x => x.id === btn.dataset.unassign);
+  if (t) { t.slot = null; saveAll(); renderSchedule(); renderTasks(); }
+});
+
+/* ---------- Sprint timer ---------- */
+let timerMin = 60, timerRemain = 60 * 60, timerId = null, timerResting = false;
+function fmt(sec){
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+}
+function renderTimer(){ $("timerDisplay").textContent = fmt(timerRemain); }
+$("presetRow").addEventListener("click", e => {
+  const btn = e.target.closest(".preset-btn");
+  if (!btn) return;
+  if (timerId) { toast("計時中，請先重設"); return; }
+  timerMin = +btn.dataset.min;
+  timerRemain = timerMin * 60;
+  timerResting = false;
+  $("presetRow").querySelectorAll(".preset-btn").forEach(b => b.classList.toggle("sel", b === btn));
+  $("timerState").textContent = "";
+  $("timerState").className = "timer-state";
+  renderTimer();
+});
+$("timerStartBtn").addEventListener("click", () => {
+  if (timerId) {                       // pause
+    clearInterval(timerId);
+    timerId = null;
+    $("timerStartBtn").textContent = "繼續";
+    $("timerState").textContent = "已暫停";
+    return;
+  }
+  $("timerStartBtn").textContent = "暫停";
+  $("timerState").textContent = timerResting ? "恢復中…" : "專注衝刺中…";
+  $("timerState").className = "timer-state" + (timerResting ? " rest" : "");
+  timerId = setInterval(() => {
+    timerRemain--;
+    renderTimer();
+    if (timerRemain <= 0) {
+      clearInterval(timerId);
+      timerId = null;
+      if (!timerResting) {
+        timerResting = true;
+        timerRemain = 10 * 60;
+        renderTimer();
+        $("timerStartBtn").textContent = "開始恢復";
+        $("timerState").textContent = "衝刺完成！安排 10 分鐘恢復";
+        $("timerState").className = "timer-state rest";
+        toast("專注衝刺完成 — 起來走走、喝水、放空");
+      } else {
+        timerResting = false;
+        timerRemain = timerMin * 60;
+        renderTimer();
+        $("timerStartBtn").textContent = "開始";
+        $("timerState").textContent = "恢復結束，準備下一段";
+        $("timerState").className = "timer-state";
+        toast("恢復結束，回到下一段衝刺");
+      }
+    }
+  }, 1000);
+});
+$("timerResetBtn").addEventListener("click", () => {
+  clearInterval(timerId);
+  timerId = null;
+  timerResting = false;
+  timerRemain = timerMin * 60;
+  renderTimer();
+  $("timerStartBtn").textContent = "開始";
+  $("timerState").textContent = "";
+  $("timerState").className = "timer-state";
+});
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "energy-blocking-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.tasks) && data.logs) {
+        db = { logs: data.logs, tasks: data.tasks };
+        saveAll();
+        initLogDraft();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有能量紀錄與任務嗎？此動作無法復原。")) return;
+  db = { logs: {}, tasks: [] };
+  saveAll();
+  initLogDraft();
+  renderAll();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-rhythm") renderEnergyMap();
+  if (id === "tab-tasks") renderTasks();
+  if (id === "tab-schedule") renderSchedule();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+function renderAll(){
+  renderSlotLog();
+  renderEnergyMap();
+  renderTasks();
+  renderSchedule();
+}
+initLogDraft();
+$("demandHint").textContent = DEMANDS.high.hint;
+renderTimer();
+renderAll();
+</script>
+</body>
+</html>

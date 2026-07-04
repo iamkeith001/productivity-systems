@@ -444,6 +444,7 @@
 const $ = id => document.getElementById(id);
 const today = () => new Date().toISOString().slice(0, 10);
 const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 let toastTimer = null;
 function toast(msg){
   const t = $("toast");
@@ -577,7 +578,7 @@ $("saveCardBtn").addEventListener("click", () => {
     exitEditMode();
   } else {
     cards.unshift({
-      id: Date.now().toString(36),
+      id: uid(),
       topic: $("dTopic").value.trim(),
       purpose: curPurpose,
       source: $("dSource").value.trim(),

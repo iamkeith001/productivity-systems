@@ -465,6 +465,7 @@
 const $ = id => document.getElementById(id);
 const today = () => new Date().toISOString().slice(0, 10);
 const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 let toastTimer = null;
 function toast(msg){
   const t = $("toast");
@@ -547,7 +548,7 @@ $("addSrcBtn").addEventListener("click", () => {
   if (!name) { toast("請填寫來源名稱"); $("srcName").focus(); return; }
   if (!curGrade) { toast("請選擇營養分級"); return; }
   db.sources.unshift({
-    id: Date.now().toString(36),
+    id: uid(),
     name,
     channel: $("srcChannel").value,
     grade: curGrade,
@@ -707,7 +708,7 @@ $("addDigestBtn").addEventListener("click", () => {
   const text = $("digText").value.trim();
   if (curOut !== "none" && !text) { toast("請寫下這次的產出內容"); $("digText").focus(); return; }
   db.digests.unshift({
-    id: Date.now().toString(36),
+    id: uid(),
     sourceId,
     date: today(),
     outputType: curOut,

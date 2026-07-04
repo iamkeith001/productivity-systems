@@ -16,3 +16,4 @@
 - 認知負荷：https://iamkeith001.github.io/productivity-systems/cognitive-load/
 - 知識蒸餾：https://iamkeith001.github.io/productivity-systems/knowledge-distill/
 - 資訊飲食：https://iamkeith001.github.io/productivity-systems/info-diet/
+- 能量區塊：https://iamkeith001.github.io/productivity-systems/energy-blocking/
