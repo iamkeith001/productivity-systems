@@ -24,3 +24,4 @@
 - 時間分塊：https://iamkeith001.github.io/productivity-systems/time-blocking/
 - 決策樹思維：https://iamkeith001.github.io/productivity-systems/decision-tree/
 - 知識原子化：https://iamkeith001.github.io/productivity-systems/knowledge-atom/
+- 80/20 檢視法：https://iamkeith001.github.io/productivity-systems/pareto-review/

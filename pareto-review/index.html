@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="80/20 檢視">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%231E63C4' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%231E63C4'%3E檢%3C/text%3E%3C/svg%3E">
+<title>80/20 檢視法 · 80/20 Review</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#1E63C4; --acc-soft:#E6EDF9;
+    --grid:rgba(30,99,196,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#6FA0E8; --acc-soft:#1A2740;
+    --grid:rgba(111,160,232,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:56px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  /* Score picker */
+  .score-block{margin-bottom:10px}
+  .score-lbl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--pencil);font-weight:700;margin-bottom:6px}
+  .score-btns{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+  .sc-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:8px 2px;border-radius:6px;font-size:14px;font-weight:800;cursor:pointer;text-align:center;font-family:"Songti TC",serif;min-height:38px}
+  .sc-btn.sel{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.hi{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.lo{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+
+  /* Activity items */
+  .act-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:9px;border-left:4px solid var(--hairline)}
+  .act-item.q-amp{border-left-color:var(--green)}
+  .act-item.q-core{border-left-color:var(--blue)}
+  .act-item.q-drain{border-left-color:var(--red)}
+  .act-item.q-trivia{border-left-color:var(--pencil)}
+  .act-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .act-name{font-weight:700;font-size:14px;line-height:1.4;flex:1}
+  .act-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;align-items:center}
+  .act-del{flex:none;border:none;background:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:800;padding:0 2px}
+  .act-zone{font-size:11.5px;font-weight:800;margin-top:7px}
+  .zone-amp{color:var(--green)} .zone-core{color:var(--blue)} .zone-drain{color:var(--red)} .zone-trivia{color:var(--pencil)}
+
+  /* Quadrant */
+  .quad-wrap{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:12px;margin-bottom:16px}
+  .quad-wrap svg{width:100%;height:auto;display:block}
+  .q-zone-amp{fill:var(--green-soft)} .q-zone-core{fill:var(--blue-soft)} .q-zone-drain{fill:var(--red-soft)} .q-zone-trivia{fill:var(--paper2)}
+  .q-axis{stroke:var(--hairline);stroke-width:1}
+  .q-cross{stroke:var(--hairline);stroke-width:1;stroke-dasharray:3 3}
+  .q-dot{fill:var(--acc);stroke:var(--paper);stroke-width:1.5}
+  .q-ztext{font-size:8.5px;font-weight:800}
+  .q-atext{font-size:8px;fill:var(--pencil);font-weight:700}
+
+  .insight{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:10px}
+  .insight b{color:var(--acc)}
+  .insight.drain{background:var(--red-soft)} .insight.drain b{color:var(--red)}
+
+  /* Action picker */
+  .action-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+  .action-chip{border:1px solid var(--hairline);background:var(--paper2);color:var(--pencil);padding:6px 10px;border-radius:20px;font-size:11.5px;cursor:pointer;font-weight:700;font-family:inherit}
+  .action-chip.on{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  /* Rhythm reviews */
+  .q-fixed{background:var(--paper2);border-radius:6px;padding:9px 12px;font-size:12px;color:var(--pencil);font-weight:700;margin-bottom:5px;line-height:1.5}
+  .review-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:14px;box-shadow:var(--shadow);margin-bottom:11px;border-left:4px solid var(--acc)}
+  .review-date{font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;font-size:14px;margin-bottom:8px}
+  .review-qa{font-size:12.5px;line-height:1.65;margin-bottom:7px}
+  .review-qa .ql{display:block;font-size:11px;color:var(--pencil);font-weight:800;letter-spacing:.03em}
+  .review-qa.amp .ql{color:var(--green)} .review-qa.drain .ql{color:var(--red)} .review-qa.next .ql{color:var(--acc)}
+  .review-del{border:none;background:none;color:var(--red);cursor:pointer;font-size:12px;font-weight:800;font-family:inherit;padding:0}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">檢</text></svg>
+      <div>
+        <h1>80/20 檢視法</h1>
+        <small>80/20 REVIEW</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: LOG -->
+  <section class="tab active" id="tab-log">
+    <div class="hero">
+      <p class="eyebrow">帕雷托檢視</p>
+      <div class="hero-title serif">哪些 20% 的行動，<br>帶來 80% 的成果？</div>
+      <p class="hero-text">不是所有努力都產生相同價值。很多人不是不努力，而是把大量精力花在低槓桿任務上——忙碌卻沒有明顯進展。盤點一段時間內的投入與產出，看見資源分配是否合理。</p>
+      <div class="quote-line serif">從「努力導向」轉向「成果導向」。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">步驟一 · 盤點投入與產出</p>
+      <h2>列出佔用你時間的活動</h2>
+      <label class="form-label" for="actName">活動 *</label>
+      <input type="text" id="actName" placeholder="例如：深度寫作、回覆訊息、例行會議、資料整理">
+
+      <div class="score-block">
+        <div class="score-lbl"><span>投入（時間／精力）*</span><span>很少 → 很多</span></div>
+        <div class="score-btns" id="investRow">
+          <button type="button" class="sc-btn" data-inv="1">1</button>
+          <button type="button" class="sc-btn" data-inv="2">2</button>
+          <button type="button" class="sc-btn" data-inv="3">3</button>
+          <button type="button" class="sc-btn" data-inv="4">4</button>
+          <button type="button" class="sc-btn" data-inv="5">5</button>
+        </div>
+      </div>
+
+      <div class="score-block">
+        <div class="score-lbl"><span>產出／價值 *</span><span>很低 → 很高</span></div>
+        <div class="score-btns" id="valueRow">
+          <button type="button" class="sc-btn" data-val="1">1</button>
+          <button type="button" class="sc-btn" data-val="2">2</button>
+          <button type="button" class="sc-btn" data-val="3">3</button>
+          <button type="button" class="sc-btn" data-val="4">4</button>
+          <button type="button" class="sc-btn" data-val="5">5</button>
+        </div>
+      </div>
+
+      <button class="btn" id="addActBtn" style="margin-top:6px">加入活動</button>
+    </div>
+
+    <div class="empty" id="logEmpty" style="display:none">
+      <span class="zh serif">還沒有盤點活動</span>
+      列出這週投入最多時間的事，<br>並替每件標上投入與產出。
+    </div>
+    <div id="actList"></div>
+  </section>
+
+  <!-- TAB 2: REVIEW -->
+  <section class="tab" id="tab-review">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stAmp">0</div><div class="l">高槓桿 20%</div></div>
+      <div class="stat"><div class="n" id="stDrain">0</div><div class="l">消耗 80%</div></div>
+      <div class="stat"><div class="n" id="stAct">0</div><div class="l">總活動</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">步驟二～四 · 檢視與調整</p>
+      <h2>投入 × 產出 象限</h2>
+      <p class="sub" style="margin-bottom:0">左上＝高槓桿（放大）、右上＝核心必要、右下＝消耗（該砍/委派/自動化）、左下＝瑣事（批次/刪除）。</p>
+    </div>
+
+    <div class="quad-wrap" id="quadWrap"></div>
+    <div id="insightArea"></div>
+
+    <div class="empty" id="reviewEmpty" style="display:none">
+      <span class="zh serif">還沒有可檢視的活動</span>
+      先到「盤點」分頁列出活動，<br>這裡會畫出象限並算出你的 20/80。
+    </div>
+    <div id="reviewList"></div>
+  </section>
+
+  <!-- TAB 3: RHYTHM -->
+  <section class="tab" id="tab-rhythm">
+    <div class="card">
+      <p class="eyebrow">步驟五 · 固定檢視節奏</p>
+      <h2>每週三個固定問題</h2>
+      <p class="sub">每週做一次小檢視、每月一次深度檢視。重點不是分析，而是把時間移向高價值的事。</p>
+
+      <label class="form-label">① 本週最有價值的 20% 是什麼？</label>
+      <textarea id="q1" placeholder="哪 1–2 件事真正推動了目標？"></textarea>
+      <label class="form-label">② 本週最消耗但低產出的 80% 是什麼？</label>
+      <textarea id="q2" placeholder="哪些很花時間卻成果有限？"></textarea>
+      <label class="form-label">③ 下週要把更多時間移向哪一件高價值任務？</label>
+      <textarea id="q3" placeholder="下週的一個明確調整…"></textarea>
+      <button class="btn" id="saveReviewBtn">存這次檢視</button>
+    </div>
+
+    <div class="empty" id="rhythmEmpty" style="display:none">
+      <span class="zh serif">還沒有檢視紀錄</span>
+      每週回答三個固定問題，<br>累積下來就看得出重心的移動。
+    </div>
+    <div id="reviewHistory"></div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">少數關鍵，<br>造成多數結果。</div>
+      <p class="hero-text">80/20 法則又稱帕雷托法則，源自義大利經濟學家 Vilfredo Pareto 的觀察——社會財富分布不均，少數因素造成多數結果。後來廣泛用於管理、品質改善、時間管理與生產力：不是所有努力都產生相同價值，真正影響結果的往往是少數關鍵行動。</p>
+      <div class="quote-line serif">重點不是分析，而是調整。</div>
+    </div>
+
+    <details>
+      <summary>五個步驟</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 蒐集投入與產出</b>：每週/月/季一次，列出投入最多時間精力的任務與它們的產出（完成度、收入、影響力、決策品質…）。</li>
+          <li><b>2. 找出高產出的少數行動</b>：哪些真正推動目標、完成後帶來明顯進展、雖不多但影響很大？這些是要保留、加強、優先的 20%。</li>
+          <li><b>3. 辨認低產出的多數消耗</b>：哪些很花時間成果有限、會議沒決策、只是習慣而存在、可刪除/合併/委派/自動化？這些是要減少的 80%。</li>
+          <li><b>4. 重新分配時間與資源</b>：高價值放精神最好時段、減少低價值會議、可標準化的變 SOP、可重複的自動化、不該你做的委派。</li>
+          <li><b>5. 固定建立檢視節奏</b>：每週小檢視、每月深度檢視，固定三個問題。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>個人工作</b>：可能發現 2 小時深度寫作比 10 小時零碎回訊息更有價值。</li>
+          <li><b>專案管理</b>：找出最影響進度的少數瓶頸（需求不清、決策延遲、測試卡住），優先處理。</li>
+          <li><b>知識管理</b>：不是收藏越多越好，而是找出最常被引用、最能產生洞見、最能支援決策的來源。</li>
+          <li><b>學習成長</b>：輸出筆記、教別人、實作專案，可能比被動看大量影片更有效。</li>
+          <li><b>團隊協作</b>：刪除沒決策、沒行動、沒負責人的低效會議。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        真正的高效不是把所有事情都做完，而是知道<b>哪些事值得被優先完成</b>。當你定期檢視投入與產出，就能避免被慣性、緊急訊息與他人期待牽著走，逐步把時間放回真正重要的地方。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">關聯工具</p>
+      <h2>搭配能量區塊與時間分塊</h2>
+      <p class="sub" style="margin-bottom:10px">80/20 檢視告訴你「該把時間移向哪些事」；「能量區塊」決定放在哪個精神時段；「時間分塊」把它排進行事曆。檢視 → 排程，一氣呵成。</p>
+      <div class="mini-row">
+        <a class="btn ghost" href="../energy-blocking/">能量區塊</a>
+        <a class="btn ghost" href="../time-blocking/">時間分塊</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="../energy-blocking/">能量區塊</a> ·
+      <a href="../time-blocking/">時間分塊</a> ·
+      <a href="../mvp-progress/">最小可行進展</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-log">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><path d="M2.5 6h.01M2.5 12h.01M2.5 18h.01"/></svg>
+      盤點
+    </button>
+    <button class="tabbtn" data-tab="tab-review">
+      <svg viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><circle cx="8" cy="8" r="1.6"/><circle cx="16" cy="14" r="1.6"/><circle cx="18" cy="7" r="1.6"/></svg>
+      檢視
+    </button>
+    <button class="tabbtn" data-tab="tab-rhythm">
+      <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 5.5V11h-5.5"/></svg>
+      節奏
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "pareto_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "pareto_v1";
+let db = { activities: [], reviews: [] };
+try {
+  const raw = JSON.parse(localStorage.getItem(storeKey));
+  if (raw && raw.activities) db = Object.assign(db, raw);
+} catch (e) {}
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(db)); }
+
+const ACTIONS = {
+  amplify:  { name: "保留加強" },
+  reduce:   { name: "減少" },
+  delegate: { name: "委派" },
+  automate: { name: "自動化" },
+  sop:      { name: "建 SOP" },
+  delete:   { name: "刪除" }
+};
+
+/* quadrant zone from invest/value */
+function zoneOf(a){
+  const hiV = a.value >= 4, loV = a.value <= 2, hiI = a.invest >= 4, loI = a.invest <= 2;
+  if (hiV && !hiI) return "amp";     // high value, not high invest -> leverage
+  if (hiV && hiI) return "core";     // high value, high invest -> core
+  if (loV && hiI) return "drain";    // low value, high invest -> drain
+  if (loV && !hiI) return "trivia";  // low value, low/mid invest -> trivia
+  return "mid";
+}
+const ZONE = {
+  amp:    { name: "高槓桿 · 放大", cls: "amp",    rec: "amplify" },
+  core:   { name: "核心 · 必要",   cls: "core",   rec: "amplify" },
+  drain:  { name: "消耗 · 該調整", cls: "drain",  rec: "reduce" },
+  trivia: { name: "瑣事 · 批次",   cls: "trivia", rec: "delete" },
+  mid:    { name: "中間地帶",      cls: "trivia", rec: "" }
+};
+
+/* ---------- Log tab ---------- */
+let curInv = null, curVal = null;
+$("investRow").addEventListener("click", e => {
+  const b = e.target.closest(".sc-btn");
+  if (!b) return;
+  curInv = +b.dataset.inv;
+  $("investRow").querySelectorAll(".sc-btn").forEach(x => x.classList.toggle("sel", x === b));
+});
+$("valueRow").addEventListener("click", e => {
+  const b = e.target.closest(".sc-btn");
+  if (!b) return;
+  curVal = +b.dataset.val;
+  $("valueRow").querySelectorAll(".sc-btn").forEach(x => x.classList.toggle("sel", x === b));
+});
+$("addActBtn").addEventListener("click", () => {
+  const name = $("actName").value.trim();
+  if (!name) { toast("請填寫活動名稱"); $("actName").focus(); return; }
+  if (!curInv) { toast("請評投入程度"); return; }
+  if (!curVal) { toast("請評產出／價值"); return; }
+  db.activities.unshift({ id: uid(), name, invest: curInv, value: curVal, action: "", createdAt: today() });
+  saveAll();
+  $("actName").value = "";
+  curInv = null; curVal = null;
+  $("investRow").querySelectorAll(".sc-btn").forEach(x => x.classList.remove("sel"));
+  $("valueRow").querySelectorAll(".sc-btn").forEach(x => x.classList.remove("sel"));
+  toast("已加入活動");
+  renderLog();
+});
+function actTagsHtml(a){
+  return '<span class="tag">投入 ' + a.invest + '</span><span class="tag ' + (a.value >= 4 ? "hi" : a.value <= 2 ? "lo" : "") + '">產出 ' + a.value + '</span>' +
+    (a.action ? '<span class="tag acc">' + ACTIONS[a.action].name + '</span>' : "");
+}
+function renderLog(){
+  $("logEmpty").style.display = db.activities.length ? "none" : "block";
+  $("actList").innerHTML = db.activities.map(a => {
+    const z = ZONE[zoneOf(a)];
+    return '<div class="act-item q-' + z.cls + '">' +
+      '<div class="act-top"><span class="act-name">' + esc(a.name) + '</span>' +
+      '<button class="act-del" data-del="' + a.id + '" aria-label="刪除">×</button></div>' +
+      '<div class="act-tags">' + actTagsHtml(a) + '</div>' +
+      '<div class="act-zone zone-' + z.cls + '">' + z.name + '</div>' +
+      '</div>';
+  }).join("");
+}
+$("actList").addEventListener("click", e => {
+  const del = e.target.closest("[data-del]");
+  if (!del) return;
+  db.activities = db.activities.filter(a => a.id !== del.dataset.del);
+  saveAll();
+  renderLog();
+  toast("已刪除活動");
+});
+
+/* ---------- Review tab ---------- */
+function renderQuadrant(){
+  const acts = db.activities;
+  const W = 320, H = 300, pad = 30;
+  const x0 = pad, x1 = W - pad, y0 = 12, y1 = H - pad;
+  const sx = v => x0 + (v - 1) / 4 * (x1 - x0);
+  const sy = v => y1 - (v - 1) / 4 * (y1 - y0);
+  const midX = sx(3), midY = sy(3);
+  let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '">';
+  // zones (four rects around mid)
+  svg += '<rect class="q-zone-amp" x="' + x0 + '" y="' + y0 + '" width="' + (midX - x0) + '" height="' + (midY - y0) + '"/>';
+  svg += '<rect class="q-zone-core" x="' + midX + '" y="' + y0 + '" width="' + (x1 - midX) + '" height="' + (midY - y0) + '"/>';
+  svg += '<rect class="q-zone-trivia" x="' + x0 + '" y="' + midY + '" width="' + (midX - x0) + '" height="' + (y1 - midY) + '"/>';
+  svg += '<rect class="q-zone-drain" x="' + midX + '" y="' + midY + '" width="' + (x1 - midX) + '" height="' + (y1 - midY) + '"/>';
+  // zone labels
+  svg += '<text class="q-ztext zone-amp" x="' + (x0 + 5) + '" y="' + (y0 + 13) + '" fill="var(--green)">高槓桿·放大</text>';
+  svg += '<text class="q-ztext zone-core" x="' + (x1 - 5) + '" y="' + (y0 + 13) + '" text-anchor="end" fill="var(--blue)">核心·必要</text>';
+  svg += '<text class="q-ztext zone-trivia" x="' + (x0 + 5) + '" y="' + (y1 - 6) + '" fill="var(--pencil)">瑣事·批次</text>';
+  svg += '<text class="q-ztext zone-drain" x="' + (x1 - 5) + '" y="' + (y1 - 6) + '" text-anchor="end" fill="var(--red)">消耗·該調整</text>';
+  // axes
+  svg += '<line class="q-axis" x1="' + x0 + '" y1="' + y1 + '" x2="' + x1 + '" y2="' + y1 + '"/>';
+  svg += '<line class="q-axis" x1="' + x0 + '" y1="' + y0 + '" x2="' + x0 + '" y2="' + y1 + '"/>';
+  svg += '<line class="q-cross" x1="' + midX + '" y1="' + y0 + '" x2="' + midX + '" y2="' + y1 + '"/>';
+  svg += '<line class="q-cross" x1="' + x0 + '" y1="' + midY + '" x2="' + x1 + '" y2="' + midY + '"/>';
+  // axis titles
+  svg += '<text class="q-atext" x="' + ((x0 + x1) / 2) + '" y="' + (H - 6) + '" text-anchor="middle">投入 →</text>';
+  svg += '<text class="q-atext" x="10" y="' + ((y0 + y1) / 2) + '" text-anchor="middle" transform="rotate(-90 10 ' + ((y0 + y1) / 2) + ')">產出 →</text>';
+  // dots with slight jitter to reduce overlap
+  acts.forEach((a, i) => {
+    const jx = ((i % 3) - 1) * 4, jy = (Math.floor(i / 3) % 3 - 1) * 4;
+    const x = sx(a.invest) + jx, y = sy(a.value) + jy;
+    svg += '<circle class="q-dot" cx="' + x + '" cy="' + y + '" r="5"/>';
+  });
+  svg += '</svg>';
+  $("quadWrap").innerHTML = svg;
+}
+function paretoInsight(){
+  const acts = db.activities;
+  if (acts.length < 2) return "";
+  const totV = acts.reduce((s, a) => s + a.value, 0);
+  const totI = acts.reduce((s, a) => s + a.invest, 0);
+  // key few: sort by value desc, accumulate to 80% of value
+  const byV = [...acts].sort((a, b) => b.value - a.value);
+  let cumV = 0, keyN = 0, keyInv = 0;
+  for (const a of byV) { cumV += a.value; keyN++; keyInv += a.invest; if (cumV >= 0.8 * totV) break; }
+  const keyPctAct = Math.round(keyN / acts.length * 100);
+  const keyPctInv = Math.round(keyInv / totI * 100);
+  // drain: sort by invest desc, accumulate to 80% invest
+  const byI = [...acts].sort((a, b) => b.invest - a.invest);
+  let cumI = 0, drN = 0, drVal = 0;
+  for (const a of byI) { cumI += a.invest; drN++; drVal += a.value; if (cumI >= 0.8 * totI) break; }
+  const drPctVal = Math.round(drVal / totV * 100);
+  let html = '<div class="insight">產出最高的 <b>' + keyN + '</b> 件事（占 ' + keyPctAct + '% 活動）撐起你 80% 的價值，只花了 <b>' + keyPctInv + '%</b> 投入——這就是你要保護、放大的關鍵少數。</div>';
+  html += '<div class="insight drain">投入最多的 <b>' + drN + '</b> 件事吃掉 80% 時間精力，卻只換到 <b>' + drPctVal + '%</b> 的價值——這些是該減少、委派或自動化的多數。</div>';
+  return html;
+}
+function renderReview(){
+  const acts = db.activities;
+  $("reviewEmpty").style.display = acts.length ? "none" : "block";
+  $("quadWrap").style.display = acts.length ? "block" : "none";
+  $("stAmp").textContent = acts.filter(a => zoneOf(a) === "amp").length;
+  $("stDrain").textContent = acts.filter(a => zoneOf(a) === "drain").length;
+  $("stAct").textContent = acts.length;
+  if (!acts.length) { $("insightArea").innerHTML = ""; $("reviewList").innerHTML = ""; return; }
+  renderQuadrant();
+  $("insightArea").innerHTML = paretoInsight();
+
+  // sort by leverage (value/invest) desc for the list
+  const sorted = [...acts].sort((a, b) => (b.value / b.invest) - (a.value / a.invest));
+  $("reviewList").innerHTML = sorted.map(a => {
+    const z = ZONE[zoneOf(a)];
+    const chips = Object.keys(ACTIONS).map(k =>
+      '<button class="action-chip' + (a.action === k ? " on" : "") + '" data-act="' + a.id + '|' + k + '">' + ACTIONS[k].name + '</button>'
+    ).join("");
+    return '<div class="act-item q-' + z.cls + '">' +
+      '<div class="act-top"><span class="act-name">' + esc(a.name) + '</span></div>' +
+      '<div class="act-tags"><span class="tag">投入 ' + a.invest + '</span><span class="tag ' + (a.value >= 4 ? "hi" : a.value <= 2 ? "lo" : "") + '">產出 ' + a.value + '</span>' +
+      '<span class="act-zone zone-' + z.cls + '" style="margin:0">' + z.name + '</span></div>' +
+      '<div class="action-row">' + chips + '</div>' +
+      '</div>';
+  }).join("");
+}
+$("reviewList").addEventListener("click", e => {
+  const b = e.target.closest("[data-act]");
+  if (!b) return;
+  const [id, k] = b.dataset.act.split("|");
+  const a = db.activities.find(x => x.id === id);
+  if (a) { a.action = a.action === k ? "" : k; saveAll(); renderReview(); renderLog(); }
+});
+
+/* ---------- Rhythm tab ---------- */
+$("saveReviewBtn").addEventListener("click", () => {
+  const q1 = $("q1").value.trim(), q2 = $("q2").value.trim(), q3 = $("q3").value.trim();
+  if (!q1 && !q2 && !q3) { toast("至少回答一個問題"); return; }
+  db.reviews.unshift({ id: uid(), date: today(), q1, q2, q3 });
+  saveAll();
+  $("q1").value = ""; $("q2").value = ""; $("q3").value = "";
+  toast("本次檢視已存！");
+  renderHistory();
+});
+function renderHistory(){
+  $("rhythmEmpty").style.display = db.reviews.length ? "none" : "block";
+  $("reviewHistory").innerHTML = db.reviews.map(r =>
+    '<div class="review-item"><div class="review-date serif">' + r.date + '　<button class="review-del" data-delrev="' + r.id + '">刪除</button></div>' +
+    (r.q1 ? '<div class="review-qa amp"><span class="ql">最有價值的 20%</span>' + esc(r.q1) + '</div>' : "") +
+    (r.q2 ? '<div class="review-qa drain"><span class="ql">最消耗的 80%</span>' + esc(r.q2) + '</div>' : "") +
+    (r.q3 ? '<div class="review-qa next"><span class="ql">下週移向</span>' + esc(r.q3) + '</div>' : "") +
+    '</div>'
+  ).join("");
+}
+$("reviewHistory").addEventListener("click", e => {
+  const del = e.target.closest("[data-delrev]");
+  if (!del) return;
+  db.reviews = db.reviews.filter(r => r.id !== del.dataset.delrev);
+  saveAll();
+  renderHistory();
+  toast("已刪除檢視");
+});
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "pareto-review-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.activities)) {
+        db = { activities: data.activities, reviews: data.reviews || [] };
+        saveAll();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有活動與檢視紀錄嗎？此動作無法復原。")) return;
+  db = { activities: [], reviews: [] };
+  saveAll();
+  renderAll();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-log") renderLog();
+  if (id === "tab-review") renderReview();
+  if (id === "tab-rhythm") renderHistory();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+function renderAll(){
+  renderLog();
+  renderReview();
+  renderHistory();
+}
+renderAll();
+</script>
+</body>
+</html>
