@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="決策日誌">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%235F27CD' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%235F27CD'%3E誌%3C/text%3E%3C/svg%3E">
+<title>決策日誌 · Decision Journaling</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --purple:#5F27CD; --purple-soft:#F1EDFA;
+    --grid:rgba(95,39,205,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --purple:#9B5DE5; --purple-soft:#2D1D4A;
+    --grid:rgba(155,93,229,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--purple)}
+  :focus-visible{outline:2px solid var(--purple);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  
+  /* Layout Cards */
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card.gridpaper{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;background-position:center}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--purple)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--purple);letter-spacing:.04em}
+  
+  /* Tabs switching */
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  
+  /* Wizard Progress Navigation */
+  .wizard-progress{display:flex;justify-content:space-between;gap:4px;border-bottom:1px solid var(--hairline-soft);padding-bottom:10px;margin-bottom:18px}
+  .wiz-step{font-size:10.5px;font-weight:700;color:var(--pencil);text-align:center;flex:1;padding:4px 0;transition:.2s}
+  .wiz-step.active{color:var(--purple);border-bottom:2px solid var(--purple)}
+  .wizard-step-panel{display:none}
+  .wizard-step-panel.active{display:block}
+  
+  /* Forms */
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],input[type=date],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:80px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--purple)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--purple);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--purple-soft);color:var(--purple)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+  
+  /* Dynamic List Inputs */
+  .dynamic-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .dynamic-row input[type=text]{margin-bottom:0;flex:1}
+  .dynamic-row input[type=radio]{width:18px;height:18px;accent-color:var(--purple);cursor:pointer;flex:none;margin-right:2px}
+  .dynamic-row button{flex:none;width:34px;height:38px;border-radius:6px;border:1px solid var(--hairline);background:var(--paper2);color:var(--red);cursor:pointer;font-weight:800;font-size:16px}
+  .selected-option-banner{background:var(--purple-soft);color:var(--purple);padding:10px 12px;border-radius:6px;margin-bottom:12px;font-size:13px;font-weight:700}
+  
+  /* Stats Grid */
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.12em}
+  
+  /* Filters */
+  .filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .filter-btn{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:6px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;font-weight:700;white-space:nowrap}
+  .filter-btn.active{background:var(--purple-soft);color:var(--purple);border-color:transparent}
+  
+  /* Decision Card */
+  .dec-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px;position:relative;border-left:4px solid var(--purple)}
+  .dec-card.pending{border-left-color:var(--amber)}
+  .dec-card.reviewed{border-left-color:var(--green)}
+  .dec-card.draft{border-left-color:var(--pencil)}
+  .dec-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+  .dec-title{font-size:16px;font-weight:800;letter-spacing:.03em;margin:0;flex:1;min-width:0;word-break:break-word}
+  .dec-meta{font-size:12px;color:var(--pencil);margin-bottom:8px}
+  .dec-choice{background:var(--paper2);padding:8px 12px;border-radius:4px;font-size:13px;margin-bottom:10px}
+  .dec-choice b{color:var(--purple)}
+  .dec-actions{display:flex;gap:8px;margin-top:12px;border-top:1px solid var(--hairline-soft);padding-top:10px}
+  .dec-actions .tiny{padding:6px 10px;font-size:12px;font-weight:700;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:4px;cursor:pointer}
+  .dec-actions .tiny.primary{background:var(--purple);color:var(--paper);border-color:transparent}
+  .dec-actions .tiny.red{color:var(--red)}
+  
+  /* Tag Design */
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 6px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em;text-transform:uppercase}
+  .tag.purple{background:var(--purple-soft);color:var(--purple);border-color:transparent}
+  .tag.amber{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.green{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.red{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .tag.blue{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  
+  /* Calibrated Warning */
+  .warning-box{background:var(--amber-soft);color:var(--amber);border-radius:6px;padding:10px 12px;font-size:12.5px;margin-bottom:12px;display:none;font-weight:700;line-height:1.5}
+  
+  /* Custom slider styling */
+  .slider-row{display:grid;grid-template-columns:1fr 50px;gap:12px;align-items:center;margin-bottom:8px}
+  input[type=range]{width:100%;accent-color:var(--purple);margin:0}
+  .slider-val{font-size:15px;font-weight:800;text-align:right}
+  
+  /* Stars rating */
+  .stars{display:flex;gap:6px;font-size:24px;color:var(--hairline);cursor:pointer;user-select:none;margin-bottom:10px}
+  .stars .star.active{color:var(--amber)}
+  
+  /* Binary outcome group */
+  .btn-group{display:flex;gap:8px;margin-bottom:12px}
+  .btn-group-btn{flex:1;padding:10px;border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);font-size:13.5px;font-weight:700;cursor:pointer;border-radius:6px;text-align:center}
+  .btn-group-btn.active{background:var(--purple);color:var(--paper);border-color:transparent}
+  .btn-group-btn.active.good{background:var(--green);color:var(--paper);border-color:transparent}
+  .btn-group-btn.active.bad{background:var(--red);color:var(--paper);border-color:transparent}
+  
+  /* Checklist for Retrospective */
+  .checklist-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--hairline-soft)}
+  .checklist-item:last-child{border-bottom:none}
+  .checklist-desc{flex:1;font-size:13.5px;line-height:1.5}
+  .checklist-select{flex:none;width:100px;margin-bottom:0}
+  
+  /* 2x2 Matrix Grid */
+  .matrix-2x2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+  .matrix-cell{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;position:relative}
+  .matrix-cell h3{font-size:13px;margin:0 0 3px;font-weight:800}
+  .matrix-cell .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;line-height:1;margin:6px 0 2px}
+  .matrix-cell .desc{font-size:10.5px;color:var(--pencil);line-height:1.3}
+  .matrix-cell::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;border-radius:4px 4px 0 0}
+  .matrix-cell.des-succ::before{background:var(--green)}
+  .matrix-cell.bad-brk::before{background:var(--blue)}
+  .matrix-cell.dumb-lk::before{background:var(--amber)}
+  .matrix-cell.des-fail::before{background:var(--red)}
+  
+  /* Calibration table */
+  .calib-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  .calib-table th,.calib-table td{border-bottom:1px solid var(--hairline-soft);padding:8px;text-align:left}
+  .calib-table th{color:var(--pencil);font-weight:700}
+  
+  /* Toast and utility classes */
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\u2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\u2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.7}
+  
+  /* Tab Bar navigation */
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.14em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--purple)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--purple)}
+  
+  @media (max-width:420px){.matrix-2x2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--purple)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--purple)">誌</text></svg>
+      <div>
+        <h1>決策日誌</h1>
+        <small>Decision Journaling</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- TAB 1: LIST -->
+  <section class="tab" id="tab-list">
+    <div class="hero">
+      <p class="eyebrow">Decision Journaling</p>
+      <div class="hero-title">在結果發生前，<br>記錄真實的思考。</div>
+      <p class="hero-text">不要用結果論成敗。好的決策可能因為運氣不好而失敗，壞的決策也可能僥倖成功。唯有寫下當初的設想，未來複盤才能真正學到東西。</p>
+      <div class="quote-line">「記錄決策當下的預測，是唯一的客觀學習法。」</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="stPending">0</div><div class="l">待回顧</div></div>
+      <div class="stat"><div class="n" id="stReviewed">0</div><div class="l">已複盤</div></div>
+      <div class="stat"><div class="n" id="stTotal">0</div><div class="l">總決策</div></div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="pending">待回顧</button>
+      <button class="filter-btn" data-filter="reviewed">已複盤</button>
+      <button class="filter-btn" data-filter="draft">草稿</button>
+    </div>
+
+    <div id="decisionsList"></div>
+  </section>
+
+  <!-- TAB 2: CREATE / EDIT (WIZARD OVERHAUL) -->
+  <section class="tab active" id="tab-create">
+    <div class="card">
+      <p class="eyebrow" id="createFormTitleEyebrow">記錄</p>
+      <h2 id="createFormTitle">記錄一項新決策</h2>
+      
+      <!-- Wizard Steps Indicators -->
+      <div class="wizard-progress">
+        <div class="wiz-step active" id="wizIndicator-1">1. 情境與選項</div>
+        <div class="wiz-step" id="wizIndicator-2">2. 選擇與假設</div>
+        <div class="wiz-step" id="wizIndicator-3">3. 預測與信心</div>
+        <div class="wiz-step" id="wizIndicator-4">4. 設定回顧</div>
+      </div>
+
+      <!-- PANEL 1: CONTEXT & OPTIONS -->
+      <div class="wizard-step-panel active" id="wizPanel-1">
+        <label class="form-label" for="decTitle">決策主題 / 目標 *</label>
+        <input type="text" id="decTitle" placeholder="例如：是否接受合作夥伴的合約提案？">
+        
+        <label class="form-label" for="decContext">背景脈絡、資源限制或已知風險</label>
+        <textarea id="decContext" placeholder="例如：目前團隊開發資源吃緊，但此合作能帶來長期市場曝光。預算限制在 15 萬以內。"></textarea>
+
+        <label class="form-label">列出可行選項 & 設為最終選擇 *</label>
+        <div class="sub">至少列出 2-3 個替代方案以避免單一路徑思考。<b>點選前面的圓鈕</b>，標示你最終採取的方案。</div>
+        
+        <div id="optionsContainer">
+          <!-- Dynamically generated rows -->
+        </div>
+        <button class="btn line" id="addOptionBtn" style="margin-bottom: 12px; padding: 8px; width:100%">+ 新增可行選項</button>
+      </div>
+
+      <!-- PANEL 2: SELECTION & REASON & ASSUMPTIONS -->
+      <div class="wizard-step-panel" id="wizPanel-2">
+        <div class="selected-option-banner">
+          最終選擇方案：<span id="wizardSelectedOptionText" style="text-decoration: underline">未選擇</span>
+        </div>
+
+        <label class="form-label" for="decChoiceReason">做出此選擇的最主要理由 *</label>
+        <textarea id="decChoiceReason" placeholder="例如：雖然成本較高，但它是唯一能在三個月內看到市場回饋的方案。"></textarea>
+
+        <label class="form-label">寫下關鍵假設</label>
+        <div class="sub">如果哪些前提不成立，這項決策就會失效？（例如：合作方能準時交件、市場需求達標等）</div>
+        <div id="assumptionsContainer">
+          <!-- Dynamically generated rows -->
+        </div>
+        <button class="btn line" id="addAssumptionBtn" style="margin-bottom: 12px; padding: 8px; width:100%">+ 新增關鍵假設</button>
+      </div>
+
+      <!-- PANEL 3: CONFIDENCE & PREDICTIONS -->
+      <div class="wizard-step-panel" id="wizPanel-3">
+        <label class="form-label">信心程度 (0% - 100%)</label>
+        <div class="sub">評估你對此決策取得預期成果的信心水準。這將用來訓練你的「判斷校準能力」。</div>
+        <div class="slider-row">
+          <input type="range" id="decConfidence" min="0" max="100" value="70">
+          <span class="slider-val" id="decConfidenceVal">70%</span>
+        </div>
+        <div class="warning-box" id="confidenceWarning">
+          ⚠️ <b>信心校準提醒：</b>世事無絕對，極端信心（0% 或 100%）通常代表我們存在盲點。試著重新評估不可控變數。
+        </div>
+
+        <label class="form-label">具體且可檢驗的預期結果</label>
+        <div class="sub">寫下未來複盤可以核對的明確指標（例如：一季內吸引 500 位新用戶、六週內降低客訴 30%）。</div>
+        <div id="predictionsContainer">
+          <!-- Dynamically generated rows -->
+        </div>
+        <button class="btn line" id="addPredictionBtn" style="margin-bottom: 12px; padding: 8px; width:100%">+ 新增預期結果</button>
+      </div>
+
+      <!-- PANEL 4: REVIEW DATE & SAVE -->
+      <div class="wizard-step-panel" id="wizPanel-4">
+        <label class="form-label">設定複盤/回顧日期 *</label>
+        <div class="sub">設定你何時要檢視實際結果（通常是 30、60 或 90 天後，依計畫性質而定）。</div>
+        <input type="date" id="decReviewDate">
+        <div class="mini-row" style="margin-bottom: 16px">
+          <button class="btn ghost" id="date30Btn">30天後</button>
+          <button class="btn ghost" id="date60Btn">60天後</button>
+          <button class="btn ghost" id="date90Btn">90天後</button>
+        </div>
+      </div>
+
+      <!-- Wizard Buttons -->
+      <div class="mini-row" style="margin-top: 24px; border-top: 1px solid var(--hairline-soft); padding-top: 16px">
+        <button class="btn line" id="wizPrevBtn" style="display:none">上一步</button>
+        <button class="btn" id="wizNextBtn">下一步</button>
+        <button class="btn" id="saveDecisionBtn" style="display:none">儲存決策日誌</button>
+        <button class="btn danger" id="wizCancelBtn">取消</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: RETROSPECTIVE (LIST AND WORKSPACE INTEGRATED) -->
+  <section class="tab" id="tab-review">
+    <!-- 3.1 Pending Reviews List (Visible when no reviewingId is active) -->
+    <div id="pendingReviewsListContainer">
+      <div class="card">
+        <p class="eyebrow">複盤任務</p>
+        <h2>待複盤的決策項目</h2>
+        <div class="sub">點選下列決策項目，即可在下方開啟複盤，核對假設並反思決策品質。</div>
+        <div id="pendingReviewList"></div>
+      </div>
+    </div>
+
+    <!-- 3.2 Active Retrospective Workspace (Visible when reviewingId is set) -->
+    <div class="card" id="reviewWorkspace" style="display:none">
+      <p class="eyebrow">複盤工作區</p>
+      <h2 id="revTitle">決策複盤</h2>
+      <div class="sub">比對實際結果與最初設想，區分決策品質與運氣成分。</div>
+
+      <!-- Original Settings Display -->
+      <div style="background:var(--paper2); padding:14px; border-radius:6px; margin-bottom:16px; font-size:13.5px">
+        <div style="margin-bottom:6px"><b>決策日期：</b><span id="revCreatedDate"></span></div>
+        <div style="margin-bottom:6px"><b>最終選擇方案：</b><span id="revSelectedOption" style="color:var(--purple); font-weight:bold"></span></div>
+        <div style="margin-bottom:6px"><b>當初信心程度：</b><span id="revConfidence" style="font-weight:bold"></span></div>
+        <div><b>當初決定理由：</b><br><span id="revChoiceReason" style="color:var(--pencil)"></span></div>
+      </div>
+
+      <!-- Form 1: Actual Outcome -->
+      <label class="form-label" for="revOutcome">1. 實際結果描述 *</label>
+      <textarea id="revOutcome" placeholder="請詳細寫下事情最終的實際發展、核心成果數據與時程..."></textarea>
+
+      <!-- Form 2: Verify Assumptions -->
+      <label class="form-label">2. 關鍵假設驗證</label>
+      <div class="sub">回頭審視，當初的哪些關鍵假設與實際相符？</div>
+      <div id="revAssumptionsList"></div>
+
+      <!-- Form 3: Verify Predictions -->
+      <label class="form-label" style="margin-top:14px">3. 預期結果達成度</label>
+      <div class="sub">當初設定的具體預測，實現了多少？</div>
+      <div id="revPredictionsList"></div>
+
+      <!-- Form 4: Process vs Luck -->
+      <label class="form-label" style="margin-top:14px">4. 歸因分析 (Process vs Luck) *</label>
+      
+      <label class="form-label" style="font-size:12px; margin-bottom: 2px">您的決策過程品質如何？ (1 - 5 星)</label>
+      <div class="sub" style="margin-bottom: 6px">考慮是否蒐集足夠資訊、分析了多種選項、排除了偏見。無關最終結果好壞。</div>
+      <div class="stars" id="revProcessStars">
+        <span class="star" data-star="1">★</span>
+        <span class="star" data-star="2">★</span>
+        <span class="star" data-star="3">★</span>
+        <span class="star" data-star="4">★</span>
+        <span class="star" data-star="5">★</span>
+      </div>
+
+      <label class="form-label" style="font-size:12px; margin-bottom: 2px">最終事情的發展，這是一個「好結果」嗎？</label>
+      <div class="btn-group" id="revOutcomeGroup">
+        <button class="btn-group-btn" data-outcome="good">是的，符合或預期之上 (好結果)</button>
+        <button class="btn-group-btn" data-outcome="bad">否，未達預期或造成損失 (壞結果)</button>
+      </div>
+
+      <!-- Auto Attribution Display Card -->
+      <div id="revAttributionCard" style="background:var(--purple-soft); color:var(--purple); padding:14px; border-radius:6px; margin:16px 0; display:none">
+        <div style="font-size:12px; font-weight:800; letter-spacing:.1em">決策歸因歸類</div>
+        <div id="revAttributionLabel" style="font-family:'Songti TC',serif; font-size:20px; font-weight:900; margin:4px 0">實至名歸</div>
+        <div id="revAttributionDesc" style="font-size:12.8px; opacity:.85; line-height:1.6">好的決策過程，並取得了好的成果！請記錄這套方法以複製成功。</div>
+      </div>
+
+      <!-- Form 5: Reflection -->
+      <label class="form-label" for="revLearning">5. 學習、盲點與反思 *</label>
+      <textarea id="revLearning" placeholder="例如：我高估了對方的技術時程、我受了沉沒成本偏誤的影響。未來做類似決定時，我應該..."></textarea>
+
+      <!-- Actions -->
+      <div class="mini-row" style="margin-top:20px">
+        <button class="btn line" id="cancelReviewBtn">取消</button>
+        <button class="btn" id="submitReviewBtn">提交複盤紀錄</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4: STATISTICS & SETTINGS -->
+  <section class="tab" id="tab-analytics">
+    <!-- Process vs Luck Grid -->
+    <div class="card">
+      <p class="eyebrow">複盤分析</p>
+      <h2>決策歸因二維矩陣</h2>
+      <div class="sub">區分實力與運氣，客觀了解自己過去決策的成效分布。</div>
+      <div class="matrix-2x2">
+        <div class="matrix-cell des-succ">
+          <h3>實至名歸</h3>
+          <div class="cnt" id="cntDesSucc">0</div>
+          <div class="desc">好決策 × 好結果<br>(實力發揮)</div>
+        </div>
+        <div class="matrix-cell bad-brk">
+          <h3>運氣不佳</h3>
+          <div class="cnt" id="cntBadBrk">0</div>
+          <div class="desc">好決策 × 壞結果<br>(遇上小概率風險)</div>
+        </div>
+        <div class="matrix-cell dumb-lk">
+          <h3>僥倖成功</h3>
+          <div class="cnt" id="cntDumbLk">0</div>
+          <div class="desc">差決策 × 好結果<br>(運氣極佳，但具高風險)</div>
+        </div>
+        <div class="matrix-cell des-fail">
+          <h3>理所當然</h3>
+          <div class="cnt" id="cntDesFail">0</div>
+          <div class="desc">差決策 × 壞結果<br>(決策失誤)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confidence Calibration -->
+    <div class="card gridpaper">
+      <p class="eyebrow">信心校準</p>
+      <h2>信心程度 vs. 實際預測達成率</h2>
+      <div class="sub">分析你在不同信心評分下，預測結果的實際達成比例。如果 90% 信心時達成率僅 40%，代表過度自信。</div>
+      <table class="calib-table">
+        <thead>
+          <tr>
+            <th>當初填寫信心區間</th>
+            <th>預測項目個數</th>
+            <th>實際達成比例</th>
+            <th>評估狀態</th>
+          </tr>
+        </thead>
+        <tbody id="calibrationBody">
+          <!-- Dyn rows will be injected here -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- General stats card -->
+    <div class="card">
+      <p class="eyebrow">指標</p>
+      <h2>其他判斷指標</h2>
+      <div class="checklist-item">
+        <span class="checklist-desc"><b>平均探索方案數：</b>(高於 2.0 代表有在克服單一路徑偏誤)</span>
+        <span class="tag purple" id="statAvgOptions">0.0</span>
+      </div>
+      <div class="checklist-item">
+        <span class="checklist-desc"><b>關鍵假設驗證率：</b>(符合預期假設的比例)</span>
+        <span class="tag green" id="statAssumpTrueRate">0%</span>
+      </div>
+      <div class="checklist-item">
+        <span class="checklist-desc"><b>總複盤歸檔率：</b>(已複盤數 / 應複盤總數)</span>
+        <span class="tag blue" id="statReviewRate">0%</span>
+      </div>
+    </div>
+
+    <!-- Export & Import / Reset -->
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>備份與還原</h2>
+      <div class="sub">資料均儲存於此瀏覽器中。清除歷史紀錄或換裝置時，請下載檔案備份。</div>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <button class="btn danger" id="wipeBtn" style="margin-top:9px; width:100%">清除全部資料</button>
+    </div>
+
+    <!-- Method Explanations Details -->
+    <div class="card">
+      <p class="eyebrow">方法指南</p>
+      <details open>
+        <summary>什麼是結果偏誤 (Outcome Bias)？</summary>
+        <div class="body">
+          人們在反思時，往往「以成敗論英雄」。如果一個投資賺錢了，就覺得自己當初看得很準（即使只是運氣好）；如果一個專案失敗了，就覺得這是個愚蠢的計畫（即使是個高勝率且經過深思熟慮的嘗試）。<br><br>
+          結果偏誤會使人學到「錯誤經驗」：在賺了僥倖成功的錢之後，盲目放大風險；或在遭遇運氣不佳的挫敗後，否定科學的試錯程序。
+        </div>
+      </details>
+      <details>
+        <summary>為什麼必須在結果出爐前寫下決策？</summary>
+        <div class="body">
+          人類大腦極其擅長在事後「自我合理化」（後見之明偏誤 Hindsight Bias）。結果一旦發生，大腦會假裝自己「早就知道會這樣」，並悄悄抹去當初的疑慮、假設與其他候選方案。<br><br>
+          在決策當下把假設、選項與信心程度白紙黑字寫下來，能提供「客觀無污染的對照組」，讓你在 30/60/90 天後複盤時，能直面自己真實的局限。
+        </div>
+      </details>
+      <details>
+        <summary>如何訓練自己的信心「校準能力」？</summary>
+        <div class="body">
+          「信心校準 (Calibration)」是指：如果你評估自己對 10 個決策的成功信心是 80%，那麼這 10 次決策最終應該要有 8 次成功。如果只成功 3 次，說明你<b>過度自信</b>；如果成功 10 次，可能代表你<b>過度保守</b>，只敢做極其穩定的選擇而錯失機會。
+        </div>
+      </details>
+    </div>
+
+    <div class="foot">
+      決策日誌法 · Decision Journaling<br>
+      系列入口：<a href="../index.html">提升生產力系統</a><br>
+      同系列：<a href="https://iamkeith001.github.io/energy-first/">能量儀表板</a> · <a href="https://iamkeith001.github.io/mind-offload/">腦袋清空站</a> · <a href="https://iamkeith001.github.io/choice-loop/">選擇迴圈</a> · <a href="https://iamkeith001.github.io/premortem-thinking/">情境預演</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="create" aria-label="記決策"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>記決策</button>
+    <button class="tabbtn" data-tab="list" aria-label="日誌"><svg viewBox="0 0 24 24"><path d="M4 19.5h16M6 17V4h12v13M10 7h4M10 11h4"/></svg>日誌</button>
+    <button class="tabbtn" data-tab="review" aria-label="複盤"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>複盤</button>
+    <button class="tabbtn" data-tab="analytics" aria-label="統計"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>統計</button>
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+// Helper utilities
+const $ = id => document.getElementById(id);
+const esc = s => (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+};
+const addDays = (dateStr, days) => {
+  const d = new Date(dateStr + "T00:00:00");
+  d.setDate(d.getDate() + days);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+};
+const fmtDate = d => {
+  if (!d) return "未設定";
+  const x = new Date(d + "T00:00:00");
+  return (x.getMonth() + 1) + "/" + x.getDate();
+};
+
+// Data Storage
+const store = {
+  get(k, def) {
+    try {
+      const v = JSON.parse(localStorage.getItem("dj_" + k));
+      return v == null ? def : v;
+    } catch (e) {
+      return def;
+    }
+  },
+  set(k, v) {
+    localStorage.setItem("dj_" + k, JSON.stringify(v));
+  }
+};
+
+let decisions = store.get("decisions", []);
+let editingId = null; 
+let reviewingId = null; 
+let currentWizardStep = 1;
+let selectedOptionRadioId = null; // Stores currently selected radio option ID during create/edit
+
+// Toast Notification
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+// Save all state
+function saveAll() {
+  store.set("decisions", decisions);
+}
+
+// Tab Switching
+document.querySelectorAll(".tabbtn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+    
+    b.classList.add("active");
+    $("tab-" + b.dataset.tab).classList.add("active");
+    
+    // Clear sub-review tab workspaces when leaving / entering directly
+    if (b.dataset.tab === "review") {
+      reviewingId = null;
+      $("reviewWorkspace").style.display = "none";
+      $("pendingReviewsListContainer").style.display = "block";
+    }
+
+    renderAll();
+    window.scrollTo({top: 0});
+  });
+});
+
+// Theme Management
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  store.set("theme", t);
+}
+applyTheme(store.get("theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* --- Dynamic Input Lists & Wizard Integration --- */
+
+function createDynamicRow(containerId, value = "", placeholder = "", additionalData = null) {
+  const container = $(containerId);
+  const rowId = uid();
+  const div = document.createElement("div");
+  div.className = "dynamic-row";
+  div.id = rowId;
+
+  if (containerId === "optionsContainer") {
+    // Options dynamic row has radio button to set as final choice
+    const isSelected = additionalData && additionalData.isSelected;
+    div.innerHTML = `
+      <input type="radio" name="selectedOptionRadio" value="${rowId}" class="option-radio" ${isSelected ? 'checked' : ''}>
+      <input type="text" value="${esc(value)}" placeholder="${esc(placeholder)}" class="option-input">
+      <button type="button" class="del-row-btn">&times;</button>
+    `;
+    container.appendChild(div);
+
+    const radio = div.querySelector(".option-radio");
+    const input = div.querySelector(".option-input");
+    const delBtn = div.querySelector(".del-row-btn");
+
+    if (isSelected) {
+      selectedOptionRadioId = rowId;
+      updateSelectedOptionBannerText();
+    }
+
+    radio.addEventListener("change", () => {
+      if (radio.checked) {
+        selectedOptionRadioId = rowId;
+        updateSelectedOptionBannerText();
+      }
+    });
+
+    input.addEventListener("input", () => {
+      if (radio.checked) {
+        updateSelectedOptionBannerText();
+      }
+    });
+
+    delBtn.addEventListener("click", () => {
+      if (container.querySelectorAll(".dynamic-row").length <= 2) {
+        toast("候選方案至少需列出 2 個！");
+        return;
+      }
+      if (radio.checked) {
+        selectedOptionRadioId = null;
+        updateSelectedOptionBannerText();
+      }
+      div.remove();
+    });
+  } else {
+    // Standard text dynamic row
+    div.innerHTML = `
+      <input type="text" value="${esc(value)}" placeholder="${esc(placeholder)}">
+      <button type="button" class="del-row-btn">&times;</button>
+    `;
+    container.appendChild(div);
+    div.querySelector(".del-row-btn").addEventListener("click", () => div.remove());
+  }
+}
+
+function updateSelectedOptionBannerText() {
+  const span = $("wizardSelectedOptionText");
+  if (!selectedOptionRadioId) {
+    span.textContent = "未選擇（請在步驟 1 點選方案前的圓鈕）";
+    span.style.color = "var(--red)";
+    return;
+  }
+  const row = $(selectedOptionRadioId);
+  if (!row) {
+    span.textContent = "未選擇";
+    span.style.color = "var(--red)";
+    return;
+  }
+  const txt = row.querySelector(".option-input").value.trim();
+  span.textContent = txt ? txt : "未命名選項";
+  span.style.color = "var(--purple)";
+}
+
+// Add Dynamic Row Listeners
+$("addOptionBtn").addEventListener("click", () => createDynamicRow("optionsContainer", "", "新增方案描述..."));
+$("addAssumptionBtn").addEventListener("click", () => createDynamicRow("assumptionsContainer", "", "關鍵假設，例如：對方能準時交件..."));
+$("addPredictionBtn").addEventListener("click", () => createDynamicRow("predictionsContainer", "", "預期結果，例如：一個月內達成..."));
+
+// Set up quick dates
+$("date30Btn").addEventListener("click", () => $("decReviewDate").value = addDays(today(), 30));
+$("date60Btn").addEventListener("click", () => $("decReviewDate").value = addDays(today(), 60));
+$("date90Btn").addEventListener("click", () => $("decReviewDate").value = addDays(today(), 90));
+
+// Slider integration
+$("decConfidence").addEventListener("input", e => {
+  const val = e.target.value;
+  $("decConfidenceVal").textContent = val + "%";
+  if (val == 0 || val == 100) {
+    $("confidenceWarning").style.display = "block";
+  } else {
+    $("confidenceWarning").style.display = "none";
+  }
+});
+
+/* --- Wizard Steps Controller --- */
+
+function showWizardStep(step) {
+  currentWizardStep = step;
+  
+  // Update indicators
+  document.querySelectorAll(".wiz-step").forEach(indicator => {
+    indicator.classList.remove("active");
+  });
+  $("wizIndicator-" + step).classList.add("active");
+
+  // Update panels
+  document.querySelectorAll(".wizard-step-panel").forEach(panel => {
+    panel.classList.remove("active");
+  });
+  $("wizPanel-" + step).classList.add("active");
+
+  // Buttons toggle
+  if (step === 1) {
+    $("wizPrevBtn").style.display = "none";
+    $("wizNextBtn").style.display = "inline-block";
+    $("saveDecisionBtn").style.display = "none";
+  } else if (step === 4) {
+    $("wizPrevBtn").style.display = "inline-block";
+    $("wizNextBtn").style.display = "none";
+    $("saveDecisionBtn").style.display = "inline-block";
+  } else {
+    $("wizPrevBtn").style.display = "inline-block";
+    $("wizNextBtn").style.display = "inline-block";
+    $("saveDecisionBtn").style.display = "none";
+  }
+}
+
+// Next Step Validation & Navigation
+$("wizNextBtn").addEventListener("click", () => {
+  if (currentWizardStep === 1) {
+    // Validate Step 1
+    const title = $("decTitle").value.trim();
+    if (!title) {
+      toast("請先輸入決策主題！");
+      return;
+    }
+    const optionRows = $("optionsContainer").querySelectorAll(".dynamic-row");
+    let optionsFilled = 0;
+    optionRows.forEach(row => {
+      if (row.querySelector(".option-input").value.trim()) optionsFilled++;
+    });
+    if (optionsFilled < 2) {
+      toast("請至少填寫兩個候選方案描述！");
+      return;
+    }
+    if (!selectedOptionRadioId) {
+      toast("請在方案前方點選圓鈕，選擇最終採取的方案！");
+      return;
+    }
+    // Update banner text for Step 2
+    updateSelectedOptionBannerText();
+  } else if (currentWizardStep === 2) {
+    // Validate Step 2
+    const reason = $("decChoiceReason").value.trim();
+    if (!reason) {
+      toast("請填寫做出此選擇的最主要理由！");
+      return;
+    }
+  }
+
+  showWizardStep(currentWizardStep + 1);
+  window.scrollTo({top: 0});
+});
+
+$("wizPrevBtn").addEventListener("click", () => {
+  showWizardStep(currentWizardStep - 1);
+  window.scrollTo({top: 0});
+});
+
+$("wizCancelBtn").addEventListener("click", () => {
+  document.querySelector('.tabbtn[data-tab="list"]').click();
+});
+
+/* --- Initialize Create/Edit Form --- */
+
+function initCreateForm(decId = null) {
+  editingId = decId;
+  $("optionsContainer").innerHTML = "";
+  $("assumptionsContainer").innerHTML = "";
+  $("predictionsContainer").innerHTML = "";
+  selectedOptionRadioId = null;
+  
+  if (decId === null) {
+    $("createFormTitle").textContent = "記錄一項新決策";
+    $("createFormTitleEyebrow").textContent = "記錄";
+    $("decTitle").value = "";
+    $("decContext").value = "";
+    $("decChoiceReason").value = "";
+    $("decConfidence").value = 70;
+    $("decConfidenceVal").textContent = "70%";
+    $("confidenceWarning").style.display = "none";
+    $("decReviewDate").value = addDays(today(), 30);
+    
+    // Add default blank fields
+    createDynamicRow("optionsContainer", "", "方案 A：接受此合約提案", { isSelected: true });
+    createDynamicRow("optionsContainer", "", "方案 B：拒絕此合約提案", { isSelected: false });
+    createDynamicRow("assumptionsContainer", "", "假設 1：對方能穩定配合並準時交件");
+    createDynamicRow("predictionsContainer", "", "預期結果：一個月後如期上線且獲得正面反饋");
+  } else {
+    const dec = decisions.find(d => d.id === decId);
+    if (!dec) return;
+    
+    $("createFormTitle").textContent = "編輯決策日誌";
+    $("createFormTitleEyebrow").textContent = "編輯";
+    $("decTitle").value = dec.title || "";
+    $("decContext").value = dec.context || "";
+    $("decChoiceReason").value = dec.choiceReason || "";
+    $("decConfidence").value = dec.confidence || 70;
+    $("decConfidenceVal").textContent = (dec.confidence || 70) + "%";
+    $("confidenceWarning").style.display = (dec.confidence == 0 || dec.confidence == 100) ? "block" : "none";
+    $("decReviewDate").value = dec.reviewDate || addDays(today(), 30);
+    
+    // Add saved options
+    dec.options.forEach(o => {
+      const isSelected = o.id === dec.selectedOptionId;
+      createDynamicRow("optionsContainer", o.text, "方案描述...", { isSelected });
+    });
+    
+    // Add assumptions & predictions
+    dec.assumptions.forEach(a => createDynamicRow("assumptionsContainer", a.text, "關鍵假設..."));
+    dec.predictions.forEach(p => createDynamicRow("predictionsContainer", p.text, "預期結果..."));
+  }
+
+  updateSelectedOptionBannerText();
+  showWizardStep(1);
+}
+
+// Save Action
+$("saveDecisionBtn").addEventListener("click", () => {
+  const title = $("decTitle").value.trim();
+  const context = $("decContext").value.trim();
+  const choiceReason = $("decChoiceReason").value.trim();
+  const confidence = parseInt($("decConfidence").value);
+  const reviewDate = $("decReviewDate").value;
+
+  if (!reviewDate) {
+    toast("請設定回顧日期！");
+    return;
+  }
+
+  // Retrieve Options
+  const optionRows = $("optionsContainer").querySelectorAll(".dynamic-row");
+  const options = [];
+  let isOptionsValid = true;
+  optionRows.forEach(row => {
+    const text = row.querySelector(".option-input").value.trim();
+    if (!text) isOptionsValid = false;
+    options.push({ id: row.id, text, notes: "" });
+  });
+
+  if (!isOptionsValid) {
+    toast("請將所有候選方案內容填寫完整！");
+    return;
+  }
+
+  // Retrieve Assumptions
+  const assumptionRows = $("assumptionsContainer").querySelectorAll(".dynamic-row");
+  const assumptions = [];
+  assumptionRows.forEach(row => {
+    const text = row.querySelector("input").value.trim();
+    if (text) assumptions.push({ id: uid(), text });
+  });
+
+  // Retrieve Predictions
+  const predictionRows = $("predictionsContainer").querySelectorAll(".dynamic-row");
+  const predictions = [];
+  predictionRows.forEach(row => {
+    const text = row.querySelector("input").value.trim();
+    if (text) predictions.push({ id: uid(), text });
+  });
+
+  if (editingId === null) {
+    const newDec = {
+      id: uid(),
+      title,
+      context,
+      createdAt: today(),
+      reviewDate,
+      options,
+      selectedOptionId: selectedOptionRadioId,
+      choiceReason,
+      assumptions,
+      confidence,
+      predictions,
+      status: "pending"
+    };
+    decisions.unshift(newDec);
+    toast("已成功儲存決策日誌！");
+  } else {
+    const idx = decisions.findIndex(d => d.id === editingId);
+    if (idx !== -1) {
+      const orig = decisions[idx];
+      decisions[idx] = {
+        ...orig,
+        title,
+        context,
+        reviewDate,
+        options,
+        selectedOptionId: selectedOptionRadioId,
+        choiceReason,
+        assumptions: assumptions.map(a => {
+          const old = orig.assumptions.find(oa => oa.text === a.text);
+          return old ? { ...a, verified: old.verified } : a;
+        }),
+        confidence,
+        predictions: predictions.map(p => {
+          const old = orig.predictions.find(op => op.text === p.text);
+          return old ? { ...p, verified: old.verified } : p;
+        }),
+        status: orig.status === "draft" ? "pending" : orig.status
+      };
+      toast("決策日誌已更新！");
+    }
+  }
+
+  saveAll();
+  document.querySelector('.tabbtn[data-tab="list"]').click();
+});
+
+
+/* --- TAB 1: DECISION CARDS LIST --- */
+
+let currentFilter = "all";
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    renderList();
+  });
+});
+
+function renderList() {
+  const el = $("decisionsList");
+  if (decisions.length === 0) {
+    el.innerHTML = '<div class="empty-hint">尚未建立任何決策日誌。快去「記決策」寫下第一個決定吧！</div>';
+    return;
+  }
+
+  let filtered = decisions;
+  if (currentFilter === "pending") {
+    filtered = decisions.filter(d => d.status === "pending");
+  } else if (currentFilter === "reviewed") {
+    filtered = decisions.filter(d => d.status === "reviewed");
+  } else if (currentFilter === "draft") {
+    filtered = decisions.filter(d => d.status === "draft");
+  }
+
+  if (filtered.length === 0) {
+    el.innerHTML = `<div class="empty-hint">此分類下目前沒有決策日誌。</div>`;
+    return;
+  }
+
+  el.innerHTML = filtered.map(d => {
+    const optionSelected = d.options.find(o => o.id === d.selectedOptionId);
+    const chosenText = optionSelected ? optionSelected.text : "未知的選項";
+    
+    // Status Tag Setup
+    let statusTag = "";
+    let classModifier = "pending";
+    if (d.status === "reviewed") {
+      classModifier = "reviewed";
+      let attrLabel = "已複盤";
+      if (d.retrospective && d.retrospective.attribution) {
+        const mapping = {
+          "deserved_success": "實至名歸",
+          "bad_break": "運氣不佳",
+          "dumb_luck": "僥倖成功",
+          "deserved_failure": "理所當然"
+        };
+        attrLabel = mapping[d.retrospective.attribution] || "已複盤";
+      }
+      statusTag = `<span class="tag green">${esc(attrLabel)}</span>`;
+    } else {
+      const t = today();
+      if (d.reviewDate === t) {
+        statusTag = `<span class="tag red">今天需回顧</span>`;
+      } else if (d.reviewDate < t) {
+        statusTag = `<span class="tag red">逾期回顧</span>`;
+      } else {
+        const diffTime = Math.abs(new Date(d.reviewDate + "T00:00:00") - new Date(t + "T00:00:00"));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        statusTag = `<span class="tag amber">剩餘 ${diffDays} 天回顧</span>`;
+      }
+    }
+
+    return `
+      <div class="dec-card ${classModifier}">
+        <div class="dec-head">
+          <h3 class="dec-title">${esc(d.title)}</h3>
+          ${statusTag}
+        </div>
+        <div class="dec-meta">
+          決策日期：${d.createdAt} · 預計回顧：${d.reviewDate} · 信心程度：${d.confidence}%
+        </div>
+        <div class="dec-choice">
+          <b>最終選擇：</b>${esc(chosenText)}<br>
+          <span style="opacity: 0.8; font-size:12px">理由：${esc(d.choiceReason)}</span>
+        </div>
+        ${d.status === "reviewed" ? `
+          <div style="font-size:12.8px; color:var(--pencil); border-left:2px solid var(--green); padding-left:10px; margin:8px 0">
+            <b>實際結果：</b>${esc(d.retrospective.actualOutcome)}<br>
+            <b>學習心得：</b>${esc(d.retrospective.learning)}
+          </div>
+        ` : ""}
+        <div class="dec-actions">
+          ${d.status !== "reviewed" ? `
+            <button class="tiny primary" onclick="startReview('${d.id}')">進行複盤</button>
+          ` : `
+            <button class="tiny" onclick="startReview('${d.id}')">查看/重新複盤</button>
+          `}
+          <button class="tiny" onclick="editDecision('${d.id}')">編輯</button>
+          <button class="tiny" onclick="copyDecisionMarkdown('${d.id}')">複製摘要</button>
+          <button class="tiny red" onclick="deleteDecision('${d.id}')" style="margin-left:auto">刪除</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.editDecision = function(id) {
+  initCreateForm(id);
+  document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+  document.querySelector('.tabbtn[data-tab="create"]').classList.add("active");
+  $("tab-create").classList.add("active");
+  window.scrollTo({top: 0});
+};
+
+window.deleteDecision = function(id) {
+  if (!confirm("確定要刪除這筆決策記錄嗎？此動作無法復原。")) return;
+  decisions = decisions.filter(d => d.id !== id);
+  if (reviewingId === id) {
+    reviewingId = null;
+    $("reviewWorkspace").style.display = "none";
+    $("pendingReviewsListContainer").style.display = "block";
+  }
+  saveAll();
+  renderAll();
+  toast("決策日誌已刪除");
+};
+
+window.copyDecisionMarkdown = async function(id) {
+  const d = decisions.find(x => x.id === id);
+  if (!d) return;
+  const opt = d.options.find(o => o.id === d.selectedOptionId);
+  const choiceText = opt ? opt.text : "未知的選項";
+
+  const lines = [
+    `# 決策日誌：${d.title}`,
+    `- 建立日期：${d.createdAt}`,
+    `- 回顧日期：${d.reviewDate}`,
+    `- 信心程度：${d.confidence}%`,
+    ``,
+    `## 決策脈絡`,
+    d.context || "無背景說明",
+    ``,
+    `## 可行方案`,
+    d.options.map((o, idx) => `選項 ${idx+1}: ${o.text}`).join("\n"),
+    ``,
+    `## 最終選擇`,
+    `**${choiceText}**`,
+    `- 理由：${d.choiceReason}`,
+    ``,
+    `## 關鍵假設`,
+    d.assumptions.length ? d.assumptions.map(a => `- [ ] ${a.text}`).join("\n") : "無設定假設",
+    ``,
+    `## 預期結果`,
+    d.predictions.length ? d.predictions.map(p => `- [ ] ${p.text}`).join("\n") : "無設定預期結果"
+  ];
+
+  if (d.status === "reviewed" && d.retrospective) {
+    const r = d.retrospective;
+    const mapping = {
+      "deserved_success": "實至名歸 (Deserved Success)",
+      "bad_break": "運氣不佳 (Bad Break)",
+      "dumb_luck": "僥倖成功 (Dumb Luck)",
+      "deserved_failure": "理所當然的失敗 (Deserved Failure)"
+    };
+    
+    lines.push(
+      ``,
+      `---`,
+      `## 複盤記錄 (${r.reviewedAt})`,
+      `- 歸因結論：${mapping[r.attribution] || r.attribution}`,
+      `- 過程品質：${r.processRating} / 5 星`,
+      `- 實際結果好壞：${r.isGoodOutcome ? "好結果" : "壞結果"}`,
+      ``,
+      `### 實際結果描述`,
+      r.actualOutcome,
+      ``,
+      `### 學習與反思`,
+      r.learning
+    );
+  }
+
+  try {
+    await navigator.clipboard.writeText(lines.join("\n"));
+    toast("已成功複製 Markdown 摘要！");
+  } catch (err) {
+    toast("複製失敗，請手動複製");
+  }
+};
+
+
+/* --- TAB 3: RETROSPECTIVE (INTEGRATED REVIEW LIST & FORM) --- */
+
+let selectedProcessRating = 0;
+let selectedOutcome = null;
+
+function renderPendingReviewList() {
+  const container = $("pendingReviewList");
+  const pendings = decisions.filter(d => d.status === "pending");
+
+  if (pendings.length === 0) {
+    container.innerHTML = `
+      <div class="empty-hint" style="padding: 24px 0">
+        目前沒有待複盤的決策！👍<br>
+        <button class="btn ghost" style="margin-top: 12px; width: auto; font-size:12.5px" onclick="document.querySelector('.tabbtn[data-tab=\\'create\\']').click()">記錄新決策</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = pendings.map(d => {
+    const opt = d.options.find(o => o.id === d.selectedOptionId);
+    const chosenText = opt ? opt.text : "未知的選項";
+    
+    const t = today();
+    let labelClass = "amber";
+    let labelText = "未到期";
+    if (d.reviewDate === t) {
+      labelClass = "red";
+      labelText = "今天需回顧";
+    } else if (d.reviewDate < t) {
+      labelClass = "red";
+      labelText = "逾期回顧";
+    } else {
+      const diffTime = Math.abs(new Date(d.reviewDate + "T00:00:00") - new Date(t + "T00:00:00"));
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      labelText = `剩餘 ${diffDays} 天`;
+    }
+
+    return `
+      <div style="padding: 12px 0; border-bottom: 1px solid var(--hairline-soft); display: flex; justify-content: space-between; align-items: center; gap: 10px">
+        <div style="flex: 1; min-width: 0">
+          <div style="font-weight:800; font-size:14.5px; word-break:break-word">${esc(d.title)}</div>
+          <div style="font-size:12px; color:var(--pencil); margin-top:2px">
+            回顧日：${d.reviewDate} · 選擇方案：<span style="color:var(--purple); font-weight:700">${esc(chosenText)}</span>
+          </div>
+        </div>
+        <span class="tag ${labelClass}" style="flex:none">${labelText}</span>
+        <button class="btn ghost" style="width: auto; padding: 6px 12px; font-size:12px; flex:none" onclick="startReview('${d.id}')">開啟複盤</button>
+      </div>
+    `;
+  }).join("");
+}
+
+window.startReview = function(id) {
+  reviewingId = id;
+  
+  // Force shift to Review Tab panel
+  document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+  document.querySelector('.tabbtn[data-tab="review"]').classList.add("active");
+  $("tab-review").classList.add("active");
+  
+  const d = decisions.find(x => x.id === id);
+  if (!d) return;
+
+  // Toggle internal panels
+  $("pendingReviewsListContainer").style.display = "none";
+  $("reviewWorkspace").style.display = "block";
+
+  $("revTitle").textContent = `決策複盤：${d.title}`;
+  $("revCreatedDate").textContent = d.createdAt;
+  
+  const opt = d.options.find(o => o.id === d.selectedOptionId);
+  $("revSelectedOption").textContent = opt ? opt.text : "未選擇";
+  $("revConfidence").textContent = d.confidence + "%";
+  $("revChoiceReason").textContent = d.choiceReason;
+
+  if (d.status === "reviewed" && d.retrospective) {
+    const r = d.retrospective;
+    $("revOutcome").value = r.actualOutcome || "";
+    $("revLearning").value = r.learning || "";
+    selectedProcessRating = r.processRating || 0;
+    selectedOutcome = r.isGoodOutcome ? "good" : "bad";
+  } else {
+    $("revOutcome").value = "";
+    $("revLearning").value = "";
+    selectedProcessRating = 0;
+    selectedOutcome = null;
+  }
+
+  updateStarDisplay();
+  updateOutcomeBtnGroup();
+  updateAttributionCard();
+
+  // Load assumptions check list
+  const aList = $("revAssumptionsList");
+  if (d.assumptions.length === 0) {
+    aList.innerHTML = '<div style="color:var(--pencil); font-size:12.5px; padding:6px 0">未設定關鍵假設</div>';
+  } else {
+    aList.innerHTML = d.assumptions.map(a => `
+      <div class="checklist-item" data-assump="${a.id}">
+        <span class="checklist-desc">${esc(a.text)}</span>
+        <select class="checklist-select">
+          <option value="true" ${a.verified === 'true' ? 'selected' : ''}>符合預期</option>
+          <option value="false" ${a.verified === 'false' ? 'selected' : ''}>不符預期</option>
+          <option value="unknown" ${a.verified === 'unknown' || !a.verified ? 'selected' : ''}>無法評估</option>
+        </select>
+      </div>
+    `).join("");
+  }
+
+  // Load predictions check list
+  const pList = $("revPredictionsList");
+  if (d.predictions.length === 0) {
+    pList.innerHTML = '<div style="color:var(--pencil); font-size:12.5px; padding:6px 0">未設定具體預期結果</div>';
+  } else {
+    pList.innerHTML = d.predictions.map(p => `
+      <div class="checklist-item" data-predict="${p.id}">
+        <span class="checklist-desc">${esc(p.text)}</span>
+        <select class="checklist-select">
+          <option value="achieved" ${p.verified === 'achieved' ? 'selected' : ''}>達成</option>
+          <option value="partial" ${p.verified === 'partial' ? 'selected' : ''}>部分達成</option>
+          <option value="failed" ${p.verified === 'failed' || !p.verified ? 'selected' : ''}>未達成</option>
+        </select>
+      </div>
+    `).join("");
+  }
+
+  window.scrollTo({top: 0});
+};
+
+// Retrospective Form interactive handlers
+document.querySelectorAll("#revProcessStars .star").forEach(s => {
+  s.addEventListener("click", () => {
+    selectedProcessRating = parseInt(s.dataset.star);
+    updateStarDisplay();
+    updateAttributionCard();
+  });
+});
+
+function updateStarDisplay() {
+  document.querySelectorAll("#revProcessStars .star").forEach(s => {
+    const val = parseInt(s.dataset.star);
+    s.classList.toggle("active", val <= selectedProcessRating);
+  });
+}
+
+document.querySelectorAll("#revOutcomeGroup .btn-group-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("#revOutcomeGroup .btn-group-btn").forEach(x => x.classList.remove("active", "good", "bad"));
+    selectedOutcome = b.dataset.outcome;
+    updateOutcomeBtnGroup();
+    updateAttributionCard();
+  });
+});
+
+function updateOutcomeBtnGroup() {
+  document.querySelectorAll("#revOutcomeGroup .btn-group-btn").forEach(b => {
+    if (b.dataset.outcome === selectedOutcome) {
+      b.classList.add("active", selectedOutcome === "good" ? "good" : "bad");
+    }
+  });
+}
+
+function updateAttributionCard() {
+  const card = $("revAttributionCard");
+  if (selectedProcessRating === 0 || !selectedOutcome) {
+    card.style.display = "none";
+    return;
+  }
+
+  const isGood = selectedOutcome === "good";
+  const attr = calculateAttribution(selectedProcessRating, isGood);
+
+  card.style.display = "block";
+  const label = $("revAttributionLabel");
+  const desc = $("revAttributionDesc");
+
+  if (attr === "deserved_success") {
+    label.textContent = "實至名歸 (Deserved Success) 🟢";
+    label.style.color = "var(--green)";
+    desc.textContent = "決策流程很優良，且實際發展符合預期！這代表你的分析路徑是正確且可複製的。請記下你做對了哪些事情。";
+  } else if (attr === "bad_break") {
+    label.textContent = "運氣不佳 (Bad Break) 🔵";
+    label.style.color = "var(--blue)";
+    desc.textContent = "你的思考相當縝密、決策過程品質高，但由於不可抗力的小機率外部隨機因素，最終結果不如人意。不要灰心，堅持好的決策流程，長期而言會取得好結果。";
+  } else if (attr === "dumb_luck") {
+    label.textContent = "僥倖成功 (Dumb Luck) 🟡";
+    label.style.color = "var(--amber)";
+    desc.textContent = "實務上你的決策過程有瑕疵（少加思考或僅憑直覺），但卻因為好運而獲得了不錯的結果。請保持警惕，運氣是無法複製的，未來在類似情境下必須修正流程。";
+  } else if (attr === "deserved_failure") {
+    label.textContent = "理所當然 (Deserved Failure) 🔴";
+    label.style.color = "var(--red)";
+    desc.textContent = "決策流程有缺陷，且最終結果確實失敗了。這是最重要的學習機會：坦誠列出當初漏看的盲點，並在下次做決定時改進流程。";
+  }
+}
+
+$("cancelReviewBtn").addEventListener("click", () => {
+  reviewingId = null;
+  $("reviewWorkspace").style.display = "none";
+  $("pendingReviewsListContainer").style.display = "block";
+  renderPendingReviewList();
+});
+
+$("submitReviewBtn").addEventListener("click", () => {
+  const dec = decisions.find(d => d.id === reviewingId);
+  if (!dec) return;
+
+  const actualOutcome = $("revOutcome").value.trim();
+  const learning = $("revLearning").value.trim();
+
+  if (!actualOutcome) {
+    toast("請填寫實際結果描述！");
+    return;
+  }
+  if (selectedProcessRating === 0) {
+    toast("請評估決策過程品質（點選星星評分）！");
+    return;
+  }
+  if (!selectedOutcome) {
+    toast("請選擇結果是『好結果』還是『壞結果』！");
+    return;
+  }
+  if (!learning) {
+    toast("請寫下您的學習與反思！");
+    return;
+  }
+
+  // Update assumptions verification
+  $("revAssumptionsList").querySelectorAll(".checklist-item").forEach(row => {
+    const aId = row.dataset.assump;
+    const val = row.querySelector(".checklist-select").value;
+    const a = dec.assumptions.find(x => x.id === aId);
+    if (a) a.verified = val;
+  });
+
+  // Update predictions verification
+  $("revPredictionsList").querySelectorAll(".checklist-item").forEach(row => {
+    const pId = row.dataset.predict;
+    const val = row.querySelector(".checklist-select").value;
+    const p = dec.predictions.find(x => x.id === pId);
+    if (p) p.verified = val;
+  });
+
+  const isGood = selectedOutcome === "good";
+  const attr = calculateAttribution(selectedProcessRating, isGood);
+
+  dec.status = "reviewed";
+  dec.retrospective = {
+    actualOutcome,
+    processRating: selectedProcessRating,
+    isGoodOutcome: isGood,
+    attribution: attr,
+    learning,
+    reviewedAt: today()
+  };
+
+  saveAll();
+  toast("複盤成功！已歸檔至決策日誌。");
+  
+  reviewingId = null;
+  $("reviewWorkspace").style.display = "none";
+  $("pendingReviewsListContainer").style.display = "block";
+  renderAll();
+});
+
+
+/* --- TAB 4: STATISTICS & ANALYTICS --- */
+
+function renderAnalytics() {
+  const reviewedDecs = decisions.filter(d => d.status === "reviewed" && d.retrospective);
+  
+  // 1. Attribution Matrix counts
+  let desSucc = 0, badBrk = 0, dumbLk = 0, desFail = 0;
+  reviewedDecs.forEach(d => {
+    const attr = d.retrospective.attribution;
+    if (attr === "deserved_success") desSucc++;
+    else if (attr === "bad_break") badBrk++;
+    else if (attr === "dumb_luck") dumbLk++;
+    else if (attr === "deserved_failure") desFail++;
+  });
+
+  $("cntDesSucc").textContent = desSucc;
+  $("cntBadBrk").textContent = badBrk;
+  $("cntDumbLk").textContent = dumbLk;
+  $("cntDesFail").textContent = desFail;
+
+  // 2. Calibration Matrix
+  let groups = {
+    high: { count: 0, achieved: 0, total: 0 },
+    med: { count: 0, achieved: 0, total: 0 },
+    low: { count: 0, achieved: 0, total: 0 }
+  };
+
+  decisions.forEach(d => {
+    if (d.status === "reviewed") {
+      let grpKey = "med";
+      if (d.confidence >= 80) grpKey = "high";
+      else if (d.confidence < 50) grpKey = "low";
+
+      d.predictions.forEach(p => {
+        groups[grpKey].total++;
+        if (p.verified === "achieved") groups[grpKey].achieved++;
+        else if (p.verified === "partial") groups[grpKey].achieved += 0.5;
+      });
+    }
+  });
+
+  const getCalibStatus = (targetRange, rate) => {
+    if (rate === null) return "資料不足";
+    const percent = rate * 100;
+    if (targetRange === "high") {
+      if (percent >= 75) return "🟢 信心校準良好";
+      if (percent < 50) return "🔴 過度自信";
+      return "🟡 輕微過度自信";
+    } else if (targetRange === "med") {
+      if (percent >= 50 && percent < 80) return "🟢 信心校準良好";
+      if (percent >= 80) return "🔵 過度保守/高估難度";
+      return "🔴 信心高於實際表現";
+    } else {
+      if (percent < 50) return "🟢 信心校準良好";
+      return "🔵 過度保守";
+    }
+  };
+
+  const highRate = groups.high.total > 0 ? (groups.high.achieved / groups.high.total) : null;
+  const medRate = groups.med.total > 0 ? (groups.med.achieved / groups.med.total) : null;
+  const lowRate = groups.low.total > 0 ? (groups.low.achieved / groups.low.total) : null;
+
+  $("calibrationBody").innerHTML = `
+    <tr>
+      <td><b>高信心度區間 (80% - 100%)</b></td>
+      <td>${groups.high.total} 個項目</td>
+      <td>${highRate !== null ? (highRate * 100).toFixed(0) + "%" : "無資料"}</td>
+      <td><span style="font-weight:700">${getCalibStatus("high", highRate)}</span></td>
+    </tr>
+    <tr>
+      <td><b>中等信心區間 (50% - 79%)</b></td>
+      <td>${groups.med.total} 個項目</td>
+      <td>${medRate !== null ? (medRate * 100).toFixed(0) + "%" : "無資料"}</td>
+      <td><span style="font-weight:700">${getCalibStatus("med", medRate)}</span></td>
+    </tr>
+    <tr>
+      <td><b>低信心度區間 (0% - 49%)</b></td>
+      <td>${groups.low.total} 個項目</td>
+      <td>${lowRate !== null ? (lowRate * 100).toFixed(0) + "%" : "無資料"}</td>
+      <td><span style="font-weight:700">${getCalibStatus("low", lowRate)}</span></td>
+    </tr>
+  `;
+
+  // 3. Other Indicators
+  let totalOptions = 0;
+  decisions.forEach(d => totalOptions += d.options.length);
+  const avgOpt = decisions.length > 0 ? (totalOptions / decisions.length) : 0;
+  $("statAvgOptions").textContent = avgOpt.toFixed(1);
+  $("statAvgOptions").className = avgOpt >= 2.5 ? "tag green" : (avgOpt >= 2.0 ? "tag purple" : "tag red");
+
+  let checkedAssump = 0;
+  let trueAssump = 0;
+  decisions.forEach(d => {
+    if (d.status === "reviewed") {
+      d.assumptions.forEach(a => {
+        if (a.verified) {
+          checkedAssump++;
+          if (a.verified === "true") trueAssump++;
+        }
+      });
+    }
+  });
+  const assumpRate = checkedAssump > 0 ? Math.round((trueAssump / checkedAssump) * 100) : 0;
+  $("statAssumpTrueRate").textContent = checkedAssump > 0 ? `${assumpRate}%` : "0%";
+
+  const totalDecs = decisions.length;
+  const reviewedCount = decisions.filter(d => d.status === "reviewed").length;
+  const reviewRate = totalDecs > 0 ? Math.round((reviewedCount / totalDecs) * 100) : 0;
+  $("statReviewRate").textContent = totalDecs > 0 ? `${reviewRate}% (${reviewedCount}/${totalDecs})` : "0%";
+}
+
+
+/* --- DATA BACKUP & UTILITIES --- */
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify({ decisions, exportedAt: new Date().toISOString() }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "decision-journal-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+$("importBtn").addEventListener("click", () => $("importFile").click());
+
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.decisions)) {
+        decisions = data.decisions;
+        saveAll();
+        renderAll();
+        toast("備份讀取成功！已回復決策日誌。");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清除所有決策日誌資料嗎？這個動作無法復原。")) return;
+  decisions = [];
+  saveAll();
+  renderAll();
+  toast("資料已全部清空");
+});
+
+
+/* --- STATE SYNC & RENDER ALL --- */
+
+function renderStats() {
+  const total = decisions.length;
+  const reviewed = decisions.filter(d => d.status === "reviewed").length;
+  const pending = total - reviewed;
+  
+  $("stTotal").textContent = total;
+  $("stReviewed").textContent = reviewed;
+  $("stPending").textContent = pending;
+}
+
+function renderAll() {
+  renderStats();
+  renderList();
+  renderPendingReviewList();
+  renderAnalytics();
+}
+
+// Initial Run
+initCreateForm(null);
+renderAll();
+
+</script>
+</body>
+</html>

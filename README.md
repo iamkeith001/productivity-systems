@@ -10,4 +10,4 @@
 - 腦袋清空站：https://iamkeith001.github.io/mind-offload/
 - 選擇迴圈：https://iamkeith001.github.io/choice-loop/
 - 情境預演：https://iamkeith001.github.io/premortem-thinking/
-- 決策日誌：https://iamkeith001.github.io/decision-journal/
+- 決策日誌：https://iamkeith001.github.io/productivity-systems/決策日誌法系統/index.html
