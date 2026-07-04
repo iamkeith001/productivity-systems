@@ -2,7 +2,7 @@
 
 把《決策日誌法（Decision Journaling）》變成日常做決策、防範結果偏誤並進行事後反思的工具。
 
-**立即使用：https://iamkeith001.github.io/decision-journal/**
+**立即使用：https://iamkeith001.github.io/productivity-systems/decision-journal/**
 
 單一 HTML 檔、零外部相依、離線可用、資料只存在你自己的裝置（瀏覽器 localStorage）。
 
