@@ -3,33 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="生產力系統">
 <meta name="theme-color" content="#ECE9E2">
-<title>提升生產力系統入口</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
+<title>提升生產力系統入口 · Productivity Systems Portal</title>
 <style>
   :root{
     --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
     --ink:#2B2823; --pencil:#6E6858;
-    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
-    --blue:#2F5AA8; --red:#C03A2B; --amber:#8A6012; --green:#3E7C4F; --purple:#5F27CD; --teal:#0FB9B1; --slate:#4A5568;
-    --grid:rgba(47,90,168,.07);
-    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+    --hairline:rgba(43,40,35,.14); --hairline-soft:rgba(43,40,35,.07);
+    --shadow:0 2px 5px rgba(43,40,35,0.03),0 8px 24px rgba(43,40,35,0.05);
+    --shadow-hover:0 20px 32px rgba(43,40,35,0.12),0 2px 8px rgba(43,40,35,0.06);
+    --grid:rgba(47,90,168,.04);
+
+    --green:#3E7C4F; --green-soft:rgba(62,124,79,0.08);
+    --red:#C03A2B; --red-soft:rgba(192,58,43,0.08);
+    --amber:#8A6012; --amber-soft:rgba(138,96,18,0.08);
+    --blue:#2F5AA8; --blue-soft:rgba(47,90,168,0.08);
+    --purple:#5F27CD; --purple-soft:rgba(95,39,205,0.08);
+    --teal:#0FB9B1; --teal-soft:rgba(15,185,177,0.08);
+    --slate:#4A5568; --slate-soft:rgba(74,85,104,0.08);
   }
   html[data-theme="dark"]{
-    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --desk:#12110D; --paper:#1D1B16; --paper2:#24221C;
     --ink:#EAE4D6; --pencil:#9C9689;
-    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
-    --blue:#8AABE8; --red:#D96A55; --amber:#CB9A46; --green:#7CAE8B; --purple:#9B5DE5; --teal:#2BCBBA; --slate:#A0AEC0;
-    --grid:rgba(138,171,232,.08);
-    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+    --hairline:rgba(234,228,214,.15); --hairline-soft:rgba(234,228,214,.07);
+    --shadow:0 4px 10px rgba(0,0,0,0.25),0 1px 3px rgba(0,0,0,0.15);
+    --shadow-hover:0 20px 35px rgba(0,0,0,0.4),0 2px 8px rgba(0,0,0,0.2);
+    --grid:rgba(234,228,214,.04);
+
+    --green:#7CAE8B; --green-soft:rgba(124,174,139,0.16);
+    --red:#D96A55; --red-soft:rgba(217,106,85,0.16);
+    --amber:#CB9A46; --amber-soft:rgba(203,154,70,0.16);
+    --blue:#8AABE8; --blue-soft:rgba(138,171,232,0.16);
+    --purple:#9B5DE5; --purple-soft:rgba(155,93,229,0.16);
+    --teal:#2BCBBA; --teal-soft:rgba(43,203,186,0.16);
+    --slate:#CBD5E0; --slate-soft:rgba(203,213,224,0.16);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
     margin:0;background:var(--desk);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
     line-height:1.65;-webkit-font-smoothing:antialiased;font-size:14.5px;
+    padding-bottom:calc(30px + env(safe-area-inset-bottom));
   }
   .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
-  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 36px}
+  .wrap{max-width:960px;margin:0 auto;padding:18px 16px 36px}
+  
   header{padding:18px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
   .brand{display:flex;align-items:center;gap:12px}
   .seal{width:38px;height:38px;flex:none}
@@ -37,38 +62,121 @@
   .brand small{display:block;color:var(--pencil);font-size:10.5px;letter-spacing:.16em;margin-top:3px}
   .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
   .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .icon-btn:active{transform:scale(.94)}
+
   .hero{
-    background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);
-    padding:26px 22px;margin:8px 0 16px;position:relative;overflow:hidden;
+    background:var(--paper);border:1px solid var(--hairline-soft);border-radius:12px;box-shadow:var(--shadow);
+    padding:28px 24px;margin:8px 0 16px;position:relative;overflow:hidden;
   }
   .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
   .hero>*{position:relative;z-index:1}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--amber);margin:0 0 4px}
   .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:30px;font-weight:900;letter-spacing:.05em;line-height:1.35;margin:0 0 10px}
-  .hero-text{color:var(--ink);opacity:.86;font-size:14px;line-height:1.85;margin:0;max-width:35em}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:16px}
+  .hero-text{color:var(--ink);opacity:.86;font-size:14px;line-height:1.85;margin:0;max-width:42em}
+
+  /* Filter and Search controls bar */
+  .controls-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; margin: 24px 0 16px; flex-wrap:wrap;
+  }
+  .filters{
+    display:flex; gap:6px; flex-wrap:nowrap; overflow-x:auto; padding-bottom:2px;
+  }
+  .filter-btn{
+    border:1px solid var(--hairline-soft); background:var(--paper); color:var(--pencil);
+    padding:8px 18px; border-radius:30px; font-size:12.5px; cursor:pointer;
+    font-weight:700; white-space:nowrap; transition:all .2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .filter-btn:hover{
+    border-color:var(--hairline);
+    color:var(--ink);
+  }
+  .filter-btn.active{
+    background:var(--paper2); color:var(--ink); border-color:var(--hairline);
+  }
+
+  .search-wrapper{
+    position:relative; flex:1; min-width:240px; max-width:320px;
+  }
+  .search-wrapper svg{
+    position:absolute; left:14px; top:50%; transform:translateY(-50%);
+    width:15px; height:15px; stroke:var(--pencil); stroke-width:2.2; fill:none;
+    pointer-events:none;
+  }
+  .search-input{
+    width:100%; border:1px solid var(--hairline-soft); background:var(--paper);
+    color:var(--ink); border-radius:30px; padding:10px 16px 10px 38px;
+    font-size:13px; outline:none; transition:all .2s;
+  }
+  .search-input:focus{
+    border-color:var(--slate);
+    box-shadow: 0 0 0 3px rgba(74,85,104,0.08);
+  }
+
+  /* Grid & Cards */
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:18px; margin-top:16px;
+  }
   .card{
-    display:flex;flex-direction:column;min-height:238px;text-decoration:none;color:inherit;
-    background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);
-    padding:18px;position:relative;overflow:hidden;
+    display:flex; flex-direction:column; min-height:238px; text-decoration:none;
+    color:inherit; background:var(--paper); border:1px solid var(--hairline-soft);
+    border-radius:12px; box-shadow:var(--shadow); padding:20px;
+    position:relative; overflow:hidden; transition:all .3s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
-  .card::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--c)}
+  .card::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:4px; background:var(--c);
+  }
+  .card:hover{
+    transform:translateY(-6px); box-shadow:var(--shadow-hover), 0 10px 30px -10px var(--c-soft);
+    border-color:var(--hairline);
+  }
   .card .mark{
-    width:34px;height:34px;border:2px solid var(--c);border-radius:5px;display:grid;place-items:center;
-    color:var(--c);font-family:"Songti TC","Noto Serif TC",serif;font-size:18px;font-weight:900;margin-bottom:14px;
+    width:38px; height:38px; border-radius:50%; background:var(--c-soft);
+    color:var(--c); display:grid; place-items:center;
+    font-family:"Songti TC","Noto Serif TC",serif; font-size:18px; font-weight:900;
+    margin-bottom:16px; transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  .card h2{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;margin:0 0 4px;letter-spacing:.04em}
-  .card .en{font-size:11px;color:var(--pencil);letter-spacing:.12em;margin-bottom:13px}
-  .card p{font-size:13px;color:var(--pencil);line-height:1.75;margin:0 0 14px;flex:1}
-  .open{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--hairline-soft);padding-top:12px;font-size:12.5px;font-weight:800;color:var(--c);letter-spacing:.08em}
-  .open svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .note{
-    margin-top:16px;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;
-    padding:15px 18px;color:var(--pencil);font-size:13px;line-height:1.75;
+  .card:hover .mark{
+    transform:scale(1.15) rotate(3deg);
   }
-  .note b{color:var(--ink)}
-  footer{text-align:center;color:var(--pencil);font-size:11px;line-height:1.8;letter-spacing:.06em;margin-top:22px}
-  @media (max-width:720px){.grid{grid-template-columns:1fr}.card{min-height:0}.hero-title{font-size:27px}}
+  .card h2{
+    font-family:"Songti TC","Noto Serif TC","PMingLiU",serif; font-size:20px;
+    margin:0 0 4px; letter-spacing:.04em; color:var(--ink);
+  }
+  .card .en{
+    font-family:'Outfit', sans-serif; font-size:10.5px; font-weight:700;
+    color:var(--pencil); letter-spacing:.12em; margin-bottom:13px; text-transform:uppercase;
+  }
+  .card p{
+    font-size:13px; color:var(--pencil); line-height:1.75; margin:0 0 16px; flex:1;
+  }
+  
+  .open{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    border-top:1px solid var(--hairline-soft); padding-top:12px; font-size:12.5px;
+    font-weight:800; color:var(--c); letter-spacing:.08em; transition:color .2s;
+  }
+  .open svg{
+    width:17px; height:17px; stroke:currentColor; stroke-width:1.8; fill:none;
+    stroke-linecap:round; stroke-linejoin:round; transition:transform .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .card:hover .open svg{
+    transform:translateX(5px);
+  }
+
+  .empty-hint{
+    grid-column: 1 / -1; text-align:center; padding:48px 16px;
+    background:var(--paper); border:1px solid var(--hairline-soft);
+    border-radius:12px; color:var(--pencil); font-size:14px; display:none;
+  }
+
+  footer{text-align:center;color:var(--pencil);font-size:11px;line-height:1.8;letter-spacing:.06em;margin-top:36px}
+  @media (max-width:720px){
+    .controls-bar{flex-direction:column; align-items:stretch}
+    .search-wrapper{max-width:none}
+    .hero-title{font-size:27px}
+  }
 </style>
 </head>
 <body>
@@ -89,11 +197,24 @@
   <section class="hero">
     <p class="eyebrow">系列入口</p>
     <div class="hero-title">把方法變成每天能用的工具。</div>
-    <p class="hero-text">這裡整理所有提升生產力系列系統頁面。每個工具都是獨立 HTML App，可以離線使用，資料只存在自己的瀏覽器。</p>
+    <p class="hero-text">這裡整理所有提升生產力系列系統頁面。每個工具都是獨立 HTML App，可以離線使用，資料只存在您本機的瀏覽器中。</p>
   </section>
 
-  <main class="grid">
-    <a class="card" style="--c:var(--green)" href="https://iamkeith001.github.io/energy-first/">
+  <!-- Search & Segmented Filter Bar -->
+  <div class="controls-bar">
+    <div class="filters" id="portalFilters">
+      <button class="filter-btn active" data-filter="all">全部工具</button>
+      <button class="filter-btn" data-filter="thinking">思維與決策</button>
+      <button class="filter-btn" data-filter="management">精力與行動</button>
+    </div>
+    <div class="search-wrapper">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="搜尋工具或關鍵字...">
+    </div>
+  </div>
+
+  <main class="grid" id="toolsGrid">
+    <a class="card" style="--c:var(--green); --c-soft:var(--green-soft)" href="https://iamkeith001.github.io/energy-first/" data-category="management">
       <div class="mark">能</div>
       <h2>能量儀表板</h2>
       <div class="en">ENERGY FIRST</div>
@@ -101,7 +222,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--red)" href="https://iamkeith001.github.io/mind-offload/">
+    <a class="card" style="--c:var(--red); --c-soft:var(--red-soft)" href="https://iamkeith001.github.io/mind-offload/" data-category="management">
       <div class="mark">空</div>
       <h2>腦袋清空站</h2>
       <div class="en">MIND OFFLOAD</div>
@@ -109,7 +230,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--amber)" href="https://iamkeith001.github.io/choice-loop/">
+    <a class="card" style="--c:var(--amber); --c-soft:var(--amber-soft)" href="https://iamkeith001.github.io/choice-loop/" data-category="thinking">
       <div class="mark">循</div>
       <h2>選擇迴圈</h2>
       <div class="en">EXPLORE CHOOSE COMMIT</div>
@@ -117,7 +238,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--blue)" href="https://iamkeith001.github.io/premortem-thinking/">
+    <a class="card" style="--c:var(--blue); --c-soft:var(--blue-soft)" href="https://iamkeith001.github.io/premortem-thinking/" data-category="thinking">
       <div class="mark">預</div>
       <h2>情境預演</h2>
       <div class="en">PREMORTEM THINKING</div>
@@ -125,7 +246,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--purple)" href="./decision-journal/">
+    <a class="card" style="--c:var(--purple); --c-soft:var(--purple-soft)" href="./decision-journal/" data-category="thinking">
       <div class="mark">誌</div>
       <h2>決策日誌</h2>
       <div class="en">DECISION JOURNALING</div>
@@ -133,7 +254,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--teal)" href="./action-trigger/">
+    <a class="card" style="--c:var(--teal); --c-soft:var(--teal-soft)" href="./action-trigger/" data-category="management">
       <div class="mark">觸</div>
       <h2>行動觸發</h2>
       <div class="en">ACTION TRIGGER</div>
@@ -141,22 +262,27 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--slate)" href="./mental-models/">
+    <a class="card" style="--c:var(--slate); --c-soft:var(--slate-soft)" href="./mental-models/" data-category="thinking">
       <div class="mark">模</div>
       <h2>心智模型</h2>
       <div class="en">MENTAL MODELS</div>
       <p>建立與運用多元心智模型工具箱。在面對複雜問題與重大決策時，藉由思維模板檢核多重維度，提升思考品質。</p>
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
+
+    <div class="empty-hint" id="emptyHint">沒有找到符合搜尋條件的工具。</div>
   </main>
 
   <footer>提升生產力系列 · 本機入口網站</footer>
 </div>
 
 <script>
+"use strict";
+
 const storeKey="prod_portal_theme";
 const btn=document.getElementById("themeBtn");
 const icon=document.getElementById("themeIcon");
+
 function applyTheme(t){
   document.documentElement.dataset.theme=t;
   icon.innerHTML=t==="dark"
@@ -166,6 +292,47 @@ function applyTheme(t){
 }
 applyTheme(localStorage.getItem(storeKey)||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
 btn.addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+
+/* --- Search and Filter Logic --- */
+const searchInput = document.getElementById('searchInput');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const cards = document.querySelectorAll('.card');
+const emptyHint = document.getElementById('emptyHint');
+
+function filterTools() {
+  const query = searchInput.value.toLowerCase().trim();
+  const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+  let visibleCount = 0;
+
+  cards.forEach(card => {
+    const title = card.querySelector('h2').textContent.toLowerCase();
+    const enTitle = card.querySelector('.en').textContent.toLowerCase();
+    const desc = card.querySelector('p').textContent.toLowerCase();
+    const category = card.dataset.category;
+
+    const matchesSearch = title.includes(query) || enTitle.includes(query) || desc.includes(query);
+    const matchesFilter = activeFilter === 'all' || category === activeFilter;
+
+    if (matchesSearch && matchesFilter) {
+      card.style.display = 'flex';
+      visibleCount++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  emptyHint.style.display = (visibleCount === 0) ? 'block' : 'none';
+}
+
+searchInput.addEventListener('input', filterTools);
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterTools();
+  });
+});
 </script>
 </body>
 </html>
