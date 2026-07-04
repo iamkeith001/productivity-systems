@@ -19,3 +19,4 @@
 - 能量區塊：https://iamkeith001.github.io/productivity-systems/energy-blocking/
 - 兩分鐘啟動：https://iamkeith001.github.io/productivity-systems/two-minute/
 - 微習慣堆疊：https://iamkeith001.github.io/productivity-systems/habit-stacking/
+- 預先決策：https://iamkeith001.github.io/productivity-systems/pre-decision/
