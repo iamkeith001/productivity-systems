@@ -11,3 +11,4 @@
 - 選擇迴圈：https://iamkeith001.github.io/choice-loop/
 - 情境預演：https://iamkeith001.github.io/premortem-thinking/
 - 決策日誌：https://iamkeith001.github.io/productivity-systems/decision-journal/
+- 行動觸發：https://iamkeith001.github.io/productivity-systems/action-trigger/

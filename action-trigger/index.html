@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="行動觸發">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%230FB9B1' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%230FB9B1'%3E觸%3C/text%3E%3C/svg%3E">
+<title>行動觸發設計 · Action Trigger Design</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --teal:#0FB9B1; --teal-soft:#E6F7F6;
+    --grid:rgba(15,185,177,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --teal:#2BCBBA; --teal-soft:#1C3B3A;
+    --grid:rgba(43,203,186,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--teal)}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  
+  /* Layout Cards */
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card.gridpaper{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;background-position:center}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--teal)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--teal);letter-spacing:.04em}
+  
+  /* Tabs switching */
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  
+  /* Wizard Progress Navigation */
+  .wizard-progress{display:flex;justify-content:space-between;gap:4px;border-bottom:1px solid var(--hairline-soft);padding-bottom:10px;margin-bottom:18px}
+  .wiz-step{font-size:10.5px;font-weight:700;color:var(--pencil);text-align:center;flex:1;padding:4px 0;transition:.2s}
+  .wiz-step.active{color:var(--teal);border-bottom:2px solid var(--teal)}
+  .wizard-step-panel{display:none}
+  .wizard-step-panel.active{display:block}
+  
+  /* Forms */
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],input[type=date],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:80px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--teal)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--teal);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--teal-soft);color:var(--teal)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+  
+  /* Dynamic List Inputs */
+  .dynamic-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .dynamic-row input[type=text]{margin-bottom:0;flex:1}
+  .dynamic-row button{flex:none;width:34px;height:38px;border-radius:6px;border:1px solid var(--hairline);background:var(--paper2);color:var(--red);cursor:pointer;font-weight:800;font-size:16px}
+  
+  /* Trigger Templates list */
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:5px 10px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700}
+  
+  /* Stats Grid */
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.12em}
+  
+  /* Active Trigger Card */
+  .trig-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--teal)}
+  .trig-card.overdue{border-left-color:var(--red)}
+  .trig-card.reviewed{border-left-color:var(--green)}
+  .trig-formula{font-family:"Songti TC","Noto Serif TC",serif;font-size:17.5px;font-weight:900;line-height:1.6;margin:12px 0;padding:10px 14px;background:var(--paper2);border-radius:6px;border-left:3px solid var(--teal)}
+  .trig-formula span.hl{color:var(--teal);text-decoration:underline;text-underline-offset:3px}
+  .env-cues-list{margin:8px 0 12px;padding-left:18px;font-size:13px;color:var(--pencil)}
+  .env-cues-list li{margin-bottom:4px}
+  
+  /* Filters */
+  .filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .filter-btn{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:6px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;font-weight:700;white-space:nowrap}
+  .filter-btn.active{background:var(--teal-soft);color:var(--teal);border-color:transparent}
+  
+  /* Stars rating */
+  .stars{display:flex;gap:6px;font-size:24px;color:var(--hairline);cursor:pointer;user-select:none;margin-bottom:10px}
+  .stars .star.active{color:var(--amber)}
+  
+  /* Binary outcome group */
+  .btn-group{display:flex;gap:8px;margin-bottom:12px}
+  .btn-group-btn{flex:1;padding:10px;border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);font-size:13px;font-weight:700;cursor:pointer;border-radius:6px;text-align:center}
+  .btn-group-btn.active{background:var(--teal);color:var(--paper);border-color:transparent}
+  .btn-group-btn.active.yes{background:var(--green);color:var(--paper);border-color:transparent}
+  .btn-group-btn.active.no{background:var(--red);color:var(--paper);border-color:transparent}
+  
+  /* Optimization guide box */
+  .optimization-box{background:var(--red-soft);color:var(--red);border-radius:6px;padding:12px;font-size:13px;margin:16px 0;line-height:1.6}
+  .opt-checkbox-row{display:flex;align-items:flex-start;gap:8px;margin-top:8px;color:var(--ink);font-weight:600}
+  .opt-checkbox-row input{margin-top:4px}
+  
+  /* Tag Design */
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 6px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em;text-transform:uppercase}
+  .tag.teal{background:var(--teal-soft);color:var(--teal);border-color:transparent}
+  .tag.amber{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.green{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.red{background:var(--red-soft);color:var(--red);border-color:transparent}
+  
+  /* Toast and utilities */
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\u2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\u2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.7}
+  
+  /* Tab Bar navigation */
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.14em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--teal)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--teal)}
+  
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--teal)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--teal)">觸</text></svg>
+      <div>
+        <h1>行動觸發設計</h1>
+        <small>Action Trigger Design</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- TAB 1: DESIGN (WIZARD DEFAULT) -->
+  <section class="tab active" id="tab-create">
+    <div class="card">
+      <p class="eyebrow" id="createFormTitleEyebrow">習慣設計</p>
+      <h2 id="createFormTitle">設計習慣觸發點</h2>
+      
+      <!-- Wizard Progress Indicators -->
+      <div class="wizard-progress">
+        <div class="wiz-step active" id="wizIndicator-1">1. 目標與觸發</div>
+        <div class="wiz-step" id="wizIndicator-2">2. 動作與提示</div>
+        <div class="wiz-step" id="wizIndicator-3">3. 設定回顧</div>
+      </div>
+
+      <!-- PANEL 1: TARGET HABIT & ANCHOR CUE -->
+      <div class="wizard-step-panel active" id="wizPanel-1">
+        <label class="form-label" for="trigHabitName">想建立的好習慣（目標） *</label>
+        <input type="text" id="trigHabitName" placeholder="例如：寫作習慣、讀書習慣、健身習慣">
+        
+        <label class="form-label" for="trigTargetBehavior">微型化目標行為（核心行動） *</label>
+        <div class="sub">目標必須具體且微小，避免抽象目標。例如：「寫 100 字」、「讀 1 頁書」、「做 5 個伏地挺身」。</div>
+        <input type="text" id="trigTargetBehavior" placeholder="例如：在稿件裡寫 3 句話">
+
+        <label class="form-label" for="trigAnchorEvent">日常固定事件 / 自然觸發點 *</label>
+        <div class="sub">尋找你每天必定會發生、非常穩定的事件作為「線索（Anchor）」。點選下方範本可快速帶入：</div>
+        <div class="templates-list">
+          <button type="button" class="template-btn" data-val="打開電腦後">打開電腦後</button>
+          <button type="button" class="template-btn" data-val="坐到書桌前">坐到書桌前</button>
+          <button type="button" class="template-btn" data-val="吃完午餐後">吃完午餐後</button>
+          <button type="button" class="template-btn" data-val="開完會後">開完會後</button>
+          <button type="button" class="template-btn" data-val="起床刷牙後">起床刷牙後</button>
+          <button type="button" class="template-btn" data-val="換上運動服後">換上運動服後</button>
+        </div>
+        <input type="text" id="trigAnchorEvent" placeholder="例如：早上坐到書桌前">
+      </div>
+
+      <!-- PANEL 2: MINIMUM ACTION & ENVIRONMENTAL CUE -->
+      <div class="wizard-step-panel" id="wizPanel-2">
+        <label class="form-label" for="trigMiniAction">最小啟動動作（低於 2 分鐘） *</label>
+        <div class="sub">習慣啟動的摩擦力必須極低。只要求自己跨出第一步，而非完成整件事。</div>
+        <input type="text" id="trigMiniAction" placeholder="例如：打開 word 並寫下標題">
+
+        <label class="form-label">設計環境可見提示（可複選）</label>
+        <div class="sub">將環境做成實體可見的提示，讓大腦一眼看到。例如：「把運動鞋放在門口」、「筆記本翻開放在桌上」。</div>
+        <div id="envCuesContainer">
+          <!-- Dynamically generated rows -->
+        </div>
+        <button class="btn line" id="addEnvCueBtn" style="margin-bottom: 12px; padding: 8px; width:100%">+ 新增環境提示</button>
+      </div>
+
+      <!-- PANEL 3: REVIEW DATE -->
+      <div class="wizard-step-panel" id="wizPanel-3">
+        <label class="form-label">設定首次回顧日期 *</label>
+        <div class="sub">習慣建立初期，預設每週回顧一次（7 天後）效果最佳。</div>
+        <input type="date" id="trigReviewDate">
+        <div class="mini-row" style="margin-bottom: 16px">
+          <button class="btn ghost" id="date7Btn">7 天後 (推薦)</button>
+          <button class="btn ghost" id="date14Btn">14 天後</button>
+          <button class="btn ghost" id="date30Btn">30 天後</button>
+        </div>
+      </div>
+
+      <!-- Wizard Navigation Buttons -->
+      <div class="mini-row" style="margin-top: 24px; border-top: 1px solid var(--hairline-soft); padding-top: 16px">
+        <button class="btn line" id="wizPrevBtn" style="display:none">上一步</button>
+        <button class="btn" id="wizNextBtn">下一步</button>
+        <button class="btn" id="saveTriggerBtn" style="display:none">儲存觸發設計</button>
+        <button class="btn danger" id="wizCancelBtn">取消</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: TRIGGER LIST -->
+  <section class="tab" id="tab-list">
+    <div class="hero">
+      <p class="eyebrow">Action Trigger Design</p>
+      <div class="hero-title">情境自動啟動，<br>取代意志力消耗。</div>
+      <p class="hero-text">真正穩定的行為，不是每天重新說服自己，而是讓環境在正確時刻提醒你開始。當 If-Then 語句在腦海建立，大腦便會形成習慣反射。</p>
+      <div class="quote-line">「好習慣不是想出來的，是觸發出來的。」</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="stPending">0</div><div class="l">待回顧</div></div>
+      <div class="stat"><div class="n" id="stTotal">0</div><div class="l">活躍中</div></div>
+      <div class="stat"><div class="n" id="stReviewed">0</div><div class="l">已完成回顧</div></div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="pending">待回顧</button>
+      <button class="filter-btn" data-filter="active">活躍中</button>
+    </div>
+
+    <div id="triggersList"></div>
+  </section>
+
+  <!-- TAB 3: RETROSPECTIVE REVIEW -->
+  <section class="tab" id="tab-review">
+    <!-- Pending review items list container -->
+    <div id="pendingReviewListContainer">
+      <div class="card">
+        <p class="eyebrow">習慣檢測</p>
+        <h2>待進行回顧的觸發點</h2>
+        <div class="sub">選擇下方的觸發點進行習慣形成檢測。我們將依據行為科學診斷問題，協助你優化流程。</div>
+        <div id="pendingReviewList"></div>
+      </div>
+    </div>
+
+    <!-- Active Retrospective Form Workspace -->
+    <div class="card" id="reviewWorkspace" style="display:none">
+      <p class="eyebrow">回顧工作區</p>
+      <h2 id="revTitle">觸發點回顧與調校</h2>
+      <div class="sub">習慣的養成在於調整系統，而不是苛求意志力。</div>
+
+      <!-- Original Statement Display -->
+      <div style="background:var(--paper2); padding:14px; border-radius:6px; margin-bottom:16px; font-size:13.5px">
+        <div><b>習慣目標：</b><span id="revHabitName" style="font-weight:700"></span></div>
+        <div class="trig-formula" style="margin: 8px 0; font-size: 15.5px">
+          當 <span class="hl" id="revFormulaAnchor">日常事件</span> 出現時，我會立刻 <span class="hl" id="revFormulaAction">啟動動作</span>。
+        </div>
+      </div>
+
+      <!-- Question 1 -->
+      <label class="form-label">1. 自然觸發事件（Anchor）是否真的出現了？ *</label>
+      <div class="sub">例如你的觸發點是「吃完午餐後」，這週內這個情境是否有規律出現？</div>
+      <div class="btn-group" id="revQ1Group">
+        <button class="btn-group-btn" data-val="yes">是，每天/情境穩定出現</button>
+        <button class="btn-group-btn" data-val="partial">部分，有時情境被打亂</button>
+        <button class="btn-group-btn" data-val="no">否，這週幾乎沒有這個情境</button>
+      </div>
+
+      <!-- Question 2 -->
+      <label class="form-label" style="margin-top:14px">2. 當觸發事件出現時，你是否「注意到」它？ *</label>
+      <div class="sub">你的大腦有沒有想起你要做的習慣？還是完全忘記了？</div>
+      <div class="btn-group" id="revQ2Group">
+        <button class="btn-group-btn" data-val="true">是的，我有注意到提示</button>
+        <button class="btn-group-btn" data-val="false">沒有，忘得一乾二淨</button>
+      </div>
+
+      <!-- Question 3 -->
+      <label class="form-label" style="margin-top:14px">3. 注意到提示後，你是否「立刻啟動」了最小動作？ *</label>
+      <div class="sub">你有沒有在 2 分鐘內開始第一步？還是覺得麻煩、產生拖延而放棄？</div>
+      <div class="btn-group" id="revQ3Group">
+        <button class="btn-group-btn" data-val="true">是的，立刻就開始了</button>
+        <button class="btn-group-btn" data-val="false">猶豫、延遲了或完全沒動</button>
+      </div>
+
+      <!-- General success star rating -->
+      <label class="form-label" style="margin-top:14px">這週的習慣啟動執行成功率？ (1 - 5 星) *</label>
+      <div class="stars" id="revSuccessStars">
+        <span class="star" data-star="1">★</span>
+        <span class="star" data-star="2">★</span>
+        <span class="star" data-star="3">★</span>
+        <span class="star" data-star="4">★</span>
+        <span class="star" data-star="5">★</span>
+      </div>
+
+      <!-- Dynamic Optimization Advice Box (Fogg Model diagnostics) -->
+      <div class="optimization-box" id="revOptBox" style="display:none">
+        ⚠️ <b>行為診斷提醒（別責怪自己的意志力！）：</b><br>
+        <span id="revDiagnosticText">檢測到您的啟動難度或提示能見度有待改進。請勾選下方的調校方案：</span>
+        
+        <div class="opt-checkbox-row">
+          <input type="checkbox" id="optCue" value="cue">
+          <label for="optCue"><b>調整觸發時機</b>（目前的日常事件不夠穩定，我想換一個更穩定的事件）</label>
+        </div>
+        <div class="opt-checkbox-row">
+          <input type="checkbox" id="optDifficulty" value="difficulty">
+          <label for="optDifficulty"><b>降低啟動難度</b>（原先設定的第一步還是太難了，我需要縮減成更小的事情）</label>
+        </div>
+        <div class="opt-checkbox-row">
+          <input type="checkbox" id="optEnvCue" value="env_cue">
+          <label for="optEnvCue"><b>強化環境提示</b>（提示不夠顯眼，我需要在顯眼位置放置實體線索）</label>
+        </div>
+      </div>
+
+      <!-- Notes / Reflections -->
+      <label class="form-label" for="revNotes">本次回顧心得與習慣調校計畫 *</label>
+      <textarea id="revNotes" placeholder="例如：我發現午餐後我太累了，打算改成『早上喝完第一杯咖啡後』作為新的觸發點，並把啟動動作縮小為只看 1 行字..."></textarea>
+
+      <!-- Actions -->
+      <div class="mini-row" style="margin-top:20px">
+        <button class="btn line" id="cancelReviewBtn">取消</button>
+        <button class="btn" id="submitReviewBtn">提交回顧紀錄</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4: STATISTICS & THEORY -->
+  <section class="tab" id="tab-analytics">
+    <!-- Habit Calibration Grid -->
+    <div class="card">
+      <p class="eyebrow">數據分析</p>
+      <h2>觸發與習慣調校統計</h2>
+      <div class="sub">了解習慣啟動的核心阻力分布，進行科學調校。</div>
+      <div class="stats">
+        <div class="stat"><div class="n" id="stAvgStars">0.0</div><div class="l">平均執行星等</div></div>
+        <div class="stat"><div class="n" id="stCheckedTotal">0</div><div class="l">總回顧次數</div></div>
+        <div class="stat"><div class="n" id="stOptRate">0%</div><div class="l">調校改善率</div></div>
+      </div>
+    </div>
+
+    <!-- Optimization Types Diagnostic -->
+    <div class="card gridpaper">
+      <p class="eyebrow">阻力分析</p>
+      <h2>阻力調校分佈（優化方向次數）</h2>
+      <div class="sub">這代表了你習慣沒做成的主要原因：是觸發時機不對、動作太難、還是環境提示不夠？</div>
+      <div class="checklist-item">
+        <span class="checklist-desc"><b>調整觸發時機次數 (線索重設)：</b></span>
+        <span class="tag teal" id="statOptCue">0 次</span>
+      </div>
+      <div class="checklist-item">
+        <span class="checklist-desc"><b>降低啟動難度次數 (阻力降低)：</b></span>
+        <span class="tag amber" id="statOptDifficulty">0 次</span>
+      </div>
+      <div class="checklist-item">
+        <span class="checklist-desc"><b>強化環境提示次數 (能見度提升)：</b></span>
+        <span class="tag green" id="statOptEnvCue">0 次</span>
+      </div>
+    </div>
+
+    <!-- Backup & Restore -->
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>備份與還原</h2>
+      <div class="sub">資料均儲存於此瀏覽器中。清除歷史紀錄或換裝置時，請下載檔案備份。</div>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <button class="btn danger" id="wipeBtn" style="margin-top:9px; width:100%">清除全部資料</button>
+    </div>
+
+    <!-- BJ Fogg behavior model Details -->
+    <div class="card">
+      <p class="eyebrow">行為科學</p>
+      <details open>
+        <summary>什麼是 BJ Fogg 行動模型？</summary>
+        <div class="body">
+          史丹佛大學行為設計實驗室創辦人 BJ Fogg 指出，一個行為的發生必須同時滿足三個要素：<br>
+          <span style="color:var(--teal); font-weight:800">Behavior = Motivation × Ability × Prompt</span> (行為 = 動機 × 能力 × 提示)<br><br>
+          1. **動機 (Motivation)**：你想做這件事的欲望。動機是波動的，很難每天維持在高點。<br>
+          2. **能力 (Ability)**：做這件事的簡易程度。能力越簡單（低阻力），就越不需要高動機。<br>
+          3. **提示 (Prompt)**：提醒你開始做這件事的線索。沒有提示，行動就絕對不會發生。<br><br>
+          習慣設計的精髓是：<b>不要去管理波動的動機，而是降低啟動難度，並設計一個 100% 會出現的穩定提示。</b>
+        </div>
+      </details>
+      <details>
+        <summary>為什麼要將目標「微型化」？</summary>
+        <div class="body">
+          當你把目標設定為「寫論文一章」時，你的大腦會感到焦慮，需要耗費巨大的動機才能啟動；而動機一旦在疲憊時降為零，你就會開始拖延。<br><br>
+          如果將目標微型化為「打開 word 文件並寫下 3 個字」，這個動作的摩擦力極低，低到你不需要任何意志力也能開始。只要你開始了最小動作，大腦的「啟動效應（Activation Energy）」就會被點燃，接下來繼續做下去的阻力就會大幅降低。
+        </div>
+      </details>
+      <details>
+        <summary>如何尋找高效的「自然觸發點 (Anchor)」？</summary>
+        <div class="body">
+          手機鬧鐘或日程提醒很容易被忽略或推遲。最高效的提示是**日常生活中的固定習慣**（Anchor）。<br><br>
+          例如：起床後、刷牙時、喝第一杯咖啡時、吃完午餐時、合上電腦螢幕時、走到家門口時。將你想養成的新習慣「寄生」在這些已經根深蒂固的舊習慣後面，大腦就能自動連結。
+        </div>
+      </details>
+    </div>
+
+    <div class="foot">
+      行動觸發設計 · Action Trigger Design<br>
+      系列入口：<a href="../index.html">提升生產力系統</a><br>
+      同系列：<a href="https://iamkeith001.github.io/energy-first/">能量儀表板</a> · <a href="https://iamkeith001.github.io/mind-offload/">腦袋清空站</a> · <a href="https://iamkeith001.github.io/choice-loop/">選擇迴圈</a> · <a href="https://iamkeith001.github.io/premortem-thinking/">情境預演</a> · <a href="https://iamkeith001.github.io/productivity-systems/decision-journal/">決策日誌</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="create" aria-label="設計"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>設計</button>
+    <button class="tabbtn" data-tab="list" aria-label="觸發器"><svg viewBox="0 0 24 24"><path d="M4 19.5h16M6 17V4h12v13M10 7h4M10 11h4"/></svg>觸發器</button>
+    <button class="tabbtn" data-tab="review" aria-label="回顧"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>回顧</button>
+    <button class="tabbtn" data-tab="analytics" aria-label="統計"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>統計</button>
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const esc = s => (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+};
+const addDays = (dateStr, days) => {
+  const d = new Date(dateStr + "T00:00:00");
+  d.setDate(d.getDate() + days);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+};
+const fmtDate = d => {
+  if (!d) return "未設定";
+  const x = new Date(d + "T00:00:00");
+  return (x.getMonth() + 1) + "/" + x.getDate();
+};
+
+const store = {
+  get(k, def) {
+    try {
+      const v = JSON.parse(localStorage.getItem("at_" + k));
+      return v == null ? def : v;
+    } catch (e) {
+      return def;
+    }
+  },
+  set(k, v) {
+    localStorage.setItem("at_" + k, JSON.stringify(v));
+  }
+};
+
+let triggers = store.get("triggers", []);
+let editingId = null;
+let reviewingId = null;
+let currentWizardStep = 1;
+
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+function saveAll() {
+  store.set("triggers", triggers);
+}
+
+// Tab Switching
+document.querySelectorAll(".tabbtn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+    
+    b.classList.add("active");
+    $("tab-" + b.dataset.tab).classList.add("active");
+    
+    if (b.dataset.tab === "review") {
+      reviewingId = null;
+      $("reviewWorkspace").style.display = "none";
+      $("pendingReviewListContainer").style.display = "block";
+    }
+
+    renderAll();
+    window.scrollTo({top: 0});
+  });
+});
+
+// Theme Management
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  store.set("theme", t);
+}
+applyTheme(store.get("theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* --- Dynamic Input Lists & Wizard Integration --- */
+
+function createDynamicRow(containerId, value = "", placeholder = "") {
+  const container = $(containerId);
+  const rowId = uid();
+  const div = document.createElement("div");
+  div.className = "dynamic-row";
+  div.id = rowId;
+  div.innerHTML = `
+    <input type="text" value="${esc(value)}" placeholder="${esc(placeholder)}">
+    <button type="button" class="del-row-btn">&times;</button>
+  `;
+  container.appendChild(div);
+  div.querySelector(".del-row-btn").addEventListener("click", () => div.remove());
+}
+
+$("addEnvCueBtn").addEventListener("click", () => createDynamicRow("envCuesContainer", "", "例如：把運動鞋放在玄關前..."));
+
+// Clickable templates for Anchor
+document.querySelectorAll(".template-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    $("trigAnchorEvent").value = btn.dataset.val;
+  });
+});
+
+// Quick dates buttons
+$("date7Btn").addEventListener("click", () => $("trigReviewDate").value = addDays(today(), 7));
+$("date14Btn").addEventListener("click", () => $("trigReviewDate").value = addDays(today(), 14));
+$("date30Btn").addEventListener("click", () => $("trigReviewDate").value = addDays(today(), 30));
+
+// Slider warning logic
+$("decConfidence").addEventListener("input", e => {
+  const val = e.target.value;
+  $("decConfidenceVal").textContent = val + "%";
+  $("confidenceWarning").style.display = (val == 0 || val == 100) ? "block" : "none";
+});
+
+/* --- Wizard steps controller --- */
+
+function showWizardStep(step) {
+  currentWizardStep = step;
+  
+  document.querySelectorAll(".wiz-step").forEach(i => i.classList.remove("active"));
+  $("wizIndicator-" + step).classList.add("active");
+
+  document.querySelectorAll(".wizard-step-panel").forEach(p => p.classList.remove("active"));
+  $("wizPanel-" + step).classList.add("active");
+
+  if (step === 1) {
+    $("wizPrevBtn").style.display = "none";
+    $("wizNextBtn").style.display = "inline-block";
+    $("saveTriggerBtn").style.display = "none";
+  } else if (step === 3) {
+    $("wizPrevBtn").style.display = "inline-block";
+    $("wizNextBtn").style.display = "none";
+    $("saveTriggerBtn").style.display = "inline-block";
+  } else {
+    $("wizPrevBtn").style.display = "inline-block";
+    $("wizNextBtn").style.display = "inline-block";
+    $("saveTriggerBtn").style.display = "none";
+  }
+}
+
+$("wizNextBtn").addEventListener("click", () => {
+  if (currentWizardStep === 1) {
+    const habit = $("trigHabitName").value.trim();
+    const behavior = $("trigTargetBehavior").value.trim();
+    const anchor = $("trigAnchorEvent").value.trim();
+
+    if (!habit) {
+      toast("請填寫想建立的習慣名稱！");
+      return;
+    }
+    if (!behavior) {
+      toast("請填寫具體的微型目標行為！");
+      return;
+    }
+    if (!anchor) {
+      toast("請設定日常固定事件觸發點！");
+      return;
+    }
+  } else if (currentWizardStep === 2) {
+    const mini = $("trigMiniAction").value.trim();
+    if (!mini) {
+      toast("請填寫最小啟動動作！");
+      return;
+    }
+  }
+
+  showWizardStep(currentWizardStep + 1);
+  window.scrollTo({top: 0});
+});
+
+$("wizPrevBtn").addEventListener("click", () => {
+  showWizardStep(currentWizardStep - 1);
+  window.scrollTo({top: 0});
+});
+
+$("wizCancelBtn").addEventListener("click", () => {
+  document.querySelector('.tabbtn[data-tab="list"]').click();
+});
+
+/* --- Initialize Create/Edit form --- */
+
+function initCreateForm(trigId = null) {
+  editingId = trigId;
+  $("envCuesContainer").innerHTML = "";
+
+  if (trigId === null) {
+    $("createFormTitle").textContent = "設計習慣觸發點";
+    $("createFormTitleEyebrow").textContent = "習慣設計";
+    $("trigHabitName").value = "";
+    $("trigTargetBehavior").value = "";
+    $("trigAnchorEvent").value = "";
+    $("trigMiniAction").value = "";
+    $("trigReviewDate").value = addDays(today(), 7);
+
+    // Default placeholders
+    createDynamicRow("envCuesContainer", "", "例如：翻開書本放在電腦鍵盤旁");
+  } else {
+    const trig = triggers.find(t => t.id === trigId);
+    if (!trig) return;
+
+    $("createFormTitle").textContent = "編輯觸發設計";
+    $("createFormTitleEyebrow").textContent = "編輯";
+    $("trigHabitName").value = trig.habitName || "";
+    $("trigTargetBehavior").value = trig.targetBehavior || "";
+    $("trigAnchorEvent").value = trig.anchorEvent || "";
+    $("trigMiniAction").value = trig.miniAction || "";
+    $("trigReviewDate").value = trig.reviewDate || addDays(today(), 7);
+
+    trig.envCues.forEach(c => createDynamicRow("envCuesContainer", c, "環境提示..."));
+  }
+
+  showWizardStep(1);
+}
+
+$("saveTriggerBtn").addEventListener("click", () => {
+  const habitName = $("trigHabitName").value.trim();
+  const targetBehavior = $("trigTargetBehavior").value.trim();
+  const anchorEvent = $("trigAnchorEvent").value.trim();
+  const miniAction = $("trigMiniAction").value.trim();
+  const reviewDate = $("trigReviewDate").value;
+
+  if (!reviewDate) {
+    toast("請設定回顧日期！");
+    return;
+  }
+
+  // Retrieve environment cues
+  const cueRows = $("envCuesContainer").querySelectorAll(".dynamic-row");
+  const envCues = [];
+  cueRows.forEach(row => {
+    const txt = row.querySelector("input").value.trim();
+    if (txt) envCues.push(txt);
+  });
+
+  if (editingId === null) {
+    const newTrig = {
+      id: uid(),
+      habitName,
+      targetBehavior,
+      anchorEvent,
+      miniAction,
+      envCues,
+      reviewDate,
+      createdAt: today(),
+      status: "active",
+      history: []
+    };
+    triggers.unshift(newTrig);
+    toast("行動觸發器設計完成！");
+  } else {
+    const idx = triggers.findIndex(t => t.id === editingId);
+    if (idx !== -1) {
+      const orig = triggers[idx];
+      triggers[idx] = {
+        ...orig,
+        habitName,
+        targetBehavior,
+        anchorEvent,
+        miniAction,
+        envCues,
+        reviewDate,
+        status: orig.status
+      };
+      toast("觸發設計更新完成！");
+    }
+  }
+
+  saveAll();
+  document.querySelector('.tabbtn[data-tab="list"]').click();
+});
+
+
+/* --- TAB 2: TRIGGER LISTS --- */
+
+let currentFilter = "all";
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    renderList();
+  });
+});
+
+function renderList() {
+  const el = $("triggersList");
+  if (triggers.length === 0) {
+    el.innerHTML = '<div class="empty-hint">目前沒有設定任何行動觸發點。請在「設計」頁面規劃你的第一個習慣提示！</div>';
+    return;
+  }
+
+  let filtered = triggers;
+  if (currentFilter === "pending") {
+    filtered = triggers.filter(t => t.status === "active" && t.reviewDate <= today());
+  } else if (currentFilter === "active") {
+    filtered = triggers.filter(t => t.status === "active");
+  }
+
+  if (filtered.length === 0) {
+    el.innerHTML = `<div class="empty-hint">無此篩選條件下的觸發器。</div>`;
+    return;
+  }
+
+  el.innerHTML = filtered.map(t => {
+    // Status tag setup
+    let statusTag = "";
+    let classModifier = "pending";
+    const curDate = today();
+    
+    if (t.reviewDate === curDate) {
+      statusTag = `<span class="tag red">今天需回顧</span>`;
+    } else if (t.reviewDate < curDate) {
+      statusTag = `<span class="tag red">逾期回顧</span>`;
+    } else {
+      const diffTime = Math.abs(new Date(t.reviewDate + "T00:00:00") - new Date(curDate + "T00:00:00"));
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      statusTag = `<span class="tag teal">剩餘 ${diffDays} 天回顧</span>`;
+      classModifier = "active-stat";
+    }
+
+    const envCuesHtml = t.envCues.length 
+      ? `<ul class="env-cues-list">${t.envCues.map(c => `<li>👁️ ${esc(c)}</li>`).join("")}</ul>`
+      : `<div class="sub" style="margin-left:4px">無設定環境提示</div>`;
+
+    return `
+      <div class="trig-card ${classModifier === "pending" ? "overdue" : ""}">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px">
+          <div style="font-size:12px; color:var(--pencil)">習慣目標：${esc(t.habitName)}</div>
+          ${statusTag}
+        </div>
+        
+        <div class="trig-formula">
+          當 <span class="hl">${esc(t.anchorEvent)}</span> 時，我會立刻 <span class="hl">${esc(t.miniAction)}</span>，以開始 <span class="hl">${esc(t.targetBehavior)}</span>。
+        </div>
+
+        <div style="font-size:12.5px; font-weight:700; color:var(--pencil)">設計的環境提示：</div>
+        ${envCuesHtml}
+
+        <div class="dec-actions" style="margin-top:8px">
+          <button class="tiny primary" onclick="startReview('${t.id}')">進行回顧</button>
+          <button class="tiny" onclick="editTrigger('${t.id}')">編輯</button>
+          <button class="tiny" onclick="copyTriggerMarkdown('${t.id}')">複製摘要</button>
+          <button class="tiny red" onclick="deleteTrigger('${t.id}')" style="margin-left:auto">刪除</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.editTrigger = function(id) {
+  initCreateForm(id);
+  document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+  document.querySelector('.tabbtn[data-tab="create"]').classList.add("active");
+  $("tab-create").classList.add("active");
+  window.scrollTo({top: 0});
+};
+
+window.deleteTrigger = function(id) {
+  if (!confirm("確定要刪除這筆觸發器嗎？這將會清除所有習慣歷史回顧紀錄。")) return;
+  triggers = triggers.filter(t => t.id !== id);
+  if (reviewingId === id) {
+    reviewingId = null;
+    $("reviewWorkspace").style.display = "none";
+    $("pendingReviewListContainer").style.display = "block";
+  }
+  saveAll();
+  renderAll();
+  toast("已刪除習慣觸發器");
+};
+
+window.copyTriggerMarkdown = async function(id) {
+  const t = triggers.find(x => x.id === id);
+  if (!t) return;
+
+  const lines = [
+    `# 行動觸發設計：${t.habitName}`,
+    `- 建立日期：${t.createdAt}`,
+    `- 預計回顧日期：${t.reviewDate}`,
+    ``,
+    `## 行動觸發 If-Then 語句`,
+    `當 **${t.anchorEvent}** 時，我會立刻 **${t.miniAction}**，以開始 **${t.targetBehavior}**。`,
+    ``,
+    `## 環境提示設計`,
+    t.envCues.length ? t.envCues.map(c => `- 👁️ ${c}`).join("\n") : "無設定環境提示",
+  ];
+
+  if (t.history && t.history.length > 0) {
+    lines.push(
+      ``,
+      `---`,
+      `## 歷史回顧摘要`,
+      `- 總回顧次數：${t.history.length} 次`,
+      `- 最近回顧反思：`
+    );
+    const last = t.history[0];
+    lines.push(
+      `  * 日期：${last.reviewedAt}`,
+      `  * 啟動率：${last.successStars} 星`,
+      `  * 事件出現：${last.q1CueOccurred === 'yes' ? '是' : (last.q1CueOccurred === 'no' ? '否' : '部分')}`,
+      `  * 是否注意到：${last.q2Noticed ? '是' : '否'}`,
+      `  * 是否立刻執行：${last.q3StartedImmediately ? '是' : '否'}`,
+      `  * 反思計畫：${last.notes}`
+    );
+  }
+
+  try {
+    await navigator.clipboard.writeText(lines.join("\n"));
+    toast("已成功複製 Markdown 摘要！");
+  } catch (err) {
+    toast("複製失敗，請手動複製");
+  }
+};
+
+
+/* --- TAB 3: RETROSPECTIVE REVIEW WORKSPACE --- */
+
+let revQ1Value = null;
+let revQ2Value = null;
+let revQ3Value = null;
+let revStarsValue = 0;
+
+function renderPendingReviewList() {
+  const container = $("pendingReviewList");
+  const pendings = triggers.filter(t => t.status === "active"); // All active triggers can be reviewed
+
+  if (pendings.length === 0) {
+    container.innerHTML = `
+      <div class="empty-hint" style="padding:24px 0">
+        目前沒有活躍的觸發器！<br>
+        <button class="btn ghost" style="margin-top:12px; width:auto; font-size:12.5px" onclick="document.querySelector('.tabbtn[data-tab=\\'create\\']').click()">設計新的觸發器</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = pendings.map(t => {
+    const curDate = today();
+    let labelClass = "teal";
+    let labelText = "活躍中";
+    if (t.reviewDate === curDate) {
+      labelClass = "red";
+      labelText = "今天需回顧";
+    } else if (t.reviewDate < curDate) {
+      labelClass = "red";
+      labelText = "逾期回顧";
+    } else {
+      const diffTime = Math.abs(new Date(t.reviewDate + "T00:00:00") - new Date(curDate + "T00:00:00"));
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      labelText = `剩餘 ${diffDays} 天`;
+    }
+
+    return `
+      <div style="padding:12px 0; border-bottom: 1px solid var(--hairline-soft); display:flex; justify-content:space-between; align-items:center; gap:10px">
+        <div style="flex:1; min-width:0">
+          <div style="font-weight:800; font-size:14px">${esc(t.habitName)}：${esc(t.targetBehavior)}</div>
+          <div style="font-size:12px; color:var(--pencil); margin-top:2px">
+            If-Then：當 <span style="color:var(--teal); font-weight:700">${esc(t.anchorEvent)}</span> 時 ➔ ${esc(t.miniAction)}
+          </div>
+        </div>
+        <span class="tag ${labelClass}" style="flex:none">${labelText}</span>
+        <button class="btn ghost" style="width:auto; padding:6px 12px; font-size:12px; flex:none" onclick="startReview('${t.id}')">開啟回顧</button>
+      </div>
+    `;
+  }).join("");
+}
+
+window.startReview = function(id) {
+  reviewingId = id;
+  
+  document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+  document.querySelector('.tabbtn[data-tab="review"]').classList.add("active");
+  $("tab-review").classList.add("active");
+
+  const t = triggers.find(x => x.id === id);
+  if (!t) return;
+
+  $("pendingReviewListContainer").style.display = "none";
+  $("reviewWorkspace").style.display = "block";
+
+  $("revHabitName").textContent = t.habitName;
+  $("revFormulaAnchor").textContent = t.anchorEvent;
+  $("revFormulaAction").textContent = t.miniAction;
+  $("revNotes").value = "";
+
+  // Reset review selections
+  revQ1Value = null;
+  revQ2Value = null;
+  revQ3Value = null;
+  revStarsValue = 0;
+  
+  // Clear button highlights
+  document.querySelectorAll(".btn-group-btn").forEach(b => b.classList.remove("active", "yes", "no", "good", "bad"));
+  updateStarDisplay();
+  $("revOptBox").style.display = "none";
+
+  // Reset checkboxes
+  $("optCue").checked = false;
+  $("optDifficulty").checked = false;
+  $("optEnvCue").checked = false;
+
+  window.scrollTo({top: 0});
+};
+
+// Button groups handlers
+document.querySelectorAll("#revQ1Group .btn-group-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#revQ1Group .btn-group-btn").forEach(x => x.classList.remove("active", "yes", "no", "bad"));
+    revQ1Value = btn.dataset.val;
+    btn.classList.add("active");
+    if (revQ1Value === "yes") btn.classList.add("yes");
+    else if (revQ1Value === "partial") btn.classList.add("active"); // default purple
+    else btn.classList.add("no");
+    checkDiagnosticAlert();
+  });
+});
+
+document.querySelectorAll("#revQ2Group .btn-group-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#revQ2Group .btn-group-btn").forEach(x => x.classList.remove("active", "yes", "no"));
+    revQ2Value = btn.dataset.val === "true";
+    btn.classList.add("active");
+    btn.classList.add(revQ2Value ? "yes" : "no");
+    checkDiagnosticAlert();
+  });
+});
+
+document.querySelectorAll("#revQ3Group .btn-group-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#revQ3Group .btn-group-btn").forEach(x => x.classList.remove("active", "yes", "no"));
+    revQ3Value = btn.dataset.val === "true";
+    btn.classList.add("active");
+    btn.classList.add(revQ3Value ? "yes" : "no");
+    checkDiagnosticAlert();
+  });
+});
+
+// Star Click Handler
+document.querySelectorAll("#revSuccessStars .star").forEach(s => {
+  s.addEventListener("click", () => {
+    revStarsValue = parseInt(s.dataset.star);
+    updateStarDisplay();
+    checkDiagnosticAlert();
+  });
+});
+
+function updateStarDisplay() {
+  document.querySelectorAll("#revSuccessStars .star").forEach(s => {
+    const val = parseInt(s.dataset.star);
+    s.classList.toggle("active", val <= revStarsValue);
+  });
+}
+
+function calculateAttribution(stars, isGood) {
+  if (stars >= 4) {
+    return isGood ? "deserved_success" : "bad_break";
+  } else {
+    return isGood ? "dumb_luck" : "deserved_failure";
+  }
+}
+
+// Show/Hide optimization checkboxes based on diagnostics
+function checkDiagnosticAlert() {
+  const box = $("revOptBox");
+  const diagnostic = $("revDiagnosticText");
+
+  // Show if low execution rate or any negative answers
+  const isFailed = (revStarsValue > 0 && revStarsValue < 4) || 
+                    revQ1Value === "no" || revQ1Value === "partial" || 
+                    revQ2Value === false || 
+                    revQ3Value === false;
+
+  if (isFailed) {
+    box.style.display = "block";
+    let text = "偵測到您的阻力瓶頸：<br>";
+    if (revQ1Value === "no" || revQ1Value === "partial") {
+      text += "• <b>線索出現頻率低</b>：自然事件（Anchor）不夠穩定，容易受到干擾。建議重新選擇時機（勾選下方的「調整觸發時機」）。<br>";
+      $("optCue").checked = true;
+    }
+    if (revQ2Value === false) {
+      text += "• <b>提示沒有注意到</b>：在大腦中沒被想起。建議加強實體或視覺能見度（勾選下方的「強化環境提示」）。<br>";
+      $("optEnvCue").checked = true;
+    }
+    if (revQ3Value === false) {
+      text += "• <b>啟動產生阻力</b>：注意到提示了，但覺得麻煩不想動。這代表動作還是太難了，強烈建議降低難度（勾選下方的「降低啟動難度」）。<br>";
+      $("optDifficulty").checked = true;
+    }
+    diagnostic.innerHTML = text;
+  } else {
+    box.style.display = "none";
+  }
+}
+
+$("cancelReviewBtn").addEventListener("click", () => {
+  reviewingId = null;
+  $("reviewWorkspace").style.display = "none";
+  $("pendingReviewListContainer").style.display = "block";
+  renderPendingReviewList();
+});
+
+$("submitReviewBtn").addEventListener("click", () => {
+  const trig = triggers.find(t => t.id === reviewingId);
+  if (!trig) return;
+
+  const notes = $("revNotes").value.trim();
+
+  if (revQ1Value === null) {
+    toast("請勾選觸發事件是否規律出現！");
+    return;
+  }
+  if (revQ2Value === null) {
+    toast("請勾選是否注意到提示！");
+    return;
+  }
+  if (revQ3Value === null) {
+    toast("請勾選是否立刻開始行動！");
+    return;
+  }
+  if (revStarsValue === 0) {
+    toast("請評估成功執行率星等！");
+    return;
+  }
+  if (!notes) {
+    toast("請填寫本次回顧反思心得！");
+    return;
+  }
+
+  // Retrieve selected optimization options
+  const optimizationType = [];
+  if ($("optCue").checked) optimizationType.push("cue");
+  if ($("optDifficulty").checked) optimizationType.push("difficulty");
+  if ($("optEnvCue").checked) optimizationType.push("env_cue");
+
+  const histEntry = {
+    reviewedAt: today(),
+    q1CueOccurred: revQ1Value,
+    q2Noticed: revQ2Value,
+    q3StartedImmediately: revQ3Value,
+    successStars: revStarsValue,
+    optimizationType,
+    notes
+  };
+
+  trig.history.unshift(histEntry);
+  
+  // Set next review date YYYY-MM-DD (typically 7 days later)
+  trig.reviewDate = addDays(today(), 7);
+
+  saveAll();
+  toast("回顧成功！已自動重設下期 7 天後回顧。");
+
+  reviewingId = null;
+  $("reviewWorkspace").style.display = "none";
+  $("pendingReviewListContainer").style.display = "block";
+  renderAll();
+});
+
+
+/* --- TAB 4: STATISTICS & ANALYTICS --- */
+
+function renderAnalytics() {
+  const activeTrigs = triggers.filter(t => t.status === "active");
+  const reviewedCount = triggers.reduce((acc, t) => acc + t.history.length, 0);
+
+  // 1. Average Stars
+  let totalStars = 0;
+  let totalHistoryCount = 0;
+  triggers.forEach(t => {
+    t.history.forEach(h => {
+      totalStars += h.successStars;
+      totalHistoryCount++;
+    });
+  });
+  const avgStars = totalHistoryCount > 0 ? (totalStars / totalHistoryCount) : 0;
+  $("stAvgStars").textContent = avgStars.toFixed(1);
+
+  // 2. Total reviews & optimization actions
+  $("stCheckedTotal").textContent = totalHistoryCount;
+  
+  // Count optimization actions
+  let optCueCount = 0;
+  let optDiffCount = 0;
+  let optEnvCount = 0;
+  let totalActions = 0;
+
+  triggers.forEach(t => {
+    t.history.forEach(h => {
+      if (h.optimizationType) {
+        h.optimizationType.forEach(type => {
+          if (type === "cue") optCueCount++;
+          else if (type === "difficulty") optDiffCount++;
+          else if (type === "env_cue") optEnvCount++;
+          totalActions++;
+        });
+      }
+    });
+  });
+
+  $("statOptCue").textContent = optCueCount + " 次";
+  $("statOptDifficulty").textContent = optDiffCount + " 次";
+  $("statOptEnvCue").textContent = optEnvCount + " 次";
+
+  // Optimization rate (number of reviews that resulted in changes / total reviews)
+  let optRate = 0;
+  let reviewsWithChanges = 0;
+  triggers.forEach(t => {
+    t.history.forEach(h => {
+      if (h.optimizationType && h.optimizationType.length > 0) {
+        reviewsWithChanges++;
+      }
+    });
+  });
+  optRate = totalHistoryCount > 0 ? Math.round((reviewsWithChanges / totalHistoryCount) * 100) : 0;
+  $("stOptRate").textContent = optRate + "%";
+}
+
+
+/* --- DATA BACKUP & RESTORE --- */
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify({ triggers, exportedAt: new Date().toISOString() }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "action-trigger-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+$("importBtn").addEventListener("click", () => $("importFile").click());
+
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.triggers)) {
+        triggers = data.triggers;
+        saveAll();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有行動觸發器與回顧歷史資料嗎？此動作無法復原。")) return;
+  triggers = [];
+  saveAll();
+  renderAll();
+  toast("資料已全數清除");
+});
+
+
+/* --- STATE SYNC & INITIAL RUN --- */
+
+function renderStats() {
+  const activeCount = triggers.filter(t => t.status === "active").length;
+  const reviewedCount = triggers.reduce((acc, t) => acc + (t.history.length > 0 ? 1 : 0), 0);
+  const curDate = today();
+  const pendingCount = triggers.filter(t => t.status === "active" && t.reviewDate <= curDate).length;
+
+  $("stTotal").textContent = activeCount;
+  $("stReviewed").textContent = reviewedCount;
+  $("stPending").textContent = pendingCount;
+}
+
+function renderAll() {
+  renderStats();
+  renderList();
+  renderPendingReviewList();
+  renderAnalytics();
+}
+
+// Initial Run
+initCreateForm(null);
+renderAll();
+
+</script>
+</body>
+</html>
