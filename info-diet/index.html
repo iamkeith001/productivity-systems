@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="資訊飲食">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%238E3B6B' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%238E3B6B'%3E食%3C/text%3E%3C/svg%3E">
+<title>資訊飲食管理 · Information Diet</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#8E3B6B; --acc-soft:#F5E8F0;
+    --grid:rgba(142,59,107,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#D08AB4; --acc-soft:#38222F;
+    --grid:rgba(208,138,180,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],input[type=time],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:64px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  /* Grade picker */
+  .grade-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
+  .grade-btn{border:1px solid var(--hairline);background:var(--paper);padding:9px 2px;border-radius:6px;font-size:12.5px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;color:var(--pencil);min-height:40px}
+  .grade-btn.sel[data-grade="high"]{background:var(--green);color:var(--paper);border-color:transparent}
+  .grade-btn.sel[data-grade="mid"]{background:var(--blue);color:var(--paper);border-color:transparent}
+  .grade-btn.sel[data-grade="low"]{background:var(--amber);color:var(--paper);border-color:transparent}
+  .grade-btn.sel[data-grade="harm"]{background:var(--red);color:var(--paper);border-color:transparent}
+  .grade-hint{font-size:12px;color:var(--pencil);margin:0 0 12px}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.05em;flex:none}
+  .tag.high{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.mid{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.low{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.harm{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .tag.ch{background:var(--paper2);color:var(--pencil)}
+
+  /* Nutrition label bar */
+  .nutri-label{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:16px}
+  .nutri-title{font-weight:800;font-size:13px;letter-spacing:.05em;margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+  .nutri-title small{color:var(--pencil);font-weight:600;letter-spacing:.02em}
+  .nutri-bar{display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--paper2);margin-bottom:9px}
+  .nutri-bar i{display:block;height:100%;transition:width .5s ease}
+  .nutri-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px;color:var(--pencil)}
+  .nutri-legend span{display:flex;align-items:center;gap:5px}
+  .nutri-legend b{width:9px;height:9px;border-radius:2px;display:inline-block}
+  .nutri-verdict{font-size:12.5px;line-height:1.7;margin:11px 0 0;padding:9px 12px;border-radius:6px}
+  .nutri-verdict.warn{background:var(--red-soft);color:var(--red)}
+  .nutri-verdict.ok{background:var(--green-soft);color:var(--green)}
+  .nutri-verdict.mid{background:var(--amber-soft);color:var(--amber)}
+
+  /* Window setting */
+  .win-row{display:flex;gap:9px;align-items:flex-end}
+  .win-row>div{flex:1}
+  .win-note{font-size:12px;color:var(--pencil);margin:8px 0 0;line-height:1.6}
+
+  /* Source cards */
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.1em}
+
+  .filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .filter-btn{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:6px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;font-weight:700;white-space:nowrap;font-family:inherit;min-height:32px}
+  .filter-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+
+  .src-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:10px;border-left:4px solid var(--hairline)}
+  .src-item.high{border-left-color:var(--green)}
+  .src-item.mid{border-left-color:var(--blue)}
+  .src-item.low{border-left-color:var(--amber)}
+  .src-item.harm{border-left-color:var(--red)}
+  .src-item.muted,.src-item.unsub{opacity:.6}
+  .src-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .src-name{font-weight:800;font-size:14.5px;letter-spacing:.02em}
+  .src-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+  .src-note{font-size:12.5px;color:var(--pencil);margin:8px 0 0;line-height:1.6}
+  .src-stat{font-size:11.5px;color:var(--pencil);margin-top:7px;letter-spacing:.03em}
+  .src-stat.warn{color:var(--red);font-weight:700}
+  .src-actions{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap}
+  .src-actions button{flex:1;min-width:64px;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:8px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;min-height:36px}
+  .src-actions button.on{background:var(--acc);color:var(--paper);border-color:transparent}
+  .src-actions button.del{color:var(--red)}
+
+  /* Output type picker */
+  .out-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+  .out-btn{border:1px solid var(--hairline);background:var(--paper);padding:9px 2px;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;color:var(--pencil);min-height:40px}
+  .out-btn.sel{background:var(--acc);color:var(--paper);border-color:transparent}
+  .out-btn.sel[data-out="none"]{background:var(--red);color:var(--paper)}
+
+  .digest-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:10px}
+  .digest-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:5px}
+  .digest-src{font-weight:800;font-size:13px}
+  .digest-date{font-size:11px;color:var(--pencil)}
+  .digest-out{font-size:13.5px;line-height:1.6}
+  .digest-out .otype{font-weight:800;color:var(--acc)}
+  .digest-none{color:var(--red);font-weight:700;font-size:13px}
+  .digest-del{border:none;background:none;color:var(--red);cursor:pointer;font-size:15px;font-weight:800;padding:0 2px}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  /* Weekly review verdicts */
+  .verdict-group{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:8px 0 4px}
+  .verdict-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:9px 4px;border-radius:6px;font-size:11.5px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;min-height:44px;line-height:1.4}
+  .verdict-btn.sel.keep{background:var(--green);color:var(--paper);border-color:transparent}
+  .verdict-btn.sel.busy{background:var(--amber);color:var(--paper);border-color:transparent}
+  .verdict-btn.sel.cut{background:var(--red);color:var(--paper);border-color:transparent}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">食</text></svg>
+      <div>
+        <h1>資訊飲食管理</h1>
+        <small>INFORMATION DIET</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: MENU (sources + grading) -->
+  <section class="tab active" id="tab-menu">
+    <div class="hero">
+      <p class="eyebrow">資訊菜單</p>
+      <div class="hero-title serif">你吃進什麼資訊，<br>是可以設計的。</div>
+      <p class="hero-text">問題不是資訊太多，而是吃進太多低品質、高刺激、強化偏見的「垃圾資訊」。先盤點每天的資訊入口，替每個來源做營養分級——看見入口，才管得了入口。</p>
+      <div class="quote-line serif">少而精、高相關、可轉化。</div>
+    </div>
+
+    <div class="nutri-label" id="nutriLabel">
+      <div class="nutri-title">資訊營養標示 <small id="nutriCount">0 個來源</small></div>
+      <div class="nutri-bar" id="nutriBar"></div>
+      <div class="nutri-legend">
+        <span><b style="background:var(--green)"></b>高營養</span>
+        <span><b style="background:var(--blue)"></b>中營養</span>
+        <span><b style="background:var(--amber)"></b>低營養</span>
+        <span><b style="background:var(--red)"></b>有害</span>
+      </div>
+      <div class="nutri-verdict" id="nutriVerdict" style="display:none"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">攝取時段</p>
+      <h2>集中攝取，其餘關通知</h2>
+      <p class="sub">不要整天被動接收。設定固定的資訊攝取時段，其他時間關閉非必要通知。</p>
+      <div class="win-row">
+        <div>
+          <label class="form-label" for="winAM">上午時段</label>
+          <input type="text" id="winAM" placeholder="例如 09:00 · 30 分鐘">
+        </div>
+        <div>
+          <label class="form-label" for="winPM">下午時段</label>
+          <input type="text" id="winPM" placeholder="例如 15:00 · 20 分鐘">
+        </div>
+      </div>
+      <button class="btn ghost" id="saveWinBtn">儲存時段</button>
+      <p class="win-note" id="winNote" style="display:none"></p>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">新增來源</p>
+      <h2>盤點一個資訊入口</h2>
+      <label class="form-label" for="srcName">來源名稱 *</label>
+      <input type="text" id="srcName" placeholder="例如：某某產業電子報、IG 追蹤、核心期刊 RSS">
+
+      <label class="form-label" for="srcChannel">管道類型</label>
+      <select id="srcChannel">
+        <option>Email</option>
+        <option>LINE</option>
+        <option>Slack</option>
+        <option>社群平台</option>
+        <option>新聞</option>
+        <option>YouTube</option>
+        <option>Podcast</option>
+        <option>RSS</option>
+        <option>論文提醒</option>
+        <option>群組訊息</option>
+        <option>其他</option>
+      </select>
+
+      <label class="form-label">營養分級 *</label>
+      <div class="grade-row" id="gradeRow">
+        <button type="button" class="grade-btn" data-grade="high">高營養</button>
+        <button type="button" class="grade-btn" data-grade="mid">中營養</button>
+        <button type="button" class="grade-btn" data-grade="low">低營養</button>
+        <button type="button" class="grade-btn" data-grade="harm">有害</button>
+      </div>
+      <p class="grade-hint" id="gradeHint">高營養：專業文獻、深度文章、可靠數據、重要客戶或團隊訊息。</p>
+
+      <label class="form-label" for="srcNote">備註（可留空）</label>
+      <input type="text" id="srcNote" placeholder="例如：只看週報、靜音群組但保留">
+
+      <button class="btn" id="addSrcBtn">加入菜單</button>
+    </div>
+
+    <div class="filters" id="menuFilters">
+      <button class="filter-btn active" data-gf="all">全部</button>
+      <button class="filter-btn" data-gf="high">高營養</button>
+      <button class="filter-btn" data-gf="mid">中營養</button>
+      <button class="filter-btn" data-gf="low">低營養</button>
+      <button class="filter-btn" data-gf="harm">有害</button>
+    </div>
+
+    <div class="empty" id="menuEmpty" style="display:none">
+      <span class="zh serif">菜單還是空的</span>
+      列出你每天接觸的資訊入口——<br>Email、社群、新聞、群組、論文提醒⋯⋯
+    </div>
+    <div id="srcList"></div>
+  </section>
+
+  <!-- TAB 2: DIGEST (input -> output) -->
+  <section class="tab" id="tab-digest">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stDigests">0</div><div class="l">攝取紀錄</div></div>
+      <div class="stat"><div class="n" id="stOutRate">—</div><div class="l">產出率</div></div>
+      <div class="stat"><div class="n" id="stNoOut">0</div><div class="l">沒有產出</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">輸入到輸出</p>
+      <h2>這次攝取，換到什麼？</h2>
+      <p class="sub">每次閱讀後至少產生一個輸出。若某來源反覆換不到產出，就該降低攝取頻率。</p>
+
+      <label class="form-label" for="digSource">來源 *</label>
+      <select id="digSource"></select>
+
+      <label class="form-label">這次的產出</label>
+      <div class="out-row" id="outRow">
+        <button type="button" class="out-btn" data-out="summary">一句摘要</button>
+        <button type="button" class="out-btn" data-out="action">一個行動</button>
+        <button type="button" class="out-btn" data-out="judgment">一個判斷</button>
+        <button type="button" class="out-btn" data-out="question">一個問題</button>
+        <button type="button" class="out-btn" data-out="card">知識卡片</button>
+        <button type="button" class="out-btn" data-out="none">沒有產出</button>
+      </div>
+
+      <textarea id="digText" placeholder="寫下這次的產出…" style="margin-top:12px"></textarea>
+      <button class="btn" id="addDigestBtn">記錄這次攝取</button>
+    </div>
+
+    <div class="empty" id="digestEmpty" style="display:none">
+      <span class="zh serif">還沒有攝取紀錄</span>
+      先到菜單加入來源，讀完之後<br>回來記錄它換到了什麼產出。
+    </div>
+    <div id="digestList"></div>
+  </section>
+
+  <!-- TAB 3: WEEKLY CLEANUP -->
+  <section class="tab" id="tab-clean">
+    <div class="card">
+      <p class="eyebrow">每週清理</p>
+      <h2>斷捨離：留下幫你做決策的</h2>
+      <p class="sub" style="margin-bottom:0">每週檢查一次：哪些來源真的幫你做出更好決策？哪些只是讓你感覺自己很忙？逐一標記處置。</p>
+    </div>
+
+    <div class="empty" id="cleanEmpty" style="display:none">
+      <span class="zh serif">沒有可清理的來源</span>
+      菜單裡有作用中的來源時，<br>這裡會列出它們讓你逐一檢視。
+    </div>
+    <div id="cleanList"></div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">資訊飲食</div>
+      <p class="hero-text">「資訊飲食」與 Clay A. Johnson 於 2012 年出版的《The Information Diet》相關：把資訊攝取比喻為飲食——問題不只是吃太多，而是吃進太多低品質、高刺激、強化偏見的內容。資訊過載研究也指出，過量且分散的資訊會增加認知負荷，影響決策品質與身心健康。</p>
+      <div class="quote-line serif">把注意力視為有限資產。</div>
+    </div>
+
+    <details>
+      <summary>好的資訊飲食三標準</summary>
+      <div class="body">
+        <ul>
+          <li><b>少而精</b>：減少重複、低品質、情緒化來源。</li>
+          <li><b>高相關</b>：只保留與目標、專案、學習方向相關的資訊。</li>
+          <li><b>可轉化</b>：攝取後能變成判斷、行動、筆記或決策。</li>
+        </ul>
+        核心不是完全避免資訊，而是有意識地選擇、限制與消化資訊。
+      </div>
+    </details>
+
+    <details>
+      <summary>五個方法</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 盤點所有資訊入口</b>：Email、LINE、Slack、社群、新聞、YouTube、Podcast、RSS、論文提醒、群組訊息。先看見入口，才管得了入口。</li>
+          <li><b>2. 做營養分級</b>：高營養（專業文獻、可靠數據）、中營養（行業新聞、工具更新）、低營養（重複觀點、標題黨）、有害（讓你焦慮、憤怒卻無助行動的內容）。</li>
+          <li><b>3. 設定攝取時段</b>：集中在固定時間，例如上午 30 分鐘、下午 20 分鐘，其餘時間關閉非必要通知。</li>
+          <li><b>4. 輸入到輸出規則</b>：每次閱讀後至少產生一個輸出——一句摘要、一個行動、一個判斷、一個問題、一張知識卡片。換不到輸出就降低攝取頻率。</li>
+          <li><b>5. 每週清理來源</b>：哪些幫你做更好決策？哪些只是讓你很忙？哪些可以取消訂閱、靜音、合併或延後閱讀？</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>知識工作者</b>：每天固定兩個時段處理 Email 與訊息，其餘時間關通知，高能量時段留給深度工作。</li>
+          <li><b>研究者</b>：建立文獻來源分級，只追蹤核心期刊、關鍵作者與高品質資料庫。</li>
+          <li><b>管理者</b>：要求團隊訊息分級——緊急即時通知、狀態更新集中每日摘要、背景資料放共享文件。</li>
+          <li><b>創作者</b>：限制社群瀏覽時間，保留高品質靈感來源，把每次閱讀轉成選題、觀點或素材。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        資訊飲食管理把注意力視為<b>有限資產</b>。現代工作不是缺資訊，而是缺少經過篩選、整理與消化後的高品質判斷。它能降低「看很多、做很少」的<b>假性生產力</b>——真正有效的資訊系統，不是讓你知道更多，而是讓你更快判斷什麼重要、什麼可信、什麼值得行動。研究也指出，資訊過載的介入可分為個人、系統與組織層級，意味著它不只靠自律，也需要流程與環境設計。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="../cognitive-load/">認知負荷</a> ·
+      <a href="../knowledge-distill/">知識蒸餾</a> ·
+      <a href="https://iamkeith001.github.io/mind-offload/">腦袋清空站</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-menu">
+      <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      菜單
+    </button>
+    <button class="tabbtn" data-tab="tab-digest">
+      <svg viewBox="0 0 24 24"><path d="M12 3v5M12 8l3.5 3.5M12 8 8.5 11.5"/><path d="M4 13v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>
+      消化
+    </button>
+    <button class="tabbtn" data-tab="tab-clean">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/></svg>
+      週檢
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "infodiet_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "infodiet_v1";
+let db = { sources: [], digests: [], settings: { winAM: "", winPM: "" } };
+try {
+  const raw = JSON.parse(localStorage.getItem(storeKey));
+  if (raw && raw.sources) db = Object.assign(db, raw);
+} catch (e) {}
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(db)); }
+
+const GRADES = {
+  high: { name: "高營養", cls: "high", color: "var(--green)", hint: "高營養：專業文獻、深度文章、可靠數據、重要客戶或團隊訊息。" },
+  mid:  { name: "中營養", cls: "mid",  color: "var(--blue)",  hint: "中營養：行業新聞、工具更新、案例分享。" },
+  low:  { name: "低營養", cls: "low",  color: "var(--amber)", hint: "低營養：重複觀點、標題黨、情緒化評論。" },
+  harm: { name: "有害",   cls: "harm", color: "var(--red)",   hint: "有害：讓你焦慮、分心、比較、憤怒，卻無助於行動的內容。" }
+};
+const OUT_TYPES = {
+  summary:  "一句摘要",
+  action:   "一個行動",
+  judgment: "一個判斷",
+  question: "一個問題",
+  card:     "知識卡片",
+  none:     "沒有產出"
+};
+
+/* ---------- Intake window setting ---------- */
+function renderWindow(){
+  $("winAM").value = db.settings.winAM || "";
+  $("winPM").value = db.settings.winPM || "";
+  const note = $("winNote");
+  if (db.settings.winAM || db.settings.winPM) {
+    note.style.display = "block";
+    note.textContent = "已設定攝取時段：" +
+      [db.settings.winAM && ("上午 " + db.settings.winAM), db.settings.winPM && ("下午 " + db.settings.winPM)].filter(Boolean).join("、") +
+      "。其餘時間關閉非必要通知。";
+  } else {
+    note.style.display = "none";
+  }
+}
+$("saveWinBtn").addEventListener("click", () => {
+  db.settings.winAM = $("winAM").value.trim();
+  db.settings.winPM = $("winPM").value.trim();
+  saveAll();
+  renderWindow();
+  toast("攝取時段已儲存");
+});
+
+/* ---------- Add source ---------- */
+let curGrade = null;
+$("gradeRow").addEventListener("click", e => {
+  const btn = e.target.closest(".grade-btn");
+  if (!btn) return;
+  curGrade = btn.dataset.grade;
+  $("gradeRow").querySelectorAll(".grade-btn").forEach(b => b.classList.toggle("sel", b === btn));
+  $("gradeHint").textContent = GRADES[curGrade].hint;
+});
+
+$("addSrcBtn").addEventListener("click", () => {
+  const name = $("srcName").value.trim();
+  if (!name) { toast("請填寫來源名稱"); $("srcName").focus(); return; }
+  if (!curGrade) { toast("請選擇營養分級"); return; }
+  db.sources.unshift({
+    id: Date.now().toString(36),
+    name,
+    channel: $("srcChannel").value,
+    grade: curGrade,
+    note: $("srcNote").value.trim(),
+    status: "active",     // active | muted | unsub
+    createdAt: today(),
+    reviews: []           // {date, verdict: keep|busy|cut}
+  });
+  saveAll();
+  $("srcName").value = "";
+  $("srcNote").value = "";
+  curGrade = null;
+  $("gradeRow").querySelectorAll(".grade-btn").forEach(b => b.classList.remove("sel"));
+  $("gradeHint").textContent = GRADES.high.hint;
+  toast("已加入菜單");
+  renderMenu();
+});
+
+/* ---------- Nutrition label ---------- */
+function renderNutriLabel(){
+  const active = db.sources.filter(s => s.status !== "unsub");
+  const counts = { high: 0, mid: 0, low: 0, harm: 0 };
+  active.forEach(s => counts[s.grade]++);
+  const total = active.length;
+  $("nutriCount").textContent = total + " 個來源";
+
+  const bar = $("nutriBar");
+  if (total === 0) {
+    bar.innerHTML = "";
+    $("nutriVerdict").style.display = "none";
+    return;
+  }
+  bar.innerHTML = ["high", "mid", "low", "harm"].map(g => {
+    const pct = counts[g] / total * 100;
+    return pct > 0 ? '<i style="width:' + pct + '%;background:' + GRADES[g].color + '"></i>' : "";
+  }).join("");
+
+  const v = $("nutriVerdict");
+  const badPct = (counts.low + counts.harm) / total;
+  const goodPct = (counts.high + counts.mid) / total;
+  v.style.display = "block";
+  if (counts.harm > 0 && counts.harm / total >= 0.2) {
+    v.className = "nutri-verdict warn";
+    v.innerHTML = "有害來源占 " + Math.round(counts.harm / total * 100) + "%——這些讓你焦慮卻無助行動的內容，是第一批該靜音或取消訂閱的對象。";
+  } else if (badPct > 0.5) {
+    v.className = "nutri-verdict mid";
+    v.innerHTML = "低營養以下占了一半以上。到「週檢」逐一檢視，把不幫你做決策的來源清掉。";
+  } else if (goodPct >= 0.7) {
+    v.className = "nutri-verdict ok";
+    v.innerHTML = "資訊飲食結構健康——高／中營養占 " + Math.round(goodPct * 100) + "%。維持攝取時段與輸出習慣即可。";
+  } else {
+    v.className = "nutri-verdict mid";
+    v.innerHTML = "結構尚可。持續用「消化」記錄產出，把換不到產出的來源降頻。";
+  }
+}
+
+/* ---------- Source list ---------- */
+let menuFilter = "all";
+$("menuFilters").addEventListener("click", e => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  menuFilter = btn.dataset.gf;
+  $("menuFilters").querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+  renderSources();
+});
+
+function sourceOutputStat(sourceId){
+  const ds = db.digests.filter(d => d.sourceId === sourceId);
+  const withOut = ds.filter(d => d.outputType !== "none").length;
+  return { total: ds.length, withOut, rate: ds.length ? Math.round(withOut / ds.length * 100) : null };
+}
+
+function renderSources(){
+  const holder = $("srcList");
+  const list = db.sources.filter(s => menuFilter === "all" || s.grade === menuFilter);
+  $("menuEmpty").style.display = db.sources.length ? "none" : "block";
+
+  holder.innerHTML = list.map(s => {
+    const g = GRADES[s.grade];
+    const st = sourceOutputStat(s.id);
+    let statLine = "";
+    if (st.total > 0) {
+      const warn = st.rate !== null && st.rate < 40;
+      statLine = '<div class="src-stat' + (warn ? " warn" : "") + '">攝取 ' + st.total + ' 次 · 產出率 ' + st.rate + '%' + (warn ? ' — 考慮降頻' : "") + '</div>';
+    }
+    const statusTag = s.status === "muted" ? '<span class="tag">已靜音</span>' : s.status === "unsub" ? '<span class="tag harm">已取消</span>' : "";
+    return '<div class="src-item ' + g.cls + ' ' + s.status + '">' +
+      '<div class="src-top"><span class="src-name">' + esc(s.name) + '</span><span class="tag ' + g.cls + '">' + g.name + '</span></div>' +
+      '<div class="src-tags"><span class="tag ch">' + esc(s.channel) + '</span>' + statusTag + '</div>' +
+      (s.note ? '<div class="src-note">' + esc(s.note) + '</div>' : "") +
+      statLine +
+      '<div class="src-actions">' +
+        '<button data-mute="' + s.id + '"' + (s.status === "muted" ? ' class="on"' : "") + '>' + (s.status === "muted" ? "解除靜音" : "靜音") + '</button>' +
+        '<button data-unsub="' + s.id + '"' + (s.status === "unsub" ? ' class="on"' : "") + '>' + (s.status === "unsub" ? "重新訂閱" : "取消訂閱") + '</button>' +
+        '<button class="del" data-del="' + s.id + '">刪除</button>' +
+      '</div></div>';
+  }).join("");
+
+  if (db.sources.length && !list.length) {
+    holder.innerHTML = '<div class="empty"><span class="zh serif">沒有這個分級的來源</span>換個篩選看看。</div>';
+  }
+}
+
+$("srcList").addEventListener("click", e => {
+  const muteBtn = e.target.closest("[data-mute]");
+  if (muteBtn) { toggleStatus(muteBtn.dataset.mute, "muted"); return; }
+  const unsubBtn = e.target.closest("[data-unsub]");
+  if (unsubBtn) { toggleStatus(unsubBtn.dataset.unsub, "unsub"); return; }
+  const delBtn = e.target.closest("[data-del]");
+  if (delBtn) {
+    if (!confirm("刪除這個來源？相關的攝取紀錄會保留。")) return;
+    db.sources = db.sources.filter(s => s.id !== delBtn.dataset.del);
+    saveAll();
+    renderMenu();
+    renderDigest();
+    toast("已刪除來源");
+  }
+});
+function toggleStatus(id, status){
+  const s = db.sources.find(x => x.id === id);
+  if (!s) return;
+  s.status = s.status === status ? "active" : status;
+  saveAll();
+  renderMenu();
+  renderDigest();
+}
+
+function renderMenu(){
+  renderNutriLabel();
+  renderSources();
+}
+
+/* ---------- Digest (input -> output) ---------- */
+let curOut = null;
+$("outRow").addEventListener("click", e => {
+  const btn = e.target.closest(".out-btn");
+  if (!btn) return;
+  curOut = btn.dataset.out;
+  $("outRow").querySelectorAll(".out-btn").forEach(b => b.classList.toggle("sel", b === btn));
+  $("digText").placeholder = curOut === "none" ? "（可註記為何沒有產出，可留空）" : "寫下這次的產出…";
+});
+
+function fillDigestSources(){
+  const sel = $("digSource");
+  const active = db.sources.filter(s => s.status === "active");
+  const prev = sel.value;
+  sel.innerHTML = active.length
+    ? active.map(s => '<option value="' + s.id + '">' + esc(s.name) + '（' + GRADES[s.grade].name + '）</option>').join("")
+    : '<option value="">尚無作用中的來源</option>';
+  if (prev) sel.value = prev;
+}
+
+$("addDigestBtn").addEventListener("click", () => {
+  const sourceId = $("digSource").value;
+  if (!sourceId) { toast("請先到菜單新增作用中的來源"); return; }
+  if (!curOut) { toast("請選擇這次的產出類型"); return; }
+  const text = $("digText").value.trim();
+  if (curOut !== "none" && !text) { toast("請寫下這次的產出內容"); $("digText").focus(); return; }
+  db.digests.unshift({
+    id: Date.now().toString(36),
+    sourceId,
+    date: today(),
+    outputType: curOut,
+    outputText: text
+  });
+  saveAll();
+  $("digText").value = "";
+  curOut = null;
+  $("outRow").querySelectorAll(".out-btn").forEach(b => b.classList.remove("sel"));
+  toast("已記錄這次攝取");
+  renderDigest();
+  renderMenu();
+});
+
+function renderDigest(){
+  fillDigestSources();
+  const holder = $("digestList");
+  $("digestEmpty").style.display = db.digests.length ? "none" : "block";
+
+  const total = db.digests.length;
+  const noOut = db.digests.filter(d => d.outputType === "none").length;
+  $("stDigests").textContent = total;
+  $("stNoOut").textContent = noOut;
+  $("stOutRate").textContent = total ? Math.round((total - noOut) / total * 100) + "%" : "—";
+
+  holder.innerHTML = db.digests.map(d => {
+    const src = db.sources.find(s => s.id === d.sourceId);
+    const srcName = src ? esc(src.name) : "（已刪除來源）";
+    const body = d.outputType === "none"
+      ? '<div class="digest-none">✕ 沒有產出' + (d.outputText ? "：" + esc(d.outputText) : "") + '</div>'
+      : '<div class="digest-out"><span class="otype">' + OUT_TYPES[d.outputType] + '</span>　' + esc(d.outputText) + '</div>';
+    return '<div class="digest-item">' +
+      '<div class="digest-top"><span class="digest-src">' + srcName + '</span>' +
+      '<span class="digest-date">' + d.date + ' <button class="digest-del" data-deldig="' + d.id + '" aria-label="刪除">×</button></span></div>' +
+      body + '</div>';
+  }).join("");
+}
+
+$("digestList").addEventListener("click", e => {
+  const btn = e.target.closest("[data-deldig]");
+  if (!btn) return;
+  db.digests = db.digests.filter(d => d.id !== btn.dataset.deldig);
+  saveAll();
+  renderDigest();
+  renderMenu();
+});
+
+/* ---------- Weekly cleanup ---------- */
+const CLEAN_VERDICTS = {
+  keep: { label: "幫我做決策", cls: "keep" },
+  busy: { label: "只是讓我忙", cls: "busy" },
+  cut:  { label: "該砍掉", cls: "cut" }
+};
+let cleanSel = {};
+
+function renderClean(){
+  const holder = $("cleanList");
+  const active = db.sources.filter(s => s.status !== "unsub");
+  $("cleanEmpty").style.display = active.length ? "none" : "block";
+
+  holder.innerHTML = active.map(s => {
+    const g = GRADES[s.grade];
+    const st = sourceOutputStat(s.id);
+    const statLine = st.total > 0 ? '攝取 ' + st.total + ' 次 · 產出率 ' + st.rate + '%' : '尚無攝取紀錄';
+    const lastReview = s.reviews.length ? s.reviews[s.reviews.length - 1] : null;
+    const verdictBtns = Object.keys(CLEAN_VERDICTS).map(v =>
+      '<button type="button" class="verdict-btn ' + CLEAN_VERDICTS[v].cls + (cleanSel[s.id] === v ? " sel" : "") + '" data-src="' + s.id + '" data-v="' + v + '">' + CLEAN_VERDICTS[v].label + '</button>'
+    ).join("");
+    const statusTag = s.status === "muted" ? '<span class="tag">已靜音</span>' : "";
+    return '<div class="src-item ' + g.cls + ' ' + s.status + '">' +
+      '<div class="src-top"><span class="src-name">' + esc(s.name) + '</span><span class="tag ' + g.cls + '">' + g.name + '</span></div>' +
+      '<div class="src-tags"><span class="tag ch">' + esc(s.channel) + '</span>' + statusTag + '</div>' +
+      '<div class="src-stat">' + statLine + (lastReview ? ' · 上次檢視：' + CLEAN_VERDICTS[lastReview.verdict].label + '（' + lastReview.date + '）' : "") + '</div>' +
+      '<div class="verdict-group">' + verdictBtns + '</div>' +
+      '<div class="src-actions" data-clean-actions="' + s.id + '" style="display:' + (cleanSel[s.id] ? "flex" : "none") + '">' +
+        cleanActionButtons(s) +
+      '</div>' +
+      '</div>';
+  }).join("");
+}
+
+function cleanActionButtons(s){
+  const sel = cleanSel[s.id];
+  if (!sel) return "";
+  if (sel === "keep") {
+    return '<button data-cleankeep="' + s.id + '">確認保留</button>';
+  }
+  // busy or cut -> offer mute / unsub
+  return '<button data-cleanmute="' + s.id + '"' + (s.status === "muted" ? ' class="on"' : "") + '>' + (s.status === "muted" ? "已靜音" : "靜音") + '</button>' +
+         '<button data-cleanunsub="' + s.id + '">取消訂閱</button>';
+}
+
+$("cleanList").addEventListener("click", e => {
+  const vBtn = e.target.closest(".verdict-btn");
+  if (vBtn) {
+    cleanSel[vBtn.dataset.src] = vBtn.dataset.v;
+    renderClean();
+    return;
+  }
+  const keepBtn = e.target.closest("[data-cleankeep]");
+  if (keepBtn) { recordReview(keepBtn.dataset.cleankeep, "keep"); toast("已保留並記錄本週檢視"); return; }
+  const muteBtn = e.target.closest("[data-cleanmute]");
+  if (muteBtn) {
+    const id = muteBtn.dataset.cleanmute;
+    const s = db.sources.find(x => x.id === id);
+    if (s) s.status = "muted";
+    recordReview(id, cleanSel[id] || "busy");
+    toast("已靜音並記錄本週檢視");
+    return;
+  }
+  const unsubBtn = e.target.closest("[data-cleanunsub]");
+  if (unsubBtn) {
+    const id = unsubBtn.dataset.cleanunsub;
+    if (!confirm("取消訂閱這個來源？它會從菜單淡出、不再出現在消化選單。")) return;
+    const s = db.sources.find(x => x.id === id);
+    if (s) s.status = "unsub";
+    recordReview(id, cleanSel[id] || "cut");
+    toast("已取消訂閱");
+    return;
+  }
+});
+
+function recordReview(id, verdict){
+  const s = db.sources.find(x => x.id === id);
+  if (!s) return;
+  s.reviews.push({ date: today(), verdict });
+  delete cleanSel[id];
+  saveAll();
+  renderClean();
+  renderMenu();
+  renderDigest();
+}
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "info-diet-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.sources)) {
+        db = { sources: data.sources, digests: data.digests || [], settings: data.settings || { winAM: "", winPM: "" } };
+        saveAll();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有來源、攝取紀錄與設定嗎？此動作無法復原。")) return;
+  db = { sources: [], digests: [], settings: { winAM: "", winPM: "" } };
+  saveAll();
+  renderAll();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-menu") renderMenu();
+  if (id === "tab-digest") renderDigest();
+  if (id === "tab-clean") renderClean();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+function renderAll(){
+  renderWindow();
+  renderMenu();
+  renderDigest();
+  renderClean();
+}
+$("gradeHint").textContent = GRADES.high.hint;
+renderAll();
+</script>
+</body>
+</html>
