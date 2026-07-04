@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="知識原子化">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23B0339B' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23B0339B'%3E原%3C/text%3E%3C/svg%3E">
+<title>知識原子化 · Knowledge Atomization</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#B0339B; --acc-soft:#F7E7F3;
+    --grid:rgba(176,51,155,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#DB84C8; --acc-soft:#37202F;
+    --grid:rgba(219,132,200,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:76px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .scaffold-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .scaffold-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+
+  .search-input{margin-bottom:10px}
+  .tag-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .tf-chip{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:5px 11px;border-radius:20px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit}
+  .tf-chip.on{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+
+  /* Atom cards */
+  .atom{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px;border-left:4px solid var(--acc)}
+  .atom.isolated{border-left-color:var(--hairline)}
+  .atom-concept{font-family:"Songti TC","Noto Serif TC",serif;font-size:15.5px;font-weight:900;line-height:1.5;margin-bottom:6px}
+  .atom-body{font-size:13px;color:var(--ink);opacity:.9;line-height:1.7;white-space:pre-wrap}
+  .atom-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .atom-links{font-size:11.5px;color:var(--acc);font-weight:800;margin-top:8px}
+  .atom-links.none{color:var(--pencil)}
+  .atom-actions{display:flex;gap:7px;margin-top:11px}
+  .atom-actions button{border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .atom-actions button.del{color:var(--red)}
+  .atom-actions .spacer{flex:1}
+  .linker{margin-top:11px;border-top:1px solid var(--hairline-soft);padding-top:11px}
+  .linker .lk-hint{font-size:11.5px;color:var(--pencil);margin-bottom:8px}
+  .link-chip{display:inline-block;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);padding:6px 11px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin:0 6px 6px 0;font-family:inherit}
+  .link-chip.on{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  /* Graph */
+  .graph-wrap{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:10px;margin-bottom:16px}
+  .graph-wrap svg{width:100%;height:auto;display:block}
+  .g-line{stroke:var(--hairline);stroke-width:1.5}
+  .g-line.hot{stroke:var(--acc);stroke-width:2.5}
+  .g-node{fill:var(--paper2);stroke:var(--acc);stroke-width:2;cursor:pointer}
+  .g-node.iso{stroke:var(--hairline)}
+  .g-node.focus{fill:var(--acc)}
+  .g-label{font-size:9px;fill:var(--ink);font-weight:700;pointer-events:none}
+  .g-detail{background:var(--acc-soft);border-radius:6px;padding:13px 15px;font-size:13px;line-height:1.7;margin-bottom:16px}
+  .g-detail .c{font-family:"Songti TC",serif;font-weight:900;font-size:15px;display:block;margin-bottom:4px}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  /* Recombine */
+  .format-row{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px}
+  .fmt-btn{border:1px solid var(--hairline);background:var(--paper);padding:10px 6px;border-radius:6px;font-size:12.5px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;color:var(--pencil);min-height:40px}
+  .fmt-btn small{display:block;font-weight:600;font-size:10.5px;margin-top:1px}
+  .fmt-btn.sel{background:var(--acc);color:var(--paper);border-color:transparent}
+  .pick-atom{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px solid var(--hairline-soft);cursor:pointer}
+  .pick-atom:first-child{border-top:none}
+  .pick-check{flex:none;width:22px;height:22px;border-radius:6px;border:1.6px solid var(--hairline);background:var(--paper);display:grid;place-items:center;margin-top:1px}
+  .pick-check.on{background:var(--acc);border-color:transparent}
+  .pick-check svg{width:13px;height:13px;stroke:var(--paper);stroke-width:2.8;fill:none;display:none}
+  .pick-check.on svg{display:block}
+  .pick-atom .pc{flex:1;font-size:13.5px;font-weight:600;line-height:1.5}
+  .out-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:14px;box-shadow:var(--shadow);margin-bottom:11px;border-left:4px solid var(--acc)}
+  .out-title{font-weight:800;font-size:14px;margin-bottom:2px}
+  .out-meta{font-size:11px;color:var(--pencil);margin-bottom:8px}
+  .out-text{font-size:12.5px;color:var(--ink);opacity:.9;line-height:1.7;white-space:pre-wrap;background:var(--paper2);border-radius:6px;padding:10px 12px;margin-bottom:9px;max-height:160px;overflow:auto}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+  details .body .eg{background:var(--paper2);border-radius:6px;padding:8px 12px;margin:6px 0;font-size:12.5px;line-height:1.8}
+  details .body .eg s{color:var(--pencil)} details .body .eg b{color:var(--acc)}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">原</text></svg>
+      <div>
+        <h1>知識原子化</h1>
+        <small>KNOWLEDGE ATOMIZATION</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: ATOMS -->
+  <section class="tab active" id="tab-atoms">
+    <div class="hero">
+      <p class="eyebrow">知識原子</p>
+      <div class="hero-title serif">把知識變成<br>可調用的積木。</div>
+      <p class="hero-text">很多人不是沒學習，而是學過的內容鎖在長文、截圖與零散筆記裡，很難再調用。把知識拆成小而清楚、可獨立理解的單位，用自己的話重寫，再建立連結——知識就從「資料倉庫」變成「思考網絡」。</p>
+      <div class="quote-line serif">單一概念、可獨立理解、可連結、可重組。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">萃取一個原子</p>
+      <h2>一則筆記只放一個概念</h2>
+      <label class="form-label" for="atomConcept">核心概念（一句話，可獨立理解）*</label>
+      <input type="text" id="atomConcept" placeholder="例如：任務切換會產生認知殘留，降低專注品質。">
+
+      <label class="form-label" for="atomBody">用自己的話重寫 *</label>
+      <div class="scaffold-row" id="scaffoldRow">
+        <button type="button" class="scaffold-btn" data-s="我理解的意思是：">我理解的意思是：</button>
+        <button type="button" class="scaffold-btn" data-s="這可以用在：">這可以用在：</button>
+        <button type="button" class="scaffold-btn" data-s="它提醒我：">它提醒我：</button>
+      </div>
+      <textarea id="atomBody" placeholder="不是複製原文，而是轉化成自己的理解…"></textarea>
+
+      <label class="form-label" for="atomTags">標籤（逗號分隔，可留空）</label>
+      <input type="text" id="atomTags" placeholder="例如：深度工作, 注意力, 學習方法">
+
+      <button class="btn" id="addAtomBtn">加入知識原子</button>
+    </div>
+
+    <input type="text" class="search-input" id="atomSearch" placeholder="搜尋概念、內容或標籤…">
+    <div class="tag-filter" id="tagFilter"></div>
+
+    <div class="empty" id="atomsEmpty" style="display:none">
+      <span class="zh serif">還沒有知識原子</span>
+      讀到值得留下的觀念時，別只收藏——<br>萃取成一個單一概念的原子。
+    </div>
+    <div id="atomList"></div>
+  </section>
+
+  <!-- TAB 2: GRAPH -->
+  <section class="tab" id="tab-graph">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stAtoms">0</div><div class="l">知識原子</div></div>
+      <div class="stat"><div class="n" id="stLinks">0</div><div class="l">連結數</div></div>
+      <div class="stat"><div class="n" id="stIso">0</div><div class="l">知識孤島</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">知識圖譜</p>
+      <h2>連結越多，越不會變孤島</h2>
+      <p class="sub" style="margin-bottom:0">點一個節點看它的連結與內容。實心＝聚焦，灰邊＝還沒連結的孤島——到「原子」分頁替它們建立連結。</p>
+    </div>
+
+    <div id="graphDetail"></div>
+    <div class="graph-wrap" id="graphWrap"></div>
+
+    <div class="empty" id="graphEmpty" style="display:none">
+      <span class="zh serif">圖譜還是空的</span>
+      先建立幾個原子並互相連結，<br>知識網絡會顯示在這裡。
+    </div>
+  </section>
+
+  <!-- TAB 3: RECOMBINE -->
+  <section class="tab" id="tab-recombine">
+    <div class="card">
+      <p class="eyebrow">重組成輸出</p>
+      <h2>知識的價值來自重新組合</h2>
+      <p class="sub">知識管理的終點不是保存，而是創造。選幾個原子、挑一種格式，組成草稿。</p>
+
+      <label class="form-label">輸出格式</label>
+      <div class="format-row" id="formatRow">
+        <button type="button" class="fmt-btn sel" data-f="essay">短文<small>組成段落</small></button>
+        <button type="button" class="fmt-btn" data-f="card">教學圖卡<small>重點條列</small></button>
+        <button type="button" class="fmt-btn" data-f="slides">簡報架構<small>逐頁標題</small></button>
+        <button type="button" class="fmt-btn" data-f="hypothesis">研究假設<small>觀察→假設</small></button>
+      </div>
+
+      <label class="form-label" for="outTitle">輸出標題</label>
+      <input type="text" id="outTitle" placeholder="例如：深度工作與注意力管理">
+
+      <label class="form-label">選擇要重組的原子（<span id="pickCount">0</span> 個）</label>
+      <div id="pickList"></div>
+
+      <button class="btn" id="composeBtn" style="margin-top:12px">產生草稿</button>
+    </div>
+
+    <div id="draftArea"></div>
+
+    <div class="card" id="savedOutCard" style="display:none">
+      <p class="eyebrow">已存輸出</p>
+      <h2>重組紀錄</h2>
+      <div id="outList"></div>
+    </div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">卡片盒筆記法<br>的數位延伸。</div>
+      <p class="hero-text">知識原子化的精神源自 Zettelkasten（卡片盒筆記法）——社會學家 Niklas Luhmann 用紙卡建立個人知識系統，把想法拆成小型、可連結、可重組的筆記。核心不是儲存資料，而是讓每張筆記成為可被連結、延伸與重新思考的知識節點。Obsidian、Roam、Logseq 把它數位化為雙向連結與知識圖譜。</p>
+      <div class="quote-line serif">從資料倉庫，變成思考網絡。</div>
+    </div>
+
+    <details>
+      <summary>好原子的四個特徵</summary>
+      <div class="body">
+        <ul>
+          <li><b>單一概念</b>：一則筆記只處理一個核心想法。</li>
+          <li><b>可獨立理解</b>：即使離開原文，也能看懂它的意思。</li>
+          <li><b>可連結</b>：能與其他概念建立關係。</li>
+          <li><b>可重組</b>：未來能用於文章、簡報、研究、教學或決策。</li>
+        </ul>
+        不是把資料切碎，而是把知識變成可以靈活調用的積木。
+      </div>
+    </details>
+
+    <details>
+      <summary>五個步驟</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 從「收藏」改成「萃取」</b>：不要只存全文，問「這裡最值得留下的一個觀念是什麼」。<div class="eg"><s>存下整篇時間管理文章</s> → <b>深度工作需要連續、不被打斷的注意力區塊。</b></div></li>
+          <li><b>2. 一張筆記只放一個概念</b>：避免混合多主題。每則筆記像一個知識細胞，越清楚越好用。</li>
+          <li><b>3. 用自己的話重寫</b>：「我理解的意思是…」「這可以用在…」「它提醒我…」把「看過」變成「真正理解」。</li>
+          <li><b>4. 加上連結與脈絡</b>：每個原子都連到相關概念，連結越多，知識越不會變成孤島。</li>
+          <li><b>5. 定期重組成輸出</b>：3 個原子組成短文、5 個變成圖卡、10 個整理成簡報。終點不是保存，而是創造。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>研究寫作</b>：把論文拆成研究問題、方法、樣本、限制、關鍵發現與可引用觀點，寫文獻回顧時快速重組。</li>
+          <li><b>AI 提示工程</b>：把提示詞拆成角色、任務、輸入格式、限制、輸出格式與評估標準，方便重複組合。</li>
+          <li><b>課程設計</b>：把一堂課拆成概念、案例、練習、常見錯誤與反思問題，快速重編成工作坊或講義。</li>
+          <li><b>個人成長</b>：把每天學到的拆成一句洞察、一個方法、一個應用場景與一個行動提醒。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        知識原子化的真正價值在於<b>降低知識的再使用成本</b>。當你把知識拆成小而清楚的單位並建立連結，它就從「資料倉庫」變成「思考網絡」。這特別適合研究者、創作者、產品經理、教育者與 AI 工作者——他們需要不斷從既有知識中產生新組合。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">關聯工具</p>
+      <h2>搭配知識蒸餾</h2>
+      <p class="sub" style="margin-bottom:10px">「知識蒸餾」把一批素材煉成一張精華卡；「知識原子化」把知識拆成許多可連結、可重組的原子。前者收斂，後者發散再重組，互補。</p>
+      <a class="btn ghost" href="../knowledge-distill/">知識蒸餾</a>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="../knowledge-distill/">知識蒸餾</a> ·
+      <a href="../mental-models/">心智模型</a> ·
+      <a href="https://iamkeith001.github.io/mind-offload/">腦袋清空站</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-atoms">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.4"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/></svg>
+      原子
+    </button>
+    <button class="tabbtn" data-tab="tab-graph">
+      <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="7" r="2.4"/><circle cx="12" cy="17" r="2.4"/><path d="M7.5 7.5l3.2 7.5M16.5 8.5l-3.5 6.5M8 6.3l8-.5"/></svg>
+      圖譜
+    </button>
+    <button class="tabbtn" data-tab="tab-recombine">
+      <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="8.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+      重組
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "katom_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "katom_v1";
+let db = { atoms: [], outputs: [] };
+try {
+  const raw = JSON.parse(localStorage.getItem(storeKey));
+  if (raw && raw.atoms) db = Object.assign(db, raw);
+} catch (e) {}
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(db)); }
+
+/* ---------- Create atom ---------- */
+$("scaffoldRow").addEventListener("click", e => {
+  const b = e.target.closest(".scaffold-btn");
+  if (!b) return;
+  const ta = $("atomBody");
+  const pre = ta.value && !ta.value.endsWith("\n") ? "\n" : "";
+  ta.value += pre + b.dataset.s;
+  ta.focus();
+});
+$("addAtomBtn").addEventListener("click", () => {
+  const concept = $("atomConcept").value.trim();
+  const body = $("atomBody").value.trim();
+  if (!concept) { toast("請寫下核心概念"); $("atomConcept").focus(); return; }
+  if (!body) { toast("請用自己的話重寫"); $("atomBody").focus(); return; }
+  const tags = $("atomTags").value.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+  db.atoms.unshift({ id: uid(), concept, body, tags, links: [], createdAt: today() });
+  saveAll();
+  $("atomConcept").value = ""; $("atomBody").value = ""; $("atomTags").value = "";
+  toast("知識原子已建立！");
+  renderAtoms();
+});
+
+/* ---------- Atom list ---------- */
+let atomSearch = "";
+let tagFilterSel = "";
+let expandedLinkId = null;
+$("atomSearch").addEventListener("input", () => { atomSearch = $("atomSearch").value.toLowerCase().trim(); renderAtoms(); });
+
+function allTags(){
+  const set = new Set();
+  db.atoms.forEach(a => a.tags.forEach(t => set.add(t)));
+  return [...set];
+}
+function renderTagFilter(){
+  const tags = allTags();
+  $("tagFilter").innerHTML = tags.length
+    ? tags.map(t => '<button class="tf-chip' + (tagFilterSel === t ? " on" : "") + '" data-tf="' + esc(t) + '">#' + esc(t) + '</button>').join("")
+    : "";
+}
+$("tagFilter").addEventListener("click", e => {
+  const b = e.target.closest(".tf-chip");
+  if (!b) return;
+  tagFilterSel = tagFilterSel === b.dataset.tf ? "" : b.dataset.tf;
+  renderAtoms();
+});
+
+function atomById(id){ return db.atoms.find(a => a.id === id); }
+
+function renderAtoms(){
+  renderTagFilter();
+  const list = db.atoms.filter(a => {
+    const hay = (a.concept + " " + a.body + " " + a.tags.join(" ")).toLowerCase();
+    const matchS = !atomSearch || hay.includes(atomSearch);
+    const matchT = !tagFilterSel || a.tags.includes(tagFilterSel);
+    return matchS && matchT;
+  });
+  $("atomsEmpty").style.display = db.atoms.length ? "none" : "block";
+  $("atomList").innerHTML = list.map(a => {
+    const linkNames = a.links.map(id => atomById(id)).filter(Boolean);
+    const linker = expandedLinkId === a.id ? renderLinker(a) : "";
+    return '<div class="atom' + (a.links.length ? "" : " isolated") + '">' +
+      '<div class="atom-concept serif">' + esc(a.concept) + '</div>' +
+      '<div class="atom-body">' + esc(a.body) + '</div>' +
+      (a.tags.length ? '<div class="atom-tags">' + a.tags.map(t => '<span class="tag acc">#' + esc(t) + '</span>').join("") + '</div>' : "") +
+      '<div class="atom-links' + (a.links.length ? "" : " none") + '">' +
+        (a.links.length ? "🔗 連結：" + linkNames.map(l => esc(l.concept.slice(0, 14))).join("、") : "尚未連結（知識孤島）") + '</div>' +
+      '<div class="atom-actions"><button data-link="' + a.id + '">🔗 連結（' + a.links.length + '）</button><span class="spacer"></span>' +
+      '<button class="del" data-del="' + a.id + '">刪除</button></div>' +
+      linker +
+      '</div>';
+  }).join("");
+  if (db.atoms.length && !list.length) {
+    $("atomList").innerHTML = '<div class="empty"><span class="zh serif">沒有符合的原子</span>換個關鍵字或標籤。</div>';
+  }
+}
+function renderLinker(a){
+  const others = db.atoms.filter(x => x.id !== a.id);
+  if (!others.length) return '<div class="linker"><div class="lk-hint">還沒有其他原子可以連結。</div></div>';
+  return '<div class="linker"><div class="lk-hint">點選要與這個原子建立雙向連結的其他原子：</div>' +
+    others.map(o => '<button class="link-chip' + (a.links.includes(o.id) ? " on" : "") + '" data-toggle="' + a.id + '|' + o.id + '">' + esc(o.concept.slice(0, 18)) + '</button>').join("") +
+    '</div>';
+}
+$("atomList").addEventListener("click", e => {
+  const linkBtn = e.target.closest("[data-link]");
+  if (linkBtn) { expandedLinkId = expandedLinkId === linkBtn.dataset.link ? null : linkBtn.dataset.link; renderAtoms(); return; }
+  const toggle = e.target.closest("[data-toggle]");
+  if (toggle) {
+    const [aId, bId] = toggle.dataset.toggle.split("|");
+    const a = atomById(aId), b = atomById(bId);
+    if (a && b) {
+      if (a.links.includes(bId)) { a.links = a.links.filter(x => x !== bId); b.links = b.links.filter(x => x !== aId); }
+      else { a.links.push(bId); b.links.push(aId); }
+      saveAll();
+      renderAtoms();
+    }
+    return;
+  }
+  const del = e.target.closest("[data-del]");
+  if (del) {
+    const id = del.dataset.del;
+    db.atoms = db.atoms.filter(a => a.id !== id);
+    db.atoms.forEach(a => { a.links = a.links.filter(x => x !== id); });
+    if (expandedLinkId === id) expandedLinkId = null;
+    saveAll();
+    renderAtoms();
+    toast("已刪除原子");
+  }
+});
+
+/* ---------- Graph ---------- */
+let focusAtomId = null;
+function renderGraph(){
+  const atoms = db.atoms;
+  const linkCount = atoms.reduce((s, a) => s + a.links.length, 0) / 2;
+  const iso = atoms.filter(a => a.links.length === 0).length;
+  $("stAtoms").textContent = atoms.length;
+  $("stLinks").textContent = linkCount;
+  $("stIso").textContent = iso;
+
+  $("graphEmpty").style.display = atoms.length ? "none" : "block";
+  $("graphWrap").style.display = atoms.length ? "block" : "none";
+  if (!atoms.length) { $("graphDetail").innerHTML = ""; return; }
+
+  const N = atoms.length;
+  const W = 340, H = 340, cx = W / 2, cy = H / 2, R = Math.min(cx, cy) - 40;
+  const pos = {};
+  atoms.forEach((a, i) => {
+    const ang = -Math.PI / 2 + i / N * 2 * Math.PI;
+    pos[a.id] = N === 1 ? { x: cx, y: cy } : { x: cx + R * Math.cos(ang), y: cy + R * Math.sin(ang) };
+  });
+  // lines (dedupe)
+  let lines = "";
+  const seen = new Set();
+  atoms.forEach(a => a.links.forEach(bId => {
+    const key = [a.id, bId].sort().join("|");
+    if (seen.has(key)) return;
+    seen.add(key);
+    if (!pos[bId]) return;
+    const hot = focusAtomId && (a.id === focusAtomId || bId === focusAtomId);
+    lines += '<line class="g-line' + (hot ? " hot" : "") + '" x1="' + pos[a.id].x + '" y1="' + pos[a.id].y + '" x2="' + pos[bId].x + '" y2="' + pos[bId].y + '"/>';
+  }));
+  let nodes = "";
+  atoms.forEach(a => {
+    const p = pos[a.id];
+    const cls = "g-node" + (a.links.length ? "" : " iso") + (focusAtomId === a.id ? " focus" : "");
+    nodes += '<g data-node="' + a.id + '" style="cursor:pointer">' +
+      '<circle class="' + cls + '" cx="' + p.x + '" cy="' + p.y + '" r="9"/>' +
+      '<text class="g-label" x="' + p.x + '" y="' + (p.y + (p.y < cy ? -13 : 20)) + '" text-anchor="middle">' + esc(a.concept.slice(0, 7)) + '</text></g>';
+  });
+  $("graphWrap").innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '">' + lines + nodes + '</svg>';
+
+  if (focusAtomId) {
+    const a = atomById(focusAtomId);
+    if (a) {
+      const neigh = a.links.map(id => atomById(id)).filter(Boolean);
+      $("graphDetail").innerHTML = '<div class="g-detail"><span class="c serif">' + esc(a.concept) + '</span>' +
+        esc(a.body) + (neigh.length ? '<br><br><b>連到：</b>' + neigh.map(n => esc(n.concept.slice(0, 16))).join("、") : '<br><br>尚未連結——到「原子」分頁替它連結其他概念。') + '</div>';
+    }
+  } else {
+    $("graphDetail").innerHTML = '<div class="g-detail" style="color:var(--pencil)">點一個節點，看它的內容與連結。' + (iso ? '　目前有 <b>' + iso + '</b> 個知識孤島。' : '') + '</div>';
+  }
+}
+$("graphWrap").addEventListener("click", e => {
+  const g = e.target.closest("[data-node]");
+  if (!g) return;
+  focusAtomId = focusAtomId === g.dataset.node ? null : g.dataset.node;
+  renderGraph();
+});
+
+/* ---------- Recombine ---------- */
+let outFormat = "essay";
+let pickSel = new Set();
+const FORMATS = {
+  essay: "短文", card: "教學圖卡", slides: "簡報架構", hypothesis: "研究假設"
+};
+$("formatRow").addEventListener("click", e => {
+  const b = e.target.closest(".fmt-btn");
+  if (!b) return;
+  outFormat = b.dataset.f;
+  $("formatRow").querySelectorAll(".fmt-btn").forEach(x => x.classList.toggle("sel", x === b));
+});
+function renderPickList(){
+  $("pickList").innerHTML = db.atoms.length
+    ? db.atoms.map(a => '<div class="pick-atom" data-pick="' + a.id + '"><div class="pick-check' + (pickSel.has(a.id) ? " on" : "") + '"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div>' +
+        '<div class="pc">' + esc(a.concept) + '</div></div>').join("")
+    : '<p class="sub" style="margin:0">還沒有原子可選，先到「原子」分頁建立。</p>';
+  $("pickCount").textContent = pickSel.size;
+}
+$("pickList").addEventListener("click", e => {
+  const p = e.target.closest("[data-pick]");
+  if (!p) return;
+  const id = p.dataset.pick;
+  if (pickSel.has(id)) pickSel.delete(id); else pickSel.add(id);
+  renderPickList();
+});
+function composeText(format, atoms, title){
+  const t = title || "未命名輸出";
+  if (format === "card") {
+    return "【" + t + "】\n" + atoms.map(a => "・" + a.concept).join("\n");
+  }
+  if (format === "slides") {
+    return "# " + t + "\n\n" + atoms.map((a, i) => (i + 1) + ". " + a.concept + "\n   " + a.body.replace(/\n/g, " ")).join("\n\n");
+  }
+  if (format === "hypothesis") {
+    return "【" + t + "】\n\n觀察（來自知識原子）：\n" + atoms.map(a => "・" + a.concept).join("\n") +
+      "\n\n可能的假設 / 命題：\n（根據上述觀察，我推論……）";
+  }
+  // essay
+  return t + "\n\n" + atoms.map(a => a.concept + a.body.replace(/\n/g, "")).join("\n\n");
+}
+$("composeBtn").addEventListener("click", () => {
+  if (pickSel.size < 2) { toast("至少選 2 個原子來重組"); return; }
+  const atoms = db.atoms.filter(a => pickSel.has(a.id));
+  const title = $("outTitle").value.trim();
+  const text = composeText(outFormat, atoms, title);
+  $("draftArea").innerHTML = '<div class="card"><p class="eyebrow">草稿 · ' + FORMATS[outFormat] + '</p>' +
+    '<h2>' + (title ? esc(title) : "未命名輸出") + '</h2>' +
+    '<textarea id="draftText" style="min-height:180px">' + esc(text) + '</textarea>' +
+    '<div class="mini-row"><button class="btn ghost" id="copyDraft">複製</button>' +
+    '<button class="btn" id="saveDraft">存入重組紀錄</button></div></div>';
+  $("draftArea").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+$("draftArea").addEventListener("click", e => {
+  if (e.target.closest("#copyDraft")) {
+    const txt = $("draftText").value;
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(() => toast("草稿已複製"), () => toast("複製失敗"));
+    else toast("此瀏覽器不支援自動複製");
+    return;
+  }
+  if (e.target.closest("#saveDraft")) {
+    const atoms = db.atoms.filter(a => pickSel.has(a.id));
+    db.outputs.unshift({ id: uid(), format: outFormat, title: $("outTitle").value.trim() || "未命名輸出", atomIds: [...pickSel], text: $("draftText").value, createdAt: today() });
+    saveAll();
+    toast("已存入重組紀錄！");
+    pickSel = new Set();
+    $("outTitle").value = "";
+    $("draftArea").innerHTML = "";
+    renderPickList();
+    renderOutputs();
+    return;
+  }
+});
+function renderOutputs(){
+  $("savedOutCard").style.display = db.outputs.length ? "block" : "none";
+  $("outList").innerHTML = db.outputs.map(o =>
+    '<div class="out-item"><div class="out-title">' + esc(o.title) + '</div>' +
+    '<div class="out-meta">' + FORMATS[o.format] + ' · ' + o.atomIds.length + ' 個原子 · ' + o.createdAt + '</div>' +
+    '<div class="out-text">' + esc(o.text) + '</div>' +
+    '<div class="mini-row"><button class="btn ghost" data-copyout="' + o.id + '">複製</button>' +
+    '<button class="btn danger" data-delout="' + o.id + '">刪除</button></div></div>'
+  ).join("");
+}
+$("outList").addEventListener("click", e => {
+  const c = e.target.closest("[data-copyout]");
+  if (c) {
+    const o = db.outputs.find(x => x.id === c.dataset.copyout);
+    if (o && navigator.clipboard) navigator.clipboard.writeText(o.text).then(() => toast("已複製"), () => toast("複製失敗"));
+    return;
+  }
+  const d = e.target.closest("[data-delout]");
+  if (d) {
+    db.outputs = db.outputs.filter(o => o.id !== d.dataset.delout);
+    saveAll();
+    renderOutputs();
+    toast("已刪除輸出");
+  }
+});
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "knowledge-atom-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.atoms)) {
+        db = { atoms: data.atoms, outputs: data.outputs || [] };
+        saveAll();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有知識原子與重組紀錄嗎？此動作無法復原。")) return;
+  db = { atoms: [], outputs: [] };
+  focusAtomId = null; expandedLinkId = null; pickSel = new Set();
+  saveAll();
+  renderAll();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-atoms") renderAtoms();
+  if (id === "tab-graph") renderGraph();
+  if (id === "tab-recombine") { renderPickList(); renderOutputs(); }
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+function renderAll(){
+  renderAtoms();
+  renderGraph();
+  renderPickList();
+  renderOutputs();
+}
+renderAll();
+</script>
+</body>
+</html>
