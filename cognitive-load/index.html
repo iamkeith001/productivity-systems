@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="認知負荷">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23A14E26' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23A14E26'%3E荷%3C/text%3E%3C/svg%3E">
+<title>認知負荷管理 · Cognitive Load Management</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#A14E26; --acc-soft:#F5EAE2;
+    --grid:rgba(161,78,38,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#D08A5E; --acc-soft:#3A2B1F;
+    --grid:rgba(208,138,94,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:72px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  /* Diagnosis questionnaire */
+  .q-group-title{display:flex;align-items:center;gap:8px;margin:20px 0 4px;font-weight:800;font-size:13.5px;letter-spacing:.06em}
+  .q-group-title .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .q-group-note{font-size:12px;color:var(--pencil);margin:0 0 10px}
+  .q-item{padding:11px 0;border-top:1px solid var(--hairline-soft)}
+  .q-text{font-size:13.5px;font-weight:600;margin-bottom:8px;line-height:1.6}
+  .q-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .q-opt{border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:8px 2px;border-radius:6px;font-size:11.5px;font-weight:700;cursor:pointer;text-align:center;font-family:inherit;min-height:38px}
+  .q-opt.sel{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  /* Load bars */
+  .load-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+  .load-bar-label{flex:none;width:64px;font-size:12.5px;font-weight:800;letter-spacing:.04em}
+  .load-bar-track{flex:1;height:14px;background:var(--paper2);border:1px solid var(--hairline-soft);border-radius:7px;overflow:hidden}
+  .load-bar-fill{height:100%;border-radius:7px;transition:width .5s ease}
+  .load-bar-val{flex:none;width:44px;text-align:right;font-family:"Songti TC","Noto Serif TC",serif;font-size:15px;font-weight:900}
+  .verdict{border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.7;margin:10px 0 0}
+  .verdict.warn{background:var(--red-soft);color:var(--red)}
+  .verdict.mid{background:var(--amber-soft);color:var(--amber)}
+  .verdict.ok{background:var(--green-soft);color:var(--green)}
+
+  /* Prescription methods */
+  .method-block{border:1px solid var(--hairline-soft);border-radius:6px;background:var(--paper);margin-bottom:12px;overflow:hidden}
+  .method-head{padding:13px 14px 10px;border-left:4px solid var(--hairline);display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .method-block.recommended .method-head{border-left-color:var(--acc);background:var(--acc-soft)}
+  .method-name{font-weight:800;font-size:14px;letter-spacing:.03em}
+  .method-why{font-size:12px;color:var(--pencil);margin-top:2px;line-height:1.6}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 6px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em;flex:none}
+  .tag.acc{background:var(--acc);color:var(--paper);border-color:transparent}
+  .action-row{display:flex;align-items:flex-start;gap:9px;padding:9px 14px;border-top:1px solid var(--hairline-soft);cursor:pointer;position:relative}
+  .action-row:hover{background:var(--paper2)}
+  .action-row input{margin-top:4px;accent-color:var(--acc)}
+  .action-row span{font-size:13px;line-height:1.6}
+  .action-row::before{content:"";position:absolute;inset:-4px 0;}
+
+  /* Plan cards (tracking) */
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.12em}
+  .plan-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--acc)}
+  .plan-card.done{border-left-color:var(--green)}
+  .plan-title{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;letter-spacing:.03em;margin:0 0 2px}
+  .plan-meta{font-size:11.5px;color:var(--pencil);margin-bottom:10px;letter-spacing:.05em}
+  .plan-progress{height:8px;background:var(--paper2);border-radius:4px;overflow:hidden;margin:10px 0 4px}
+  .plan-progress i{display:block;height:100%;background:var(--acc);border-radius:4px;transition:width .4s ease}
+  .plan-progress-label{font-size:11.5px;color:var(--pencil);margin-bottom:8px}
+  .delta-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .delta{font-size:12px;font-weight:800;border-radius:4px;padding:3px 8px}
+  .delta.down{background:var(--green-soft);color:var(--green)}
+  .delta.up{background:var(--red-soft);color:var(--red)}
+  .delta.flat{background:var(--paper2);color:var(--pencil)}
+  .mini-bars{margin:10px 0 2px}
+  .mini-bars .load-bar-row{margin-bottom:7px}
+  .mini-bars .load-bar-track{height:9px}
+  .mini-bars .load-bar-val{font-size:13px;width:56px}
+  .mini-bars .load-bar-label{font-size:11.5px;width:56px}
+
+  .rescore-banner{background:var(--blue-soft);color:var(--blue);border-radius:6px;padding:11px 14px;font-size:13px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .rescore-banner button{border:none;background:none;color:var(--blue);font-weight:800;cursor:pointer;font-size:12.5px;text-decoration:underline;font-family:inherit;flex:none}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.14em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">荷</text></svg>
+      <div>
+        <h1>認知負荷管理</h1>
+        <small>COGNITIVE LOAD</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: DIAGNOSIS -->
+  <section class="tab active" id="tab-diagnose">
+    <div class="hero" id="diagHero">
+      <p class="eyebrow">負荷診斷</p>
+      <div class="hero-title serif">大腦不是不夠力，<br>是被雜訊塞滿了。</div>
+      <p class="hero-text">工作記憶容量有限。挑一個讓你「特別累、特別卡」的任務，用 12 題快篩找出負荷來源：是任務本身複雜（內在）、環境材料太亂（外在），還是努力沒有轉化成理解（增益）。</p>
+      <div class="quote-line serif">少處理雜訊，多處理真正重要的問題。</div>
+    </div>
+
+    <div class="rescore-banner" id="rescoreBanner" style="display:none">
+      <span id="rescoreBannerText">重新診斷</span>
+      <button id="rescoreCancelBtn">取消</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">STEP 1</p>
+      <h2>要診斷的任務</h2>
+      <p class="sub">寫下一個具體的任務或情境，越具體越好。</p>
+      <label class="form-label" for="diagTask">任務名稱 *</label>
+      <input type="text" id="diagTask" placeholder="例如：讀一篇統計方法的論文、寫系統設計文件">
+
+      <p class="eyebrow" style="margin-top:6px">STEP 2 · 逐題勾選符合程度</p>
+
+      <div id="questionList"></div>
+
+      <div style="margin-top:16px">
+        <button class="btn" id="diagRunBtn">產生負荷判讀</button>
+      </div>
+    </div>
+
+    <div class="card" id="diagResultCard" style="display:none">
+      <p class="eyebrow">診斷結果</p>
+      <h2 id="diagResultTitle">負荷結構</h2>
+      <p class="sub">每類 0–12 分。內在與外在越高代表負荷越重；增益越高代表有效努力越多。</p>
+      <div id="diagBars"></div>
+      <div id="diagVerdicts"></div>
+      <div style="margin-top:16px">
+        <button class="btn" id="toPrescriptionBtn">產生減負處方 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: PRESCRIPTION -->
+  <section class="tab" id="tab-prescribe">
+    <div class="empty" id="presEmpty">
+      <span class="zh serif">還沒有診斷結果</span>
+      先到「診斷」分頁完成一次負荷快篩，<br>系統會依你的負荷結構開出對應的減負處方。
+    </div>
+
+    <div id="presWorkspace" style="display:none">
+      <div class="card">
+        <p class="eyebrow">減負處方</p>
+        <h2 id="presTaskTitle">任務</h2>
+        <p class="sub" id="presTaskSub">依診斷結果，標了「推薦」的方法優先處理。勾選你要實際執行的行動（建議 3–6 項，不要貪多）。</p>
+        <div class="mini-bars" id="presBars"></div>
+      </div>
+
+      <div id="methodList"></div>
+
+      <div class="card">
+        <label class="form-label" for="presNotes">補充筆記（可留空）</label>
+        <textarea id="presNotes" placeholder="例如：先從關通知開始，下週一實施"></textarea>
+        <button class="btn" id="savePlanBtn">儲存為減負計畫</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: TRACKING -->
+  <section class="tab" id="tab-track">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stPlans">0</div><div class="l">減負計畫</div></div>
+      <div class="stat"><div class="n" id="stActionRate">0%</div><div class="l">行動完成率</div></div>
+      <div class="stat"><div class="n" id="stRescored">0</div><div class="l">再診斷次數</div></div>
+    </div>
+
+    <div class="empty" id="trackEmpty" style="display:none">
+      <span class="zh serif">目前沒有減負計畫</span>
+      完成一次診斷並儲存處方後，<br>計畫會出現在這裡，供你追蹤行動與前後對比。
+    </div>
+
+    <div id="planList"></div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">認知負荷理論</div>
+      <p class="hero-text">教育心理學家 John Sweller 於 1980 年代提出認知負荷理論，1988 年的〈Cognitive Load During Problem Solving〉是重要基礎文獻。核心前提：工作記憶有限，若任務設計超出容量，學習與表現就會下降。管理重點不是讓事情毫無挑戰，而是降低外在負荷、合理控制內在負荷、提高增益負荷。</p>
+      <div class="quote-line serif">把「努力」與「有效努力」區分開來。</div>
+    </div>
+
+    <details>
+      <summary>三類認知負荷</summary>
+      <div class="body">
+        <ul>
+          <li><b>內在負荷</b>：任務本身的複雜度，例如學習微積分、設計系統架構。無法消除，但可以拆解與排序。</li>
+          <li><b>外在負荷</b>：與目標無關的干擾，例如版面混亂、資訊分散、步驟不清。應該優先削減。</li>
+          <li><b>增益負荷</b>：用於理解、整合與建立長期知識結構的有效努力。應該刻意提高。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>五個管理方法</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 移除干擾與雜訊</b>：刪除多餘資訊，用清楚標題、分段、空白與視覺層級，讓大腦不必花力氣找重點。</li>
+          <li><b>2. 把複雜任務拆成小步驟</b>：一次處理太多元素會過載。用「先示範、再練習、再整合」拆成可完成的階段。</li>
+          <li><b>3. 用圖像與結構輔助理解</b>：流程圖、表格、概念圖、檢查清單能把抽象資訊外化，降低工作記憶壓力。</li>
+          <li><b>4. 逐步增加難度</b>：先提供範例與模板，再逐漸拿掉輔助，避免一開始就同時處理太多變數。</li>
+          <li><b>5. 建立自動化與熟練度</b>：基礎技能練到自動化後，工作記憶就能釋放給更高階的判斷。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>學習與考試</b>：先用範例題建立解題基模，再做變化題；避免一開始就大量刷難題。</li>
+          <li><b>專案管理</b>：拆成里程碑、責任人、下一步與風險清單，讓團隊不用每次重新理解全貌。</li>
+          <li><b>軟體與介面設計</b>：減少同一畫面的選項數，主要操作放在明顯位置。</li>
+          <li><b>研究與知識工作</b>：閱讀文獻用「研究問題—方法—結果—限制」模板，減少理解成本。</li>
+          <li><b>團隊會議</b>：會前給背景與決策問題；會中只討論關鍵分歧；會後輸出決策、負責人與期限。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        很多人以為學不會或做不好是能力不足，其實常是材料、流程或環境設計造成<b>外在負荷過高</b>。認知負荷管理不是降低標準，而是<b>改善思考條件</b>——當不必要負荷下降，深度理解、創造性判斷與高品質決策才有空間出現。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="https://iamkeith001.github.io/energy-first/">能量儀表板</a> ·
+      <a href="https://iamkeith001.github.io/mind-offload/">腦袋清空站</a> ·
+      <a href="../mental-models/">心智模型</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-diagnose">
+      <svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 1 9-9"/><path d="M12 12l4.5-4.5"/><circle cx="12" cy="12" r="1.4"/></svg>
+      診斷
+    </button>
+    <button class="tabbtn" data-tab="tab-prescribe">
+      <svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 3.5V6h6V3.5M9 11h6M9 15h4"/></svg>
+      處方
+    </button>
+    <button class="tabbtn" data-tab="tab-track">
+      <svg viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M10 6h10M10 12h10M10 18h6"/></svg>
+      追蹤
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "cogload_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "cogload_v1";
+let plans = [];
+try { plans = JSON.parse(localStorage.getItem(storeKey) || "[]"); } catch (e) { plans = []; }
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(plans)); }
+
+/* ---------- Questionnaire definition ---------- */
+const DIMS = {
+  int: { name: "內在負荷", color: "var(--amber)", note: "任務本身的複雜度（無法消除，但可以拆解）" },
+  ext: { name: "外在負荷", color: "var(--red)",   note: "與目標無關的干擾與雜訊（應優先削減）" },
+  ger: { name: "增益負荷", color: "var(--green)", note: "轉化為長期理解的有效努力（越高越好）" }
+};
+const QUESTIONS = [
+  { dim: "int", text: "這個任務需要同時考慮多個互相關聯的元素" },
+  { dim: "int", text: "這對我來說是不熟悉的新領域" },
+  { dim: "int", text: "過程中需要在腦中同時記住多個中間結果" },
+  { dim: "int", text: "沒有現成的範例或模板可以參考" },
+  { dim: "ext", text: "工作材料或介面雜亂，要花力氣找重點" },
+  { dim: "ext", text: "需要的資訊分散在多個地方" },
+  { dim: "ext", text: "步驟或要求不清楚，需要自己猜" },
+  { dim: "ext", text: "環境干擾多（通知、打斷、噪音）" },
+  { dim: "ger", text: "我會把新資訊與已知的知識連結起來" },
+  { dim: "ger", text: "我會用圖表或筆記把想法外化，不靠腦記" },
+  { dim: "ger", text: "我會把重複的部分整理成模板或 SOP" },
+  { dim: "ger", text: "我會定期回顧並歸納學到的東西" }
+];
+const SCALE = ["幾乎沒有", "偶爾", "經常", "總是"];
+
+/* ---------- Methods & actions library ---------- */
+const METHODS = [
+  {
+    id: "declutter", name: "1. 移除干擾與雜訊", target: "ext",
+    why: "外在負荷來自與目標無關的雜訊，是最該優先削減的部分。",
+    actions: [
+      "工作時段關閉所有非必要通知",
+      "桌面與工作區只留這個任務需要的材料",
+      "把分散的資訊集中到單一文件或頁面",
+      "文件加上清楚標題、分段與重點標示"
+    ]
+  },
+  {
+    id: "chunk", name: "2. 把複雜任務拆成小步驟", target: "int",
+    why: "一次處理太多互相關聯的元素會過載，拆解能控制內在負荷。",
+    actions: [
+      "把任務列成 3–7 個可獨立完成的子步驟",
+      "為每個子步驟寫下明確的完成定義",
+      "一次只處理一個子步驟，完成再進下一個",
+      "動手前先完整看過一個做好的範例"
+    ]
+  },
+  {
+    id: "visualize", name: "3. 用圖像與結構輔助理解", target: "ger",
+    why: "把抽象資訊外化成圖表與清單，能釋放工作記憶並促進整合。",
+    actions: [
+      "畫一張流程圖或概念圖呈現整體結構",
+      "把比較性資訊整理成表格",
+      "建立固定模板（如：問題—方法—結果—限制）",
+      "把中間結果隨手寫下來，不靠腦記"
+    ]
+  },
+  {
+    id: "scaffold", name: "4. 逐步增加難度", target: "int",
+    why: "先有支架再撤支架，避免一開始就同時面對所有變數。",
+    actions: [
+      "先從範本、例題或簡化版本開始做",
+      "熟練後逐步移除輔助（範本、提示）",
+      "難度只增加一個維度，不同時加碼",
+      "進入變化題前，先確認基礎版已穩定"
+    ]
+  },
+  {
+    id: "automate", name: "5. 建立自動化與熟練度", target: "ger",
+    why: "基礎操作自動化後，工作記憶才能留給高階判斷。",
+    actions: [
+      "把重複流程寫成 SOP 或檢查清單",
+      "建立常用片段庫（程式碼、句型、報告架構）",
+      "固定會議與報告的格式，不每次重新發明",
+      "對關鍵基本功做刻意的重複練習"
+    ]
+  }
+];
+
+/* ---------- Diagnosis state ---------- */
+let answers = new Array(QUESTIONS.length).fill(null);
+let pendingDiag = null;   // {task, scores:{int,ext,ger}, recommended:[methodId]}
+let rescoringPlanId = null;
+
+/* ---------- Render questionnaire ---------- */
+function renderQuestions(){
+  const holder = $("questionList");
+  holder.innerHTML = "";
+  let lastDim = null;
+  QUESTIONS.forEach((q, i) => {
+    if (q.dim !== lastDim) {
+      lastDim = q.dim;
+      const d = DIMS[q.dim];
+      const title = document.createElement("div");
+      title.className = "q-group-title";
+      title.innerHTML = '<span class="dot" style="background:' + d.color + '"></span>' + d.name;
+      holder.appendChild(title);
+      const note = document.createElement("p");
+      note.className = "q-group-note";
+      note.textContent = d.note;
+      holder.appendChild(note);
+    }
+    const item = document.createElement("div");
+    item.className = "q-item";
+    const scaleBtns = SCALE.map((s, v) =>
+      '<button type="button" class="q-opt" data-q="' + i + '" data-v="' + v + '">' + s + '</button>'
+    ).join("");
+    item.innerHTML = '<div class="q-text">' + (i + 1) + '. ' + q.text + '</div><div class="q-scale">' + scaleBtns + '</div>';
+    holder.appendChild(item);
+  });
+  holder.addEventListener("click", e => {
+    const btn = e.target.closest(".q-opt");
+    if (!btn) return;
+    const qi = +btn.dataset.q, v = +btn.dataset.v;
+    answers[qi] = v;
+    btn.parentElement.querySelectorAll(".q-opt").forEach(b => b.classList.toggle("sel", +b.dataset.v === v));
+  });
+}
+
+function computeScores(){
+  const s = { int: 0, ext: 0, ger: 0 };
+  QUESTIONS.forEach((q, i) => { s[q.dim] += answers[i]; });
+  return s;
+}
+
+function barRow(dim, val, max){
+  const d = DIMS[dim];
+  const pct = Math.round(val / max * 100);
+  return '<div class="load-bar-row">' +
+    '<span class="load-bar-label">' + d.name.slice(0, 2) + '</span>' +
+    '<div class="load-bar-track"><div class="load-bar-fill" style="width:' + pct + '%;background:' + d.color + '"></div></div>' +
+    '<span class="load-bar-val serif">' + val + '<small style="font-size:11px;color:var(--pencil)">/' + max + '</small></span>' +
+    '</div>';
+}
+
+function interpret(scores){
+  const out = [];       // verdict boxes
+  const rec = new Set();
+  if (scores.ext >= 7) {
+    out.push({ cls: "warn", text: "<b>外在負荷過高</b>——最優先處理。干擾與雜訊正在吃掉你的工作記憶，先做減法，再談努力。" });
+    rec.add("declutter"); rec.add("visualize");
+  } else if (scores.ext >= 4) {
+    out.push({ cls: "mid", text: "<b>外在負荷中等</b>——仍有可削減的雜訊，清掉它是最便宜的效率提升。" });
+    rec.add("declutter");
+  }
+  if (scores.int >= 7) {
+    out.push({ cls: "warn", text: "<b>內在負荷偏高</b>——任務本身複雜。不要硬撐，用拆解與範例把它變成一連串可完成的小任務。" });
+    rec.add("chunk"); rec.add("scaffold");
+  } else if (scores.int >= 4) {
+    out.push({ cls: "mid", text: "<b>內在負荷中等</b>——複雜度可控，但拆成階段仍會更省力。" });
+    rec.add("chunk");
+  }
+  if (scores.ger <= 3) {
+    out.push({ cls: "warn", text: "<b>增益負荷不足</b>——目前的努力較少轉化為長期知識結構，容易「做完就忘」。加入外化與模板化的習慣。" });
+    rec.add("visualize"); rec.add("automate");
+  } else if (scores.ger <= 6) {
+    out.push({ cls: "mid", text: "<b>增益負荷尚可</b>——已有一些有效努力，把外化與 SOP 變成固定習慣會更穩。" });
+    rec.add("automate");
+  } else {
+    out.push({ cls: "ok", text: "<b>增益負荷良好</b>——你的努力大多轉化成了理解與結構，維持下去。" });
+  }
+  if (scores.ext < 4 && scores.int < 4 && scores.ger >= 7) {
+    out.unshift({ cls: "ok", text: "<b>負荷結構健康</b>——雜訊少、複雜度可控、有效努力充足。此任務不是你的瓶頸。" });
+  }
+  if (rec.size === 0) rec.add("automate");
+  return { verdicts: out, recommended: [...rec] };
+}
+
+/* ---------- Diagnosis flow ---------- */
+$("diagRunBtn").addEventListener("click", () => {
+  const task = $("diagTask").value.trim();
+  if (!task) { toast("請先填寫任務名稱"); $("diagTask").focus(); return; }
+  const unanswered = answers.findIndex(a => a === null);
+  if (unanswered !== -1) { toast("第 " + (unanswered + 1) + " 題還沒作答"); return; }
+
+  const scores = computeScores();
+
+  // Rescore mode: append to an existing plan
+  if (rescoringPlanId) {
+    const plan = plans.find(p => p.id === rescoringPlanId);
+    if (plan) {
+      plan.rescores.push({ date: today(), scores });
+      saveAll();
+      toast("再診斷完成！已記錄前後對比。");
+      exitRescoreMode();
+      renderTrack();
+      switchTab("tab-track");
+      return;
+    }
+    exitRescoreMode();
+  }
+
+  const { verdicts, recommended } = interpret(scores);
+  pendingDiag = { task, scores, recommended };
+
+  $("diagResultTitle").textContent = task;
+  $("diagBars").innerHTML = barRow("int", scores.int, 12) + barRow("ext", scores.ext, 12) + barRow("ger", scores.ger, 12);
+  $("diagVerdicts").innerHTML = verdicts.map(v => '<div class="verdict ' + v.cls + '">' + v.text + '</div>').join("");
+  $("diagResultCard").style.display = "block";
+  $("diagResultCard").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+$("toPrescriptionBtn").addEventListener("click", () => {
+  renderPrescription();
+  switchTab("tab-prescribe");
+});
+
+/* ---------- Rescore mode ---------- */
+function enterRescoreMode(planId){
+  const plan = plans.find(p => p.id === planId);
+  if (!plan) return;
+  rescoringPlanId = planId;
+  $("rescoreBanner").style.display = "flex";
+  $("rescoreBannerText").textContent = "再診斷：" + plan.task + "（作答後自動記錄對比）";
+  $("diagTask").value = plan.task;
+  resetAnswers();
+  $("diagResultCard").style.display = "none";
+  switchTab("tab-diagnose");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function exitRescoreMode(){
+  rescoringPlanId = null;
+  $("rescoreBanner").style.display = "none";
+  $("diagTask").value = "";
+  resetAnswers();
+}
+$("rescoreCancelBtn").addEventListener("click", () => { exitRescoreMode(); toast("已取消再診斷"); });
+
+function resetAnswers(){
+  answers = new Array(QUESTIONS.length).fill(null);
+  document.querySelectorAll("#questionList .q-opt.sel").forEach(b => b.classList.remove("sel"));
+}
+
+/* ---------- Prescription ---------- */
+function renderPrescription(){
+  if (!pendingDiag) {
+    $("presEmpty").style.display = "block";
+    $("presWorkspace").style.display = "none";
+    return;
+  }
+  $("presEmpty").style.display = "none";
+  $("presWorkspace").style.display = "block";
+  $("presTaskTitle").textContent = pendingDiag.task;
+  const s = pendingDiag.scores;
+  $("presBars").innerHTML = barRow("int", s.int, 12) + barRow("ext", s.ext, 12) + barRow("ger", s.ger, 12);
+
+  const holder = $("methodList");
+  holder.innerHTML = "";
+  const ordered = [...METHODS].sort((a, b) =>
+    (pendingDiag.recommended.includes(b.id) ? 1 : 0) - (pendingDiag.recommended.includes(a.id) ? 1 : 0)
+  );
+  ordered.forEach(m => {
+    const isRec = pendingDiag.recommended.includes(m.id);
+    const block = document.createElement("div");
+    block.className = "method-block" + (isRec ? " recommended" : "");
+    const rows = m.actions.map((a, i) =>
+      '<label class="action-row"><input type="checkbox" data-method="' + m.id + '" data-idx="' + i + '"' + (isRec && i < 2 ? " checked" : "") + '><span>' + a + '</span></label>'
+    ).join("");
+    block.innerHTML =
+      '<div class="method-head"><div><div class="method-name">' + m.name + '</div>' +
+      '<div class="method-why">' + m.why + '</div></div>' +
+      (isRec ? '<span class="tag acc">推薦</span>' : '<span class="tag">備選</span>') + '</div>' + rows;
+    holder.appendChild(block);
+  });
+}
+
+$("savePlanBtn").addEventListener("click", () => {
+  if (!pendingDiag) return;
+  const actions = [];
+  document.querySelectorAll("#methodList input[type=checkbox]:checked").forEach(cb => {
+    const m = METHODS.find(x => x.id === cb.dataset.method);
+    actions.push({ method: m.name, text: m.actions[+cb.dataset.idx], done: false });
+  });
+  if (actions.length === 0) { toast("請至少勾選一項要執行的行動"); return; }
+  plans.unshift({
+    id: Date.now().toString(36),
+    task: pendingDiag.task,
+    createdAt: today(),
+    scores: pendingDiag.scores,
+    recommended: pendingDiag.recommended,
+    actions,
+    notes: $("presNotes").value.trim(),
+    rescores: []
+  });
+  saveAll();
+  toast("減負計畫已建立！");
+  pendingDiag = null;
+  $("presNotes").value = "";
+  $("diagTask").value = "";
+  resetAnswers();
+  $("diagResultCard").style.display = "none";
+  renderPrescription();
+  renderTrack();
+  switchTab("tab-track");
+});
+
+/* ---------- Tracking ---------- */
+function deltaTag(label, before, after, lowerIsBetter){
+  const diff = after - before;
+  let cls = "flat", arrow = "±0";
+  if (diff !== 0) {
+    const improved = lowerIsBetter ? diff < 0 : diff > 0;
+    cls = improved ? "down" : "up";
+    arrow = (diff > 0 ? "+" : "−") + Math.abs(diff);
+  }
+  return '<span class="delta ' + cls + '">' + label + ' ' + arrow + '</span>';
+}
+
+function renderTrack(){
+  const holder = $("planList");
+  holder.innerHTML = "";
+  $("trackEmpty").style.display = plans.length ? "none" : "block";
+
+  let totalActions = 0, doneActions = 0, rescoreCount = 0;
+
+  plans.forEach(plan => {
+    totalActions += plan.actions.length;
+    doneActions += plan.actions.filter(a => a.done).length;
+    rescoreCount += plan.rescores.length;
+
+    const done = plan.actions.filter(a => a.done).length;
+    const pct = plan.actions.length ? Math.round(done / plan.actions.length * 100) : 0;
+
+    const card = document.createElement("div");
+    card.className = "plan-card" + (pct === 100 ? " done" : "");
+
+    const actionRows = plan.actions.map((a, i) =>
+      '<label class="action-row" style="padding-left:0;padding-right:0"><input type="checkbox" data-plan="' + plan.id + '" data-idx="' + i + '"' + (a.done ? " checked" : "") + '><span' + (a.done ? ' style="text-decoration:line-through;color:var(--pencil)"' : "") + '>' + a.text + '</span></label>'
+    ).join("");
+
+    let compareHtml = "";
+    if (plan.rescores.length) {
+      const last = plan.rescores[plan.rescores.length - 1];
+      compareHtml = '<div class="delta-row">' +
+        deltaTag("內在", plan.scores.int, last.scores.int, true) +
+        deltaTag("外在", plan.scores.ext, last.scores.ext, true) +
+        deltaTag("增益", plan.scores.ger, last.scores.ger, false) +
+        '<span class="delta flat">' + last.date + ' 再診斷</span></div>';
+    }
+
+    card.innerHTML =
+      '<div class="plan-title serif">' + plan.task + '</div>' +
+      '<div class="plan-meta">' + plan.createdAt + ' 建立 · ' + plan.actions.length + ' 項行動</div>' +
+      '<div class="mini-bars">' +
+        barRow("int", plan.scores.int, 12) + barRow("ext", plan.scores.ext, 12) + barRow("ger", plan.scores.ger, 12) +
+      '</div>' +
+      compareHtml +
+      '<div class="plan-progress"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="plan-progress-label">行動完成 ' + done + '/' + plan.actions.length + '（' + pct + '%）</div>' +
+      actionRows +
+      (plan.notes ? '<p class="sub" style="margin:10px 0 0">📝 ' + plan.notes + '</p>' : "") +
+      '<div class="mini-row" style="margin-top:14px">' +
+        '<button class="btn ghost" data-rescore="' + plan.id + '">再診斷對比</button>' +
+        '<button class="btn danger" data-del="' + plan.id + '">刪除</button>' +
+      '</div>';
+    holder.appendChild(card);
+  });
+
+  $("stPlans").textContent = plans.length;
+  $("stActionRate").textContent = (totalActions ? Math.round(doneActions / totalActions * 100) : 0) + "%";
+  $("stRescored").textContent = rescoreCount;
+}
+
+$("planList").addEventListener("click", e => {
+  const cb = e.target.closest("input[type=checkbox]");
+  if (cb) {
+    const plan = plans.find(p => p.id === cb.dataset.plan);
+    if (plan) {
+      plan.actions[+cb.dataset.idx].done = cb.checked;
+      saveAll();
+      renderTrack();
+    }
+    return;
+  }
+  const rescoreBtn = e.target.closest("[data-rescore]");
+  if (rescoreBtn) { enterRescoreMode(rescoreBtn.dataset.rescore); return; }
+  const delBtn = e.target.closest("[data-del]");
+  if (delBtn) {
+    if (!confirm("確定刪除這個減負計畫？此動作無法復原。")) return;
+    plans = plans.filter(p => p.id !== delBtn.dataset.del);
+    saveAll();
+    renderTrack();
+    toast("已刪除計畫");
+  }
+});
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify({ plans, exportedAt: new Date().toISOString() }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "cognitive-load-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.plans)) {
+        plans = data.plans;
+        saveAll();
+        renderTrack();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有減負計畫與診斷資料嗎？此動作無法復原。")) return;
+  plans = [];
+  saveAll();
+  renderTrack();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-prescribe") renderPrescription();
+  if (id === "tab-track") renderTrack();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+renderQuestions();
+renderTrack();
+</script>
+</body>
+</html>

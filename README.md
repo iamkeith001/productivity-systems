@@ -13,3 +13,5 @@
 - 決策日誌：https://iamkeith001.github.io/productivity-systems/decision-journal/
 - 行動觸發：https://iamkeith001.github.io/productivity-systems/action-trigger/
 - 心智模型：https://iamkeith001.github.io/productivity-systems/mental-models/
+- 認知負荷：https://iamkeith001.github.io/productivity-systems/cognitive-load/
+- 知識蒸餾：https://iamkeith001.github.io/productivity-systems/knowledge-distill/

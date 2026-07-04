@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="知識蒸餾">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%234B3F9E' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%234B3F9E'%3E萃%3C/text%3E%3C/svg%3E">
+<title>知識蒸餾法 · Knowledge Distillation</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#4B3F9E; --acc-soft:#ECEAF6;
+    --grid:rgba(75,63,158,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#A99DE8; --acc-soft:#2A2740;
+    --grid:rgba(169,157,232,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* Wizard */
+  .wizard-progress{display:flex;justify-content:space-between;gap:4px;border-bottom:1px solid var(--hairline-soft);padding-bottom:10px;margin-bottom:18px}
+  .wiz-step{font-size:10.5px;font-weight:700;color:var(--pencil);text-align:center;flex:1;padding:4px 0;transition:.2s}
+  .wiz-step.active{color:var(--acc);border-bottom:2px solid var(--acc)}
+  .wizard-step-panel{display:none}
+  .wizard-step-panel.active{display:block}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:72px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .template-btn.sel{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  /* Fragment type picker + list */
+  .frag-type-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+  .frag-type-btn{border:1px solid var(--hairline);background:var(--paper);padding:9px 2px;border-radius:6px;font-size:12.5px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;color:var(--pencil);min-height:40px}
+  .frag-type-btn.sel{color:var(--paper);border-color:transparent}
+  .frag-type-btn.sel[data-type="fact"]{background:var(--blue)}
+  .frag-type-btn.sel[data-type="view"]{background:var(--amber)}
+  .frag-type-btn.sel[data-type="principle"]{background:var(--acc)}
+  .frag-type-btn.sel[data-type="action"]{background:var(--green)}
+  .frag-item{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-top:1px solid var(--hairline-soft)}
+  .frag-item .tag{margin-top:2px}
+  .frag-item p{flex:1;margin:0;font-size:13px;line-height:1.65}
+  .frag-item button{flex:none;width:30px;height:30px;border-radius:6px;border:1px solid var(--hairline);background:var(--paper2);color:var(--red);cursor:pointer;font-weight:800;font-size:15px}
+  .frag-counts{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 12px}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.06em;flex:none}
+  .tag.fact{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.view{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.principle{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.action{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.gold{background:var(--amber);color:var(--paper);border-color:transparent}
+  .tag.redo{background:var(--red-soft);color:var(--red);border-color:transparent}
+
+  /* Knowledge card display */
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.12em}
+
+  .kcard{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--acc)}
+  .kcard.standard{border-left-color:var(--amber)}
+  .kcard.redistill{border-left-color:var(--red)}
+  .kcard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:2px}
+  .kcard-title{font-size:13px;font-weight:800;color:var(--pencil);letter-spacing:.04em;margin:0}
+  .kcard-insight{font-family:"Songti TC","Noto Serif TC",serif;font-size:18px;font-weight:900;letter-spacing:.03em;line-height:1.6;margin:6px 0 10px;padding:10px 14px;background:var(--paper2);border-radius:6px;border-left:3px solid var(--acc)}
+  .kcard.standard .kcard-insight{border-left-color:var(--amber)}
+  .kcard-points{margin:0 0 10px;padding-left:20px;font-size:13.5px;line-height:1.8}
+  .kcard-points li{margin-bottom:2px}
+  .kcard-action{font-size:13px;background:var(--green-soft);color:var(--green);border-radius:6px;padding:9px 12px;margin-bottom:10px;font-weight:600}
+  .kcard-meta{font-size:11.5px;color:var(--pencil);letter-spacing:.05em;margin-bottom:10px}
+  .kcard details{margin-bottom:10px}
+
+  .filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .filter-btn{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:6px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;font-weight:700;white-space:nowrap;font-family:inherit;min-height:32px}
+  .filter-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .search-input{margin-bottom:10px}
+
+  /* Review (reflow) */
+  .verdict-group{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}
+  .verdict-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:10px 4px;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;min-height:42px}
+  .verdict-btn.sel.good{background:var(--green);color:var(--paper);border-color:transparent}
+  .verdict-btn.sel.part{background:var(--amber);color:var(--paper);border-color:transparent}
+  .verdict-btn.sel.bad{background:var(--red);color:var(--paper);border-color:transparent}
+  .review-history{font-size:12px;color:var(--pencil);line-height:1.8;margin:8px 0 0}
+  .review-history b{color:var(--ink)}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .edit-banner{background:var(--blue-soft);color:var(--blue);border-radius:6px;padding:11px 14px;font-size:13px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .edit-banner button{border:none;background:none;color:var(--blue);font-weight:800;cursor:pointer;font-size:12.5px;text-decoration:underline;font-family:inherit;flex:none}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.14em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">萃</text></svg>
+      <div>
+        <h1>知識蒸餾法</h1>
+        <small>KNOWLEDGE DISTILLATION</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: DISTILL WIZARD -->
+  <section class="tab active" id="tab-distill">
+    <div class="hero">
+      <p class="eyebrow">蒸餾工作台</p>
+      <div class="hero-title serif">資料不缺，<br>缺的是提煉。</div>
+      <p class="hero-text">一般摘要只回答「這份資料說了什麼」；蒸餾更進一步回答：真正重要的是什麼？背後的原則是什麼？能支持哪個決策或行動？把大量素材煉成小而準、可複用的知識卡片。</p>
+      <div class="quote-line serif">把複雜變簡單，把資訊變智慧。</div>
+    </div>
+
+    <div class="edit-banner" id="editBanner" style="display:none">
+      <span id="editBannerText">重新蒸餾</span>
+      <button id="editCancelBtn">取消</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow" id="wizEyebrow">知識蒸餾</p>
+      <h2>蒸餾一批素材</h2>
+
+      <div class="wizard-progress">
+        <div class="wiz-step active" id="wizInd-1">1. 目的</div>
+        <div class="wiz-step" id="wizInd-2">2. 素材歸類</div>
+        <div class="wiz-step" id="wizInd-3">3. 萃取精華</div>
+      </div>
+
+      <!-- STEP 1: PURPOSE -->
+      <div class="wizard-step-panel active" id="wizPanel-1">
+        <label class="form-label" for="dTopic">主題 / 素材範圍 *</label>
+        <input type="text" id="dTopic" placeholder="例如：MDRO 預測文獻 20 篇、本週專案檢討會議">
+
+        <label class="form-label">蒸餾目的 *</label>
+        <div class="sub">目的不同，萃取重點就不同。先選一個主要目的：</div>
+        <div class="templates-list" id="purposeList">
+          <button type="button" class="template-btn" data-val="寫報告">寫報告</button>
+          <button type="button" class="template-btn" data-val="做決策">做決策</button>
+          <button type="button" class="template-btn" data-val="教學">教學</button>
+          <button type="button" class="template-btn" data-val="建立 SOP">建立 SOP</button>
+          <button type="button" class="template-btn" data-val="研究假設">研究假設</button>
+        </div>
+
+        <label class="form-label" for="dSource">素材來源備註（可留空）</label>
+        <input type="text" id="dSource" placeholder="例如：PubMed 檢索 2024–2026、會議逐字稿">
+
+        <button class="btn" id="toStep2Btn">下一步：倒入素材 →</button>
+      </div>
+
+      <!-- STEP 2: COLLECT & CLASSIFY -->
+      <div class="wizard-step-panel" id="wizPanel-2">
+        <p class="sub" style="margin-top:2px">先大量倒入、不急著下結論——包括不支持你想法的素材。每條選一個類型再加入：</p>
+
+        <div class="frag-type-row" id="fragTypeRow">
+          <button type="button" class="frag-type-btn sel" data-type="fact">事實</button>
+          <button type="button" class="frag-type-btn" data-type="view">觀點</button>
+          <button type="button" class="frag-type-btn" data-type="principle">原則</button>
+          <button type="button" class="frag-type-btn" data-type="action">行動</button>
+        </div>
+        <div class="sub" id="fragTypeHint">事實：客觀資訊、數據、事件。</div>
+
+        <textarea id="fragText" placeholder="貼上或輸入一條素材…"></textarea>
+        <button class="btn ghost" id="addFragBtn" style="margin-bottom:14px">＋ 加入素材</button>
+
+        <div class="frag-counts" id="fragCounts"></div>
+        <div id="fragList"></div>
+
+        <div class="mini-row" style="margin-top:14px">
+          <button class="btn line" id="backTo1Btn">← 上一步</button>
+          <button class="btn" id="toStep3Btn">下一步：萃取 →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: DISTILL ESSENCE -->
+      <div class="wizard-step-panel" id="wizPanel-3">
+        <p class="sub" style="margin-top:2px">好的蒸餾結果，是讓未來的你不用重讀原始資料也能快速抓到重點。</p>
+
+        <label class="form-label" for="dInsight">一句話洞見 *</label>
+        <input type="text" id="dInsight" placeholder="這批素材最核心的一句話">
+
+        <label class="form-label">三點摘要（至少填第一點）</label>
+        <input type="text" id="dPoint1" placeholder="重點一 *">
+        <input type="text" id="dPoint2" placeholder="重點二">
+        <input type="text" id="dPoint3" placeholder="重點三">
+
+        <label class="form-label" for="dAction">下一步行動（可留空）</label>
+        <input type="text" id="dAction" placeholder="這個洞見能支持的決策、實驗或下一步">
+
+        <div class="mini-row" style="margin-top:6px">
+          <button class="btn line" id="backTo2Btn">← 上一步</button>
+          <button class="btn" id="saveCardBtn">存成知識卡片</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: CARD LIBRARY -->
+  <section class="tab" id="tab-library">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stCards">0</div><div class="l">知識卡片</div></div>
+      <div class="stat"><div class="n" id="stStandard">0</div><div class="l">已升級標準</div></div>
+      <div class="stat"><div class="n" id="stRedo">0</div><div class="l">待重新蒸餾</div></div>
+    </div>
+
+    <input type="text" class="search-input" id="libSearch" placeholder="搜尋主題、洞見或摘要…">
+    <div class="filters" id="libFilters">
+      <button class="filter-btn active" data-pf="all">全部</button>
+      <button class="filter-btn" data-pf="寫報告">寫報告</button>
+      <button class="filter-btn" data-pf="做決策">做決策</button>
+      <button class="filter-btn" data-pf="教學">教學</button>
+      <button class="filter-btn" data-pf="建立 SOP">建立 SOP</button>
+      <button class="filter-btn" data-pf="研究假設">研究假設</button>
+    </div>
+
+    <div class="empty" id="libEmpty" style="display:none">
+      <span class="zh serif">卡片庫還是空的</span>
+      到「蒸餾」分頁把第一批素材<br>煉成知識卡片吧。
+    </div>
+
+    <div id="cardList"></div>
+  </section>
+
+  <!-- TAB 3: REFLOW REVIEW -->
+  <section class="tab" id="tab-reflow">
+    <div class="card">
+      <p class="eyebrow">回流機制</p>
+      <h2>用過之後，回來校正</h2>
+      <p class="sub" style="margin-bottom:0">蒸餾不是一次完成。每次實際應用後回來檢核：<b>反覆有效（2 次以上）→ 升級成標準</b>；<b>無法支持行動 → 標記重新蒸餾</b>。</p>
+    </div>
+
+    <div class="empty" id="reflowEmpty" style="display:none">
+      <span class="zh serif">沒有可檢核的卡片</span>
+      先蒸餾出知識卡片，實際用過之後<br>再回來記錄它有沒有效。
+    </div>
+
+    <div id="reflowList"></div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">知識蒸餾</div>
+      <p class="hero-text">「知識蒸餾」原是機器學習方法：2015 年 Geoffrey Hinton、Oriol Vinyals 與 Jeff Dean 提出，把大型「教師模型」的知識轉移到較小的「學生模型」，讓小模型保留關鍵能力、降低部署成本。應用到知識管理，精神是：把大量、分散、複雜的資訊，萃取成小而準、可理解、可複用的知識單元。</p>
+      <div class="quote-line serif">真正稀缺的不是資料，而是提煉判斷的能力。</div>
+    </div>
+
+    <details>
+      <summary>蒸餾與摘要的差別</summary>
+      <div class="body">
+        一般摘要只回答「這份資料說了什麼」；知識蒸餾更進一步回答：
+        <ul>
+          <li>這件事<b>真正重要的</b>是什麼？</li>
+          <li>它背後的<b>原則</b>是什麼？</li>
+          <li>我可以如何<b>重複使用</b>？</li>
+          <li>它能支持哪個<b>決策或行動</b>？</li>
+        </ul>
+        核心不是「越短越好」，而是把判斷邏輯、核心模式與可行動洞見萃取出來。
+      </div>
+    </details>
+
+    <details>
+      <summary>五個步驟</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 明確蒸餾目的</b>：為了寫報告、做決策、教學、建立 SOP 還是形成研究假設？目的不同，萃取重點也不同。</li>
+          <li><b>2. 大量吸收，不立刻判斷</b>：先收集足夠材料，避免只挑支持自己想法的片段。</li>
+          <li><b>3. 篩選與歸類</b>：分成四類——<b>事實</b>（客觀資訊、數據）、<b>觀點</b>（作者或團隊的解釋）、<b>原則</b>（可跨情境重複使用的規律）、<b>行動</b>（可執行、可測試的下一步）。</li>
+          <li><b>4. 蒸餾成知識精華</b>：一句話洞見、三點摘要、決策原則、流程圖、檢查清單、知識卡片、可教學範例。</li>
+          <li><b>5. 建立回流機制</b>：每次應用後回頭修正。無法支持行動的洞見要重新蒸餾；反覆有效的原則升級成團隊標準。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>研究與論文寫作</b>：讀 20 篇文獻後，蒸餾出「研究缺口、方法差異、可引用論點、未解問題」，比堆疊 citation 更有價值。</li>
+          <li><b>會議管理</b>：不留逐字紀錄，蒸餾成「結論、決策、責任人、下一步、風險」。</li>
+          <li><b>團隊知識庫</b>：把專案經驗轉成「錯誤模式、成功條件、決策原則、可重複流程」。知識庫的價值不在資料多，而在能否幫新人更快做對事。</li>
+          <li><b>個人學習</b>：讀完一本書，產出「可採用的 3 個原則、1 個行動實驗、1 個反思問題」，而不只是摘錄金句。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        知識蒸餾法把知識管理從「<b>保存資訊</b>」提升到「<b>提煉判斷</b>」。在資訊過載時代，真正稀缺的不是資料，而是能把資料轉化為決策、行動與教學的能力。蒸餾也可視為一種高效學習框架：關鍵在於選擇要轉移的知識型態，以及讓接收者用更低成本吸收。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="../cognitive-load/">認知負荷</a> ·
+      <a href="https://iamkeith001.github.io/mind-offload/">腦袋清空站</a> ·
+      <a href="../mental-models/">心智模型</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-distill">
+      <svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v5.5L4.8 17a2.4 2.4 0 0 0 2.1 3.5h10.2a2.4 2.4 0 0 0 2.1-3.5L14 8.5V3"/><path d="M7 14.5h10"/></svg>
+      蒸餾
+    </button>
+    <button class="tabbtn" data-tab="tab-library">
+      <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 5V3.5M16 5V3.5M8 13.5h8M8 16.5h5"/></svg>
+      卡片庫
+    </button>
+    <button class="tabbtn" data-tab="tab-reflow">
+      <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 5.5V11h-5.5"/></svg>
+      回流
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "distill_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "distill_v1";
+let cards = [];
+try { cards = JSON.parse(localStorage.getItem(storeKey) || "[]"); } catch (e) { cards = []; }
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(cards)); }
+
+const FRAG_TYPES = {
+  fact:      { name: "事實", hint: "事實：客觀資訊、數據、事件。" },
+  view:      { name: "觀點", hint: "觀點：作者或團隊的解釋。" },
+  principle: { name: "原則", hint: "原則：可跨情境重複使用的規律。" },
+  action:    { name: "行動", hint: "行動：可以被執行、測試或決策的下一步。" }
+};
+
+/* ---------- Wizard state ---------- */
+let wizStep = 1;
+let fragments = [];        // {type, text}
+let curFragType = "fact";
+let editingCardId = null;  // redistill mode
+
+function gotoStep(n){
+  wizStep = n;
+  [1, 2, 3].forEach(i => {
+    $("wizInd-" + i).classList.toggle("active", i === n);
+    $("wizPanel-" + i).classList.toggle("active", i === n);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* Purpose picker */
+let curPurpose = null;
+$("purposeList").addEventListener("click", e => {
+  const btn = e.target.closest(".template-btn");
+  if (!btn) return;
+  curPurpose = btn.dataset.val;
+  $("purposeList").querySelectorAll(".template-btn").forEach(b => b.classList.toggle("sel", b === btn));
+});
+
+$("toStep2Btn").addEventListener("click", () => {
+  if (!$("dTopic").value.trim()) { toast("請先填寫主題"); $("dTopic").focus(); return; }
+  if (!curPurpose) { toast("請選擇蒸餾目的"); return; }
+  gotoStep(2);
+});
+$("backTo1Btn").addEventListener("click", () => gotoStep(1));
+$("backTo2Btn").addEventListener("click", () => gotoStep(2));
+
+/* Fragment type picker */
+$("fragTypeRow").addEventListener("click", e => {
+  const btn = e.target.closest(".frag-type-btn");
+  if (!btn) return;
+  curFragType = btn.dataset.type;
+  $("fragTypeRow").querySelectorAll(".frag-type-btn").forEach(b => b.classList.toggle("sel", b === btn));
+  $("fragTypeHint").textContent = FRAG_TYPES[curFragType].hint;
+});
+
+$("addFragBtn").addEventListener("click", () => {
+  const text = $("fragText").value.trim();
+  if (!text) { toast("素材內容不能是空的"); $("fragText").focus(); return; }
+  fragments.push({ type: curFragType, text });
+  $("fragText").value = "";
+  $("fragText").focus();
+  renderFragments();
+});
+
+function renderFragments(){
+  const counts = { fact: 0, view: 0, principle: 0, action: 0 };
+  fragments.forEach(f => counts[f.type]++);
+  $("fragCounts").innerHTML = Object.keys(FRAG_TYPES)
+    .map(t => '<span class="tag ' + t + '">' + FRAG_TYPES[t].name + ' ' + counts[t] + '</span>').join("");
+  $("fragList").innerHTML = fragments.map((f, i) =>
+    '<div class="frag-item"><span class="tag ' + f.type + '">' + FRAG_TYPES[f.type].name + '</span>' +
+    '<p>' + esc(f.text) + '</p>' +
+    '<button type="button" data-del-frag="' + i + '" aria-label="刪除素材">×</button></div>'
+  ).join("");
+}
+$("fragList").addEventListener("click", e => {
+  const btn = e.target.closest("[data-del-frag]");
+  if (!btn) return;
+  fragments.splice(+btn.dataset.delFrag, 1);
+  renderFragments();
+});
+
+$("toStep3Btn").addEventListener("click", () => {
+  if (fragments.length === 0) { toast("請至少加入一條素材"); return; }
+  gotoStep(3);
+});
+
+/* ---------- Save card ---------- */
+$("saveCardBtn").addEventListener("click", () => {
+  const insight = $("dInsight").value.trim();
+  const p1 = $("dPoint1").value.trim();
+  if (!insight) { toast("請填寫一句話洞見"); $("dInsight").focus(); return; }
+  if (!p1) { toast("三點摘要至少要填第一點"); $("dPoint1").focus(); return; }
+  const points = [p1, $("dPoint2").value.trim(), $("dPoint3").value.trim()].filter(Boolean);
+
+  if (editingCardId) {
+    const card = cards.find(c => c.id === editingCardId);
+    if (card) {
+      card.topic = $("dTopic").value.trim();
+      card.purpose = curPurpose;
+      card.source = $("dSource").value.trim();
+      card.fragments = fragments;
+      card.insight = insight;
+      card.points = points;
+      card.action = $("dAction").value.trim();
+      card.status = "active";
+      card.redistilledAt = today();
+      saveAll();
+      toast("重新蒸餾完成，卡片已更新！");
+    }
+    exitEditMode();
+  } else {
+    cards.unshift({
+      id: Date.now().toString(36),
+      topic: $("dTopic").value.trim(),
+      purpose: curPurpose,
+      source: $("dSource").value.trim(),
+      fragments,
+      insight,
+      points,
+      action: $("dAction").value.trim(),
+      status: "active",       // active | standard | redistill
+      createdAt: today(),
+      reviews: []             // {date, verdict: good|part|bad, note}
+    });
+    saveAll();
+    toast("知識卡片已存入卡片庫！");
+  }
+
+  resetWizard();
+  renderLibrary();
+  switchTab("tab-library");
+});
+
+function resetWizard(){
+  ["dTopic", "dSource", "dInsight", "dPoint1", "dPoint2", "dPoint3", "dAction", "fragText"].forEach(id => { $(id).value = ""; });
+  curPurpose = null;
+  $("purposeList").querySelectorAll(".template-btn").forEach(b => b.classList.remove("sel"));
+  fragments = [];
+  renderFragments();
+  gotoStep(1);
+}
+
+/* ---------- Redistill (edit) mode ---------- */
+function enterEditMode(cardId){
+  const card = cards.find(c => c.id === cardId);
+  if (!card) return;
+  editingCardId = cardId;
+  $("editBanner").style.display = "flex";
+  $("editBannerText").textContent = "重新蒸餾：" + card.topic;
+  $("dTopic").value = card.topic;
+  $("dSource").value = card.source || "";
+  curPurpose = card.purpose;
+  $("purposeList").querySelectorAll(".template-btn").forEach(b => b.classList.toggle("sel", b.dataset.val === card.purpose));
+  fragments = card.fragments.map(f => ({ type: f.type, text: f.text }));
+  renderFragments();
+  $("dInsight").value = card.insight;
+  $("dPoint1").value = card.points[0] || "";
+  $("dPoint2").value = card.points[1] || "";
+  $("dPoint3").value = card.points[2] || "";
+  $("dAction").value = card.action || "";
+  gotoStep(1);
+  switchTab("tab-distill");
+}
+function exitEditMode(){
+  editingCardId = null;
+  $("editBanner").style.display = "none";
+}
+$("editCancelBtn").addEventListener("click", () => {
+  exitEditMode();
+  resetWizard();
+  toast("已取消重新蒸餾");
+});
+
+/* ---------- Library ---------- */
+let libFilter = "all";
+$("libFilters").addEventListener("click", e => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  libFilter = btn.dataset.pf;
+  $("libFilters").querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+  renderLibrary();
+});
+$("libSearch").addEventListener("input", renderLibrary);
+
+function statusTag(card){
+  if (card.status === "standard") return '<span class="tag gold">標準</span>';
+  if (card.status === "redistill") return '<span class="tag redo">待重新蒸餾</span>';
+  return "";
+}
+
+function cardPlainText(card){
+  let s = "【主題】" + card.topic + "（目的：" + card.purpose + "）\n";
+  s += "【一句話洞見】" + card.insight + "\n";
+  s += "【三點摘要】\n" + card.points.map(p => "・" + p).join("\n") + "\n";
+  if (card.action) s += "【下一步行動】" + card.action + "\n";
+  return s;
+}
+
+function renderLibrary(){
+  const q = $("libSearch").value.toLowerCase().trim();
+  const holder = $("cardList");
+  const list = cards.filter(c => {
+    const matchP = libFilter === "all" || c.purpose === libFilter;
+    const hay = (c.topic + " " + c.insight + " " + c.points.join(" ")).toLowerCase();
+    return matchP && (!q || hay.includes(q));
+  });
+
+  $("libEmpty").style.display = cards.length ? "none" : "block";
+  $("stCards").textContent = cards.length;
+  $("stStandard").textContent = cards.filter(c => c.status === "standard").length;
+  $("stRedo").textContent = cards.filter(c => c.status === "redistill").length;
+
+  holder.innerHTML = list.map(card => {
+    const counts = { fact: 0, view: 0, principle: 0, action: 0 };
+    card.fragments.forEach(f => counts[f.type]++);
+    const fragTags = Object.keys(FRAG_TYPES).filter(t => counts[t] > 0)
+      .map(t => '<span class="tag ' + t + '">' + FRAG_TYPES[t].name + ' ' + counts[t] + '</span>').join(" ");
+    const fragRows = card.fragments.map(f =>
+      '<div class="frag-item"><span class="tag ' + f.type + '">' + FRAG_TYPES[f.type].name + '</span><p>' + esc(f.text) + '</p></div>'
+    ).join("");
+    return '<div class="kcard ' + card.status + '">' +
+      '<div class="kcard-top"><p class="kcard-title">' + esc(card.topic) + ' · <span style="font-weight:600">' + card.purpose + '</span></p>' + statusTag(card) + '</div>' +
+      '<div class="kcard-insight serif">' + esc(card.insight) + '</div>' +
+      '<ul class="kcard-points">' + card.points.map(p => "<li>" + esc(p) + "</li>").join("") + '</ul>' +
+      (card.action ? '<div class="kcard-action">→ ' + esc(card.action) + '</div>' : "") +
+      '<div class="kcard-meta">' + card.createdAt + ' 蒸餾' + (card.redistilledAt ? ' · ' + card.redistilledAt + ' 重蒸餾' : "") + (card.source ? ' · 來源：' + esc(card.source) : "") + '</div>' +
+      '<details><summary>原始素材（' + card.fragments.length + ' 條）　' + fragTags + '</summary><div class="body">' + fragRows + '</div></details>' +
+      '<div class="mini-row">' +
+        '<button class="btn ghost" data-copy="' + card.id + '">複製精華</button>' +
+        (card.status === "redistill"
+          ? '<button class="btn" data-redistill="' + card.id + '">重新蒸餾</button>'
+          : '<button class="btn line" data-redistill="' + card.id + '">重蒸餾</button>') +
+        '<button class="btn danger" data-del="' + card.id + '">刪除</button>' +
+      '</div></div>';
+  }).join("");
+
+  if (cards.length && !list.length) {
+    holder.innerHTML = '<div class="empty"><span class="zh serif">沒有符合的卡片</span>換個關鍵字或篩選條件試試。</div>';
+  }
+}
+
+$("cardList").addEventListener("click", e => {
+  const copyBtn = e.target.closest("[data-copy]");
+  if (copyBtn) {
+    const card = cards.find(c => c.id === copyBtn.dataset.copy);
+    if (!card) return;
+    const text = cardPlainText(card);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => toast("精華已複製，可貼到筆記或訊息"), () => toast("複製失敗，請手動選取"));
+    } else { toast("此瀏覽器不支援自動複製"); }
+    return;
+  }
+  const reBtn = e.target.closest("[data-redistill]");
+  if (reBtn) { enterEditMode(reBtn.dataset.redistill); return; }
+  const delBtn = e.target.closest("[data-del]");
+  if (delBtn) {
+    if (!confirm("確定刪除這張知識卡片？此動作無法復原。")) return;
+    cards = cards.filter(c => c.id !== delBtn.dataset.del);
+    saveAll();
+    renderLibrary();
+    renderReflow();
+    toast("已刪除卡片");
+  }
+});
+
+/* ---------- Reflow (review) ---------- */
+const VERDICTS = {
+  good: { label: "反覆有效", cls: "good" },
+  part: { label: "部分有效", cls: "part" },
+  bad:  { label: "無法支持行動", cls: "bad" }
+};
+let reflowSel = {};   // cardId -> verdict
+
+function renderReflow(){
+  const holder = $("reflowList");
+  $("reflowEmpty").style.display = cards.length ? "none" : "block";
+  holder.innerHTML = cards.map(card => {
+    const goodCount = card.reviews.filter(r => r.verdict === "good").length;
+    const hist = card.reviews.slice(-3).reverse().map(r =>
+      "<b>" + r.date + "</b>：" + VERDICTS[r.verdict].label + (r.note ? "——" + esc(r.note) : "")
+    ).join("<br>");
+    const verdictBtns = Object.keys(VERDICTS).map(v =>
+      '<button type="button" class="verdict-btn ' + VERDICTS[v].cls + (reflowSel[card.id] === v ? " sel" : "") + '" data-card="' + card.id + '" data-v="' + v + '">' + VERDICTS[v].label + '</button>'
+    ).join("");
+    return '<div class="kcard ' + card.status + '">' +
+      '<div class="kcard-top"><p class="kcard-title">' + esc(card.topic) + '</p>' + statusTag(card) + '</div>' +
+      '<div class="kcard-insight serif">' + esc(card.insight) + '</div>' +
+      '<p class="sub" style="margin-bottom:8px">實際用過這個洞見了嗎？記錄它的表現（已累積有效 ' + goodCount + ' 次）：</p>' +
+      '<div class="verdict-group">' + verdictBtns + '</div>' +
+      '<input type="text" id="note-' + card.id + '" placeholder="檢核備註（可留空）" style="margin-bottom:9px">' +
+      '<button class="btn ghost" data-submit="' + card.id + '">記錄這次檢核</button>' +
+      (hist ? '<div class="review-history">' + hist + '</div>' : "") +
+      '</div>';
+  }).join("");
+}
+
+$("reflowList").addEventListener("click", e => {
+  const vBtn = e.target.closest(".verdict-btn");
+  if (vBtn) {
+    reflowSel[vBtn.dataset.card] = vBtn.dataset.v;
+    renderReflow();
+    return;
+  }
+  const sBtn = e.target.closest("[data-submit]");
+  if (sBtn) {
+    const id = sBtn.dataset.submit;
+    const card = cards.find(c => c.id === id);
+    const verdict = reflowSel[id];
+    if (!card) return;
+    if (!verdict) { toast("請先選擇這次應用的結果"); return; }
+    const note = $("note-" + id) ? $("note-" + id).value.trim() : "";
+    card.reviews.push({ date: today(), verdict, note });
+
+    if (verdict === "bad") {
+      card.status = "redistill";
+      toast("已標記為待重新蒸餾——到卡片庫重煉它");
+    } else {
+      const goodCount = card.reviews.filter(r => r.verdict === "good").length;
+      if (goodCount >= 2 && card.status !== "standard") {
+        card.status = "standard";
+        toast("反覆有效！已升級為標準 🏆");
+      } else {
+        toast("檢核已記錄");
+      }
+    }
+    delete reflowSel[id];
+    saveAll();
+    renderReflow();
+    renderLibrary();
+  }
+});
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify({ cards, exportedAt: new Date().toISOString() }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "knowledge-distill-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.cards)) {
+        cards = data.cards;
+        saveAll();
+        renderLibrary();
+        renderReflow();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有知識卡片與檢核紀錄嗎？此動作無法復原。")) return;
+  cards = [];
+  saveAll();
+  renderLibrary();
+  renderReflow();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-library") renderLibrary();
+  if (id === "tab-reflow") renderReflow();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+renderFragments();
+renderLibrary();
+renderReflow();
+</script>
+</body>
+</html>
