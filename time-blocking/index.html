@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="時間分塊">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23C2622D' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23C2622D'%3E塊%3C/text%3E%3C/svg%3E">
+<title>時間分塊法 · Time Blocking</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#C2622D; --acc-soft:#F6EAE0;
+    --grid:rgba(194,98,45,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#E4995F; --acc-soft:#38271A;
+    --grid:rgba(228,153,95,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],input[type=time],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  /* Type picker */
+  .type-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+  .type-btn{border:1px solid var(--hairline);background:var(--paper);padding:9px 2px;border-radius:6px;font-size:12.5px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;color:var(--pencil);min-height:40px}
+  .type-btn.sel[data-type="deep"]{background:var(--acc);color:var(--paper);border-color:transparent}
+  .type-btn.sel[data-type="shallow"]{background:var(--amber);color:var(--paper);border-color:transparent}
+  .type-btn.sel[data-type="fixed"]{background:var(--blue);color:var(--paper);border-color:transparent}
+  .type-hint{font-size:12px;color:var(--pencil);margin:0 0 12px}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.05em}
+  .tag.deep{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.shallow{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.fixed{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+
+  .filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .filter-btn{border:1px solid var(--hairline-soft);background:var(--paper);color:var(--pencil);padding:6px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;font-weight:700;white-space:nowrap;font-family:inherit;min-height:32px}
+  .filter-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+
+  /* Task items */
+  .task-item{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:9px;border-left:4px solid var(--hairline)}
+  .task-item.deep{border-left-color:var(--acc)}
+  .task-item.shallow{border-left-color:var(--amber)}
+  .task-item.fixed{border-left-color:var(--blue)}
+  .task-item.scheduled{opacity:.55}
+  .task-body{flex:1;min-width:0}
+  .task-title{font-size:14px;font-weight:600;line-height:1.5}
+  .task-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;align-items:center}
+  .task-sched{font-size:11px;color:var(--pencil);font-weight:700}
+  .task-go{flex:none;border:1px solid var(--hairline);background:var(--acc);color:var(--paper);border-radius:6px;padding:7px 11px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+  .task-del{flex:none;border:none;background:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:800;padding:0 2px}
+
+  /* Timeline */
+  .summary-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:800;box-shadow:var(--shadow)}
+  .chip b{font-family:"Songti TC","Noto Serif TC",serif;font-size:14px}
+  .chip.deep{color:var(--acc)} .chip.shallow{color:var(--amber)} .chip.fixed{color:var(--blue)} .chip.buffer{color:var(--green)}
+
+  .timeline{position:relative}
+  .tl-block{background:var(--paper);border:1px solid var(--hairline-soft);border-left:4px solid var(--acc);border-radius:6px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:6px;display:flex;gap:12px;align-items:flex-start}
+  .tl-block.deep{border-left-color:var(--acc)}
+  .tl-block.shallow{border-left-color:var(--amber)}
+  .tl-block.fixed{border-left-color:var(--blue)}
+  .tl-time{flex:none;width:96px;font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;font-size:14px;line-height:1.35}
+  .tl-time small{display:block;font-family:inherit;font-size:10.5px;color:var(--pencil);font-weight:700}
+  .tl-main{flex:1;min-width:0}
+  .tl-title{font-size:14px;font-weight:700;line-height:1.4}
+  .tl-sub{margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .tl-dur{font-size:11px;color:var(--pencil);font-weight:700}
+  .tl-del{flex:none;border:none;background:none;color:var(--red);cursor:pointer;font-size:16px;font-weight:800;padding:0 2px}
+  .tl-gap{font-size:11.5px;font-weight:700;padding:5px 14px;margin-bottom:6px;border-radius:6px}
+  .tl-gap.buffer{color:var(--green);background:var(--green-soft)}
+  .tl-gap.overlap{color:var(--red);background:var(--red-soft)}
+  .tl-gap.nobuffer{color:var(--amber);background:var(--amber-soft)}
+
+  /* Analysis */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:22px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+  .bar-label{flex:none;width:70px;font-size:12.5px;font-weight:800}
+  .bar-track{flex:1;height:15px;background:var(--paper2);border:1px solid var(--hairline-soft);border-radius:8px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:8px;transition:width .5s ease}
+  .bar-val{flex:none;width:66px;text-align:right;font-size:12px;font-weight:800}
+  .verdict{border-radius:6px;padding:11px 13px;font-size:12.5px;line-height:1.7;margin-bottom:10px}
+  .verdict.ok{background:var(--green-soft);color:var(--green)}
+  .verdict.warn{background:var(--red-soft);color:var(--red)}
+  .verdict.mid{background:var(--amber-soft);color:var(--amber)}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+  details .body .eg{background:var(--paper2);border-radius:6px;padding:8px 12px;margin:6px 0;font-size:12.5px;font-family:"Songti TC",serif;font-weight:700;line-height:1.9}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.12em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">塊</text></svg>
+      <div>
+        <h1>時間分塊法</h1>
+        <small>TIME BLOCKING</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- TAB 1: TASKS -->
+  <section class="tab active" id="tab-tasks">
+    <div class="hero">
+      <p class="eyebrow">時間分塊</p>
+      <div class="hero-title serif">替注意力預約位置。</div>
+      <p class="hero-text">待辦清單只回答「我要做什麼」；時間分塊進一步回答「我何時、做多久、這段時間只處理哪一類事」。先把今天要處理的事全列出來，並分成三類，才好安排進時間表。</p>
+      <div class="quote-line serif">讓重要任務不再被零碎事情擠掉。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">步驟一 · 列出任務</p>
+      <h2>今天有哪些事佔用注意力</h2>
+      <label class="form-label" for="taskTitle">任務 *</label>
+      <input type="text" id="taskTitle" placeholder="例如：寫論文 Discussion、回覆廠商信、專案會議">
+
+      <label class="form-label">步驟二 · 任務類型 *</label>
+      <div class="type-row" id="typeRow">
+        <button type="button" class="type-btn" data-type="deep">深度工作</button>
+        <button type="button" class="type-btn" data-type="shallow">淺層工作</button>
+        <button type="button" class="type-btn" data-type="fixed">固定事件</button>
+      </div>
+      <p class="type-hint" id="typeHint">深度工作：需高度專注，如寫作、研究、程式設計、策略規劃。</p>
+
+      <button class="btn" id="addTaskBtn">加入任務</button>
+    </div>
+
+    <div class="filters" id="taskFilters">
+      <button class="filter-btn active" data-tf="all">全部</button>
+      <button class="filter-btn" data-tf="deep">深度</button>
+      <button class="filter-btn" data-tf="shallow">淺層</button>
+      <button class="filter-btn" data-tf="fixed">固定</button>
+      <button class="filter-btn" data-tf="unsched">未排入</button>
+    </div>
+
+    <div class="empty" id="taskEmpty" style="display:none">
+      <span class="zh serif">還沒有任務</span>
+      先把今天的工作、會議、回信、學習、<br>運動與生活事項全部列出來。
+    </div>
+    <div id="taskList"></div>
+  </section>
+
+  <!-- TAB 2: SCHEDULE -->
+  <section class="tab" id="tab-schedule">
+    <div class="card">
+      <p class="eyebrow">步驟三～五 · 排時間表</p>
+      <h2>把任務放進時間區塊</h2>
+      <p class="sub">先排不可移動的固定事件，再把深度工作放在精神最好的時段。相似的淺層工作批次成同一區塊，每 2–3 小時留 15–30 分緩衝。</p>
+
+      <label class="form-label" for="blockSelect">從任務選擇（或直接輸入標題）</label>
+      <select id="blockSelect"></select>
+      <input type="text" id="blockTitle" placeholder="區塊標題">
+
+      <label class="form-label">類型</label>
+      <div class="type-row" id="blockTypeRow">
+        <button type="button" class="type-btn sel" data-type="deep">深度工作</button>
+        <button type="button" class="type-btn" data-type="shallow">淺層工作</button>
+        <button type="button" class="type-btn" data-type="fixed">固定事件</button>
+      </div>
+
+      <div class="row2">
+        <div><label class="form-label" for="blockStart">開始</label><input type="time" id="blockStart" value="09:00"></div>
+        <div><label class="form-label" for="blockEnd">結束</label><input type="time" id="blockEnd" value="10:30"></div>
+      </div>
+      <button class="btn" id="addBlockBtn">排入時間表</button>
+    </div>
+
+    <div class="summary-chips" id="summaryChips"></div>
+
+    <div class="empty" id="scheduleEmpty" style="display:none">
+      <span class="zh serif">時間表還是空的</span>
+      先排入固定事件與深度工作，<br>時間軸會顯示在這裡並檢查重疊與緩衝。
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <!-- TAB 3: ANALYSIS -->
+  <section class="tab" id="tab-analysis">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stBlocks">0</div><div class="l">時間區塊</div></div>
+      <div class="stat"><div class="n" id="stPlanned">0</div><div class="l">已排時數</div></div>
+      <div class="stat"><div class="n" id="stBuffer">0</div><div class="l">緩衝(分)</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">注意力分配</p>
+      <h2>一天的時間花在哪</h2>
+      <div id="allocBars"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">計畫健檢</p>
+      <h2>這份時間表可執行嗎</h2>
+      <div id="healthChecks"></div>
+    </div>
+
+    <div class="empty" id="analysisEmpty" style="display:none">
+      <span class="zh serif">還沒有可分析的區塊</span>
+      到「時間表」排入幾個區塊後，<br>這裡會分析注意力分配與計畫健康度。
+    </div>
+  </section>
+
+  <!-- TAB 4: LEARN -->
+  <section class="tab" id="tab-learn">
+    <div class="hero">
+      <p class="eyebrow">理論背景</p>
+      <div class="hero-title serif">不只寫待辦，<br>直接排「何時做」。</div>
+      <p class="hero-text">時間分塊法來自時間管理、專案管理與深度工作理論的交會。Cal Newport 在《Deep Work》大力推廣用行事曆保護深度工作時段。核心精神：真正稀缺的不是時間本身，而是不被打斷的專注時段——所以直接替任務安排「何時做」。</p>
+      <div class="quote-line serif">用行事曆保護真正重要的事。</div>
+    </div>
+
+    <details>
+      <summary>一天的樣子</summary>
+      <div class="body">
+        <div class="eg">09:00–10:30　深度寫作<br>10:30–11:00　回覆 Email<br>11:00–12:00　會議<br>14:00–15:30　專案開發<br>16:00–16:30　行政處理</div>
+        每個區塊指定明確任務，減少臨時切換、降低決策疲勞。
+      </div>
+    </details>
+
+    <details>
+      <summary>五個步驟</summary>
+      <div class="body">
+        <ul>
+          <li><b>1. 先列出今日任務</b>：工作、會議、回信、學習、運動、生活全寫出來，先看清楚有哪些事佔用注意力。</li>
+          <li><b>2. 區分任務類型</b>：深度工作（高專注）、淺層工作（可批次）、固定事件（已排定）。</li>
+          <li><b>3. 先安排不可移動的時間</b>：固定事件先放，再把深度工作放在精神最好的時段——別留到一天最後。</li>
+          <li><b>4. 為相似任務建立批次區塊</b>：例如每天 11:30 與 16:30 各處理一次訊息與 Email，大幅減少切換成本。</li>
+          <li><b>5. 保留緩衝時間</b>：每 2–3 小時留 15–30 分緩衝處理延誤與突發。沒有緩衝的時間表，上午就會崩潰。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>延伸應用案例</summary>
+      <div class="body">
+        <ul>
+          <li><b>研究工作</b>：上午文獻閱讀與實驗設計，下午資料整理與通訊。深度分析不與行政混在一起。</li>
+          <li><b>程式開發</b>：上午設為無會議開發時段，下午再 code review、同步會議與文件更新。</li>
+          <li><b>內容創作</b>：發想、寫作、編輯、排版、發布拆成不同區塊，而非一次做完。</li>
+          <li><b>團隊管理</b>：設定固定的一對一、決策與深度思考區塊，避免整天被即時訊息牽著走。</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>專業解讀</summary>
+      <div class="body">
+        時間分塊不只是排程，而是<b>主動設計注意力的使用方式</b>——把「我要做什麼」轉化成「我何時專注做這件事」，降低拖延與多工干擾。但別過度僵化：真正有效的時間分塊是<b>有結構但保留彈性、有優先順序但允許調整</b>，不是用行事曆綁住自己。
+      </div>
+    </details>
+
+    <div class="card" style="margin-top:16px">
+      <p class="eyebrow">關聯工具</p>
+      <h2>搭配能量區塊與認知負荷</h2>
+      <p class="sub" style="margin-bottom:10px">「能量區塊」幫你決定哪個時段精神最好、該放深度工作；「認知負荷」提醒別把過重任務塞進零碎時間。三者互補。</p>
+      <div class="mini-row">
+        <a class="btn ghost" href="../energy-blocking/">能量區塊</a>
+        <a class="btn ghost" href="../cognitive-load/">認知負荷</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">資料管理</p>
+      <h2>備份與還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器中。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row" style="margin-bottom:9px">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <button class="btn danger" id="wipeBtn">清空全部資料</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+
+    <div class="foot">
+      提升生產力系列 ·
+      <a href="../">系列入口</a> ·
+      <a href="../energy-blocking/">能量區塊</a> ·
+      <a href="../cognitive-load/">認知負荷</a> ·
+      <a href="../mvp-progress/">最小可行進展</a>
+      <br>資料僅存於本機瀏覽器 · 離線可用
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-tasks">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M2.5 6h.01M2.5 12h.01M2.5 18h.01"/></svg>
+      任務
+    </button>
+    <button class="tabbtn" data-tab="tab-schedule">
+      <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/><rect x="6" y="11.5" width="7" height="2.2" rx="1" fill="currentColor" stroke="none"/><rect x="6" y="15.5" width="5" height="2.2" rx="1" fill="currentColor" stroke="none"/></svg>
+      時間表
+    </button>
+    <button class="tabbtn" data-tab="tab-analysis">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M12 3v9l6.4-6.4"/></svg>
+      檢視
+    </button>
+    <button class="tabbtn" data-tab="tab-learn">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M9 8h7"/></svg>
+      學習
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const toMin = hhmm => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
+function fmtDur(min){
+  const h = Math.floor(min / 60), m = min % 60;
+  if (h && m) return h + " 小時 " + m + " 分";
+  if (h) return h + " 小時";
+  return m + " 分";
+}
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---------- Theme ---------- */
+const themeKey = "timeblock_theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  $("themeIcon").innerHTML = t === "dark"
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  localStorage.setItem(themeKey, t);
+}
+applyTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("themeBtn").addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Data ---------- */
+const storeKey = "timeblock_v1";
+let db = { tasks: [], blocks: [] };   // block: {id, taskId, title, type, start, end}
+try {
+  const raw = JSON.parse(localStorage.getItem(storeKey));
+  if (raw && raw.tasks) db = Object.assign(db, raw);
+} catch (e) {}
+function saveAll(){ localStorage.setItem(storeKey, JSON.stringify(db)); }
+
+const TYPES = {
+  deep:    { name: "深度工作", cls: "deep",    color: "var(--acc)",   hint: "深度工作：需高度專注，如寫作、研究、程式設計、策略規劃。" },
+  shallow: { name: "淺層工作", cls: "shallow", color: "var(--amber)", hint: "淺層工作：可批次處理，如 Email、訊息、行政庶務。" },
+  fixed:   { name: "固定事件", cls: "fixed",   color: "var(--blue)",  hint: "固定事件：已排定的會議、課程、約定、通勤。" }
+};
+
+/* ---------- Task tab ---------- */
+let curType = null;
+$("typeRow").addEventListener("click", e => {
+  const btn = e.target.closest(".type-btn");
+  if (!btn) return;
+  curType = btn.dataset.type;
+  $("typeRow").querySelectorAll(".type-btn").forEach(b => b.classList.toggle("sel", b === btn));
+  $("typeHint").textContent = TYPES[curType].hint;
+});
+$("addTaskBtn").addEventListener("click", () => {
+  const title = $("taskTitle").value.trim();
+  if (!title) { toast("請填寫任務"); $("taskTitle").focus(); return; }
+  if (!curType) { toast("請選擇任務類型"); return; }
+  db.tasks.unshift({ id: uid(), title, type: curType, scheduled: false });
+  saveAll();
+  $("taskTitle").value = "";
+  curType = null;
+  $("typeRow").querySelectorAll(".type-btn").forEach(b => b.classList.remove("sel"));
+  $("typeHint").textContent = TYPES.deep.hint;
+  toast("已加入任務");
+  renderTasks();
+  fillBlockSelect();
+});
+let taskFilter = "all";
+$("taskFilters").addEventListener("click", e => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  taskFilter = btn.dataset.tf;
+  $("taskFilters").querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+  renderTasks();
+});
+function renderTasks(){
+  const list = db.tasks.filter(t => {
+    if (taskFilter === "all") return true;
+    if (taskFilter === "unsched") return !t.scheduled;
+    return t.type === taskFilter;
+  });
+  $("taskEmpty").style.display = db.tasks.length ? "none" : "block";
+  $("taskList").innerHTML = list.map(t => {
+    const ty = TYPES[t.type];
+    return '<div class="task-item ' + ty.cls + (t.scheduled ? " scheduled" : "") + '">' +
+      '<div class="task-body"><div class="task-title">' + esc(t.title) + '</div>' +
+      '<div class="task-tags"><span class="tag ' + ty.cls + '">' + ty.name + '</span>' +
+      (t.scheduled ? '<span class="task-sched">已排入</span>' : "") + '</div></div>' +
+      (t.scheduled ? "" : '<button class="task-go" data-go="' + t.id + '">排入</button>') +
+      '<button class="task-del" data-del="' + t.id + '" aria-label="刪除">×</button></div>';
+  }).join("");
+  if (db.tasks.length && !list.length) {
+    $("taskList").innerHTML = '<div class="empty"><span class="zh serif">沒有這個分類的任務</span>換個篩選看看。</div>';
+  }
+}
+$("taskList").addEventListener("click", e => {
+  const go = e.target.closest("[data-go]");
+  if (go) {
+    const t = db.tasks.find(x => x.id === go.dataset.go);
+    if (t) {
+      fillBlockSelect();
+      $("blockSelect").value = t.id;
+      applyBlockSelect();
+      switchTab("tab-schedule");
+    }
+    return;
+  }
+  const del = e.target.closest("[data-del]");
+  if (del) {
+    db.tasks = db.tasks.filter(t => t.id !== del.dataset.del);
+    // detach blocks referencing it
+    db.blocks.forEach(b => { if (b.taskId === del.dataset.del) b.taskId = null; });
+    saveAll();
+    renderTasks();
+    fillBlockSelect();
+    toast("已刪除任務");
+  }
+});
+
+/* ---------- Schedule tab ---------- */
+let blockType = "deep";
+$("blockTypeRow").addEventListener("click", e => {
+  const btn = e.target.closest(".type-btn");
+  if (!btn) return;
+  blockType = btn.dataset.type;
+  $("blockTypeRow").querySelectorAll(".type-btn").forEach(b => b.classList.toggle("sel", b === btn));
+});
+function setBlockType(type){
+  blockType = type;
+  $("blockTypeRow").querySelectorAll(".type-btn").forEach(b => b.classList.toggle("sel", b.dataset.type === type));
+}
+function fillBlockSelect(){
+  const sel = $("blockSelect");
+  const prev = sel.value;
+  const unsched = db.tasks.filter(t => !t.scheduled);
+  let html = '<option value="__free">直接輸入標題</option>';
+  html += unsched.map(t => '<option value="' + t.id + '">' + esc(t.title) + '（' + TYPES[t.type].name + '）</option>').join("");
+  sel.innerHTML = html;
+  if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+}
+function applyBlockSelect(){
+  const v = $("blockSelect").value;
+  if (v === "__free") { return; }
+  const t = db.tasks.find(x => x.id === v);
+  if (t) { $("blockTitle").value = t.title; setBlockType(t.type); }
+}
+$("blockSelect").addEventListener("change", applyBlockSelect);
+
+$("addBlockBtn").addEventListener("click", () => {
+  const sel = $("blockSelect").value;
+  let title = $("blockTitle").value.trim();
+  const taskId = sel !== "__free" ? sel : null;
+  if (taskId) { const t = db.tasks.find(x => x.id === taskId); if (t && !title) title = t.title; }
+  if (!title) { toast("請輸入區塊標題或選一個任務"); $("blockTitle").focus(); return; }
+  const start = $("blockStart").value, end = $("blockEnd").value;
+  if (!start || !end) { toast("請設定開始與結束時間"); return; }
+  if (toMin(end) <= toMin(start)) { toast("結束時間要晚於開始時間"); return; }
+  db.blocks.push({ id: uid(), taskId, title, type: blockType, start, end });
+  if (taskId) { const t = db.tasks.find(x => x.id === taskId); if (t) t.scheduled = true; }
+  saveAll();
+  $("blockTitle").value = "";
+  $("blockSelect").value = "__free";
+  toast("已排入時間表");
+  renderSchedule();
+  renderTasks();
+});
+
+function sortedBlocks(){ return [...db.blocks].sort((a, b) => toMin(a.start) - toMin(b.start)); }
+
+function renderSummaryChips(){
+  const totals = { deep: 0, shallow: 0, fixed: 0 };
+  db.blocks.forEach(b => { totals[b.type] += toMin(b.end) - toMin(b.start); });
+  // buffer = positive gaps between consecutive blocks
+  const bs = sortedBlocks();
+  let buffer = 0;
+  for (let i = 1; i < bs.length; i++) {
+    const gap = toMin(bs[i].start) - toMin(bs[i - 1].end);
+    if (gap > 0) buffer += gap;
+  }
+  const chip = (cls, label, min) => min > 0 ? '<span class="chip ' + cls + '">' + label + ' <b>' + (min / 60).toFixed(min % 60 ? 1 : 0) + 'h</b></span>' : "";
+  $("summaryChips").innerHTML =
+    chip("deep", "深度", totals.deep) + chip("shallow", "淺層", totals.shallow) +
+    chip("fixed", "固定", totals.fixed) +
+    (buffer > 0 ? '<span class="chip buffer">緩衝 <b>' + buffer + '分</b></span>' : "");
+}
+
+function renderSchedule(){
+  fillBlockSelect();
+  renderSummaryChips();
+  const bs = sortedBlocks();
+  $("scheduleEmpty").style.display = bs.length ? "none" : "block";
+  let html = "";
+  for (let i = 0; i < bs.length; i++) {
+    const b = bs[i];
+    const ty = TYPES[b.type];
+    const dur = toMin(b.end) - toMin(b.start);
+    if (i > 0) {
+      const gap = toMin(b.start) - toMin(bs[i - 1].end);
+      if (gap < 0) html += '<div class="tl-gap overlap">⚠ 與上一個區塊重疊 ' + (-gap) + ' 分——請調整時間</div>';
+      else if (gap === 0) html += '<div class="tl-gap nobuffer">↕ 無縫接續，沒有緩衝</div>';
+      else html += '<div class="tl-gap buffer">↕ 緩衝 ' + gap + ' 分</div>';
+    }
+    html += '<div class="tl-block ' + ty.cls + '">' +
+      '<div class="tl-time serif">' + b.start + '<small>↓ ' + b.end + '</small></div>' +
+      '<div class="tl-main"><div class="tl-title">' + esc(b.title) + '</div>' +
+      '<div class="tl-sub"><span class="tag ' + ty.cls + '">' + ty.name + '</span>' +
+      '<span class="tl-dur">' + fmtDur(dur) + '</span></div></div>' +
+      '<button class="tl-del" data-delblock="' + b.id + '" aria-label="刪除">×</button></div>';
+  }
+  $("timeline").innerHTML = html;
+}
+$("timeline").addEventListener("click", e => {
+  const del = e.target.closest("[data-delblock]");
+  if (!del) return;
+  const blk = db.blocks.find(b => b.id === del.dataset.delblock);
+  if (blk && blk.taskId) { const t = db.tasks.find(x => x.id === blk.taskId); if (t) t.scheduled = false; }
+  db.blocks = db.blocks.filter(b => b.id !== del.dataset.delblock);
+  saveAll();
+  renderSchedule();
+  renderTasks();
+});
+
+/* ---------- Analysis tab ---------- */
+function renderAnalysis(){
+  const bs = sortedBlocks();
+  $("analysisEmpty").style.display = bs.length ? "none" : "block";
+  const totals = { deep: 0, shallow: 0, fixed: 0 };
+  db.blocks.forEach(b => { totals[b.type] += toMin(b.end) - toMin(b.start); });
+  const planned = totals.deep + totals.shallow + totals.fixed;
+  let buffer = 0, maxRun = 0, run = 0;
+  for (let i = 0; i < bs.length; i++) {
+    run += toMin(bs[i].end) - toMin(bs[i].start);
+    if (i < bs.length - 1) {
+      const gap = toMin(bs[i + 1].start) - toMin(bs[i].end);
+      if (gap > 0) { buffer += gap; maxRun = Math.max(maxRun, run); run = 0; }
+    }
+  }
+  maxRun = Math.max(maxRun, run);
+
+  $("stBlocks").textContent = db.blocks.length;
+  $("stPlanned").textContent = (planned / 60).toFixed(planned % 60 ? 1 : 0) + "h";
+  $("stBuffer").textContent = buffer;
+
+  // allocation bars
+  const maxT = Math.max(totals.deep, totals.shallow, totals.fixed, 1);
+  const barRow = (t) => '<div class="bar-row"><span class="bar-label" style="color:' + TYPES[t].color + '">' + TYPES[t].name + '</span>' +
+    '<div class="bar-track"><div class="bar-fill" style="width:' + (totals[t] / maxT * 100) + '%;background:' + TYPES[t].color + '"></div></div>' +
+    '<span class="bar-val">' + fmtDur(totals[t]) + '</span></div>';
+  $("allocBars").innerHTML = planned ? (barRow("deep") + barRow("shallow") + barRow("fixed")) :
+    '<p class="sub" style="margin:0">還沒有區塊。</p>';
+
+  // health checks
+  const checks = [];
+  // overlaps
+  let overlaps = 0;
+  for (let i = 1; i < bs.length; i++) if (toMin(bs[i].start) < toMin(bs[i - 1].end)) overlaps++;
+  if (overlaps > 0) checks.push({ cls: "warn", text: "<b>有 " + overlaps + " 處區塊重疊</b>——同一時間排了兩件事，先調整時間避免衝突。" });
+  // buffer adequacy
+  if (planned > 0) {
+    if (maxRun > 180 && buffer === 0) checks.push({ cls: "warn", text: "<b>連續 " + fmtDur(maxRun) + " 沒有緩衝</b>——每 2–3 小時留 15–30 分，否則一有延誤整天就崩。" });
+    else if (maxRun > 180) checks.push({ cls: "mid", text: "<b>最長連續 " + fmtDur(maxRun) + "</b> 偏長——考慮中間插入一段緩衝。" });
+    else if (buffer >= 15) checks.push({ cls: "ok", text: "<b>有保留緩衝（共 " + buffer + " 分）</b>——計畫有喘息空間，較能承受突發。" });
+  }
+  // deep in morning
+  if (totals.deep > 0) {
+    let deepAM = 0;
+    db.blocks.filter(b => b.type === "deep").forEach(b => {
+      const s = toMin(b.start), e = Math.min(toMin(b.end), 12 * 60);
+      if (e > s) deepAM += e - s;
+    });
+    const amPct = Math.round(deepAM / totals.deep * 100);
+    if (amPct >= 60) checks.push({ cls: "ok", text: "<b>深度工作大多在上午（" + amPct + "%）</b>——把重要工作放在精神最好的時段，很好。" });
+    else checks.push({ cls: "mid", text: "<b>只有 " + amPct + "% 深度工作在上午</b>——重要工作別留到一天最後，容易被突發事件吞掉。" });
+  }
+  // shallow batching
+  const shallowBlocks = db.blocks.filter(b => b.type === "shallow").length;
+  if (shallowBlocks >= 3) checks.push({ cls: "mid", text: "<b>淺層工作分成 " + shallowBlocks + " 個區塊</b>——考慮批次成 1–2 個固定時段（如 11:30、16:30），減少切換成本。" });
+  else if (shallowBlocks > 0) checks.push({ cls: "ok", text: "<b>淺層工作已批次（" + shallowBlocks + " 區塊）</b>——集中處理訊息與雜務，切換成本低。" });
+
+  if (!checks.length && planned > 0) checks.push({ cls: "ok", text: "目前沒有偵測到問題。有結構、保留彈性，就是好的時間分塊。" });
+  $("healthChecks").innerHTML = planned ? checks.map(c => '<div class="verdict ' + c.cls + '">' + c.text + '</div>').join("") :
+    '<p class="sub" style="margin:0">先到「時間表」排入區塊。</p>';
+}
+
+/* ---------- Backup ---------- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "time-blocking-backup-" + new Date().toISOString().slice(0, 10) + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.tasks) && Array.isArray(data.blocks)) {
+        db = { tasks: data.tasks, blocks: data.blocks };
+        saveAll();
+        renderAll();
+        toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有任務與時間表嗎？此動作無法復原。")) return;
+  db = { tasks: [], blocks: [] };
+  saveAll();
+  renderAll();
+  toast("資料已全數清除");
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-tasks") renderTasks();
+  if (id === "tab-schedule") renderSchedule();
+  if (id === "tab-analysis") renderAnalysis();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ---------- Init ---------- */
+function renderAll(){
+  renderTasks();
+  renderSchedule();
+  renderAnalysis();
+}
+$("typeHint").textContent = TYPES.deep.hint;
+renderAll();
+</script>
+</body>
+</html>
