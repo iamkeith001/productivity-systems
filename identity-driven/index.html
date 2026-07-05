@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="身份驅動">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%238D5F92' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%238D5F92'%3E身%3C/text%3E%3C/svg%3E">
+<title>身份驅動系統 · Identity-Based Systems</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --purple:#7A45B5; --purple-soft:#F0EAF8;
+    --acc:#8D5F92; --acc-soft:#F2EBF2;
+    --grid:rgba(141,95,146,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --purple:#B99AE0; --purple-soft:#2E2638;
+    --acc:#C9A2CE; --acc-soft:#322636;
+    --grid:rgba(201,162,206,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:56px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .id-card,.vote-card,.env-card,.rl-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .id-card{border-left:4px solid var(--acc)}
+  .vote-card{border-left:4px solid var(--green)}
+  .env-card{border-left:4px solid var(--amber)}
+  .rl-card{border-left:4px solid var(--blue)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.d學習{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.d健康{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.d創作{background:var(--purple-soft);color:var(--purple);border-color:transparent}
+  .tag.d工作{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.d人際{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .goalflip{font-size:12.5px;line-height:1.7;margin-top:8px}
+  .goalflip .old{color:var(--pencil);text-decoration:line-through}
+  .goalflip .new{color:var(--acc);font-weight:800}
+  .arrowline{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12.5px;line-height:1.6}
+  .arrowline .from{color:var(--red);text-decoration:line-through;font-weight:700}
+  .arrowline .to{color:var(--acc);font-weight:800}
+
+  .loopbox{background:var(--paper2);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.9;margin-bottom:12px;text-align:center;font-weight:700;letter-spacing:.03em}
+  .loopbox b{color:var(--acc)}
+
+  .idbar{margin-bottom:10px}
+  .idbar .ib-top{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;gap:8px}
+  .idbar .ib-top .v{color:var(--acc);font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;flex:none}
+  .idbar .track{height:8px;background:var(--paper2);border-radius:4px;overflow:hidden}
+  .idbar .fill{height:100%;background:var(--acc);border-radius:4px;transition:width .3s ease}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">身</text></svg>
+      <div>
+        <h1>身份驅動系統</h1>
+        <small>IDENTITY-BASED SYSTEMS</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-identity">
+    <div class="hero">
+      <p class="eyebrow">身份驅動系統</p>
+      <div class="hero-title serif">不是逼自己做事，<br>而是成為會做那些事的人。</div>
+      <p class="hero-text">長期行為往往不是由目標決定，而是由自我認同決定。目標有完成的一天，身份則會持續影響未來選擇——目標驅動容易短期衝刺，身份驅動更容易長期維持。</p>
+      <div class="quote-line serif">我做這件事，因為這就是我是誰。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">定義身份</p>
+      <h2>把目標句改寫成身份句</h2>
+      <p class="sub">不只問「我要做到什麼」，也問「我想成為什麼樣的人」。行動就不只是任務，而是身份的一部分。</p>
+      <div class="templates-list" id="idTemplates"></div>
+      <label class="form-label" for="idOldGoal">舊的目標句（選填）</label>
+      <input type="text" id="idOldGoal" placeholder="例如：我要讀 50 本書">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="idStatement">身份宣告 *</label>
+          <input type="text" id="idStatement" placeholder="例如：我是持續學習的人">
+        </div>
+        <div style="flex:0 0 118px">
+          <label class="form-label" for="idDomain">領域</label>
+          <select id="idDomain">
+            <option>學習</option>
+            <option>健康</option>
+            <option>創作</option>
+            <option>工作</option>
+            <option>人際</option>
+            <option>其他</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="addIdBtn">建立身份</button>
+    </div>
+
+    <div class="hint-box"><b>語言就是定位：</b>「我正在努力運動」和「我是有運動習慣的人」，會帶出不同的選擇。這不是自我催眠，而是建立穩定的心理定位。</div>
+    <div id="idEmpty" class="empty"><span class="zh">還沒有身份宣告</span>挑一個你最想長期維持的方向，先寫下身份句。</div>
+    <div id="idList"></div>
+  </section>
+
+  <section class="tab" id="tab-votes">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stTodayVotes">0</div><div class="l">今日投票</div></div>
+      <div class="stat"><div class="n" id="stTotalVotes">0</div><div class="l">累計投票</div></div>
+      <div class="stat"><div class="n" id="stStreak">0</div><div class="l">連續天數</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">身份證據</p>
+      <h2>每個小行動，都是一張選票</h2>
+      <p class="sub">身份不是靠口號建立，而是靠反覆證據。每記一筆，就是對大腦說：「我是會做這種事的人。」</p>
+      <label class="form-label" for="voteId">投給哪個身份？</label>
+      <select id="voteId"></select>
+      <label class="form-label" for="voteAction">今天做了什麼小行動 *</label>
+      <input type="text" id="voteAction" placeholder="例如：閱讀 10 分鐘、完成一次深度工作、整理一次知識庫">
+      <button class="btn" id="addVoteBtn">投下這一票</button>
+    </div>
+
+    <div class="hint-box"><b>提醒：</b>票不用大——10 分鐘的閱讀和 2 小時的閱讀，對身份感是同一張票。重點是反覆出現。</div>
+    <div id="voteEmpty" class="empty"><span class="zh">還沒有投票紀錄</span>今天替某個身份投下第一票。</div>
+    <div id="voteList"></div>
+  </section>
+
+  <section class="tab" id="tab-design">
+    <div class="card">
+      <p class="eyebrow">環境設計</p>
+      <h2>讓環境每天強化你要的身份</h2>
+      <p class="sub">桌面放書強化閱讀身份、固定運動時段強化健康身份。很多人不是不自律，只是環境每天都在強化另一種身份。</p>
+      <label class="form-label" for="envId">支持哪個身份？</label>
+      <select id="envId"></select>
+      <label class="form-label" for="envChange">環境調整 *</label>
+      <input type="text" id="envChange" placeholder="例如：把書放在床頭、手機通知全關、建立固定寫作角落">
+      <button class="btn" id="addEnvBtn">加入環境設計</button>
+    </div>
+    <div id="envEmpty" class="empty" style="margin-bottom:16px"><span class="zh">還沒有環境設計</span>替你最重要的身份，改一個每天都看得到的環境細節。</div>
+    <div id="envList"></div>
+
+    <div class="card">
+      <p class="eyebrow">更新舊身份</p>
+      <h2>避免身份衝突</h2>
+      <p class="sub">「我是拖延的人」「我數學不好」——這些舊標籤會默默限制行動。高階成長不只是增加能力，還包含更新舊身份。</p>
+      <label class="form-label" for="rlOld">限制你的舊標籤 *</label>
+      <input type="text" id="rlOld" placeholder="例如：我是拖延的人">
+      <label class="form-label" for="rlNew">改寫成新身份 *</label>
+      <input type="text" id="rlNew" placeholder="例如：我是會先做兩分鐘再說的人">
+      <button class="btn" id="addRlBtn">更新身份標籤</button>
+    </div>
+    <div id="rlEmpty" class="empty"><span class="zh">還沒有標籤更新</span>寫下一句常對自己說的負面標籤，改寫它。</div>
+    <div id="rlList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>身份宣告</h3><div class="cnt" id="rvIds">0</div><div class="desc">正在建立的身份數。</div></div>
+      <div class="mini-card"><h3>累計選票</h3><div class="cnt" id="rvVotes">0</div><div class="desc">每張票都在鞏固「我是誰」。</div></div>
+      <div class="mini-card"><h3>連續投票</h3><div class="cnt" id="rvStreak">0</div><div class="desc">連續有投票的天數。</div></div>
+      <div class="mini-card"><h3>環境＋標籤</h3><div class="cnt" id="rvDesigns">0</div><div class="desc">環境設計與身份更新的總數。</div></div>
+    </div>
+
+    <div class="loopbox">身份 → 驅動習慣 → 習慣塑造結果 → <b>結果強化身份</b> ↻</div>
+
+    <div class="card" id="strengthCard" style="display:none">
+      <p class="eyebrow">身份強度</p>
+      <h2>各身份累積的選票</h2>
+      <div id="strengthBars"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>身份驅動的五個做法</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>不只設定目標，而是定義身份：「我想成為什麼樣的人？」</li>
+          <li>用小行動累積身份證據：每次行動都是一張選票。</li>
+          <li>設計符合身份的環境：讓環境強化你要的身份。</li>
+          <li>用語言改變自我認知：建立穩定的心理定位。</li>
+          <li>避免身份衝突：更新舊標籤，建立新身份。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../habit-stacking/">微習慣堆疊法</a> · <a href="../compound-flywheel/">複利行動飛輪</a> · <a href="../action-trigger/">行動觸發</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-identity"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg><span>身份</span></button>
+    <button class="tabbtn" data-tab="tab-votes"><svg viewBox="0 0 24 24"><path d="M4 11h16v9H4zM8 11V7a4 4 0 0 1 8 0v4M9 15l2 2 4-4"/></svg><span>投票</span></button>
+    <button class="tabbtn" data-tab="tab-design"><svg viewBox="0 0 24 24"><path d="M3 21v-4l11-11 4 4L7 21zM14 6l4 4M12 3l1.5 1.5M19 10l1.5 1.5"/></svg><span>設計</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "identity_driven_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"ids":[],"votes":[],"envs":[],"rls":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const idById = id => db.ids.find(x => x.id === id);
+const votesOf = id => db.votes.filter(v => v.idId === id);
+
+const idTemplates = [
+  { old:"我要讀 50 本書", statement:"我是持續學習的人", domain:"學習" },
+  { old:"我要減脂", statement:"我是重視健康與能量管理的人", domain:"健康" },
+  { old:"我要經營內容", statement:"我是能穩定輸出價值的人", domain:"創作" },
+  { old:"我要學 AI", statement:"我是持續適應新技術的人", domain:"學習" },
+  { old:"我要早睡", statement:"我是會照顧自己狀態的人", domain:"健康" }
+];
+$("idTemplates").innerHTML = idTemplates.map((t, i) => '<button class="template-btn" data-itpl="' + i + '">' + esc(t.statement) + '</button>').join("");
+$("idTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-itpl]");
+  if (!btn) return;
+  const t = idTemplates[btn.dataset.itpl];
+  $("idOldGoal").value = t.old;
+  $("idStatement").value = t.statement;
+  $("idDomain").value = t.domain;
+});
+
+$("addIdBtn").addEventListener("click", () => {
+  const statement = $("idStatement").value.trim();
+  if (!statement) { toast("請輸入身份宣告"); return; }
+  db.ids.unshift({
+    id: uid(),
+    statement,
+    domain: $("idDomain").value,
+    oldGoal: $("idOldGoal").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  $("idStatement").value = ""; $("idOldGoal").value = "";
+  $("idDomain").value = "學習";
+  renderAll();
+  toast("已建立身份");
+});
+
+function renderIds(){
+  $("idEmpty").style.display = db.ids.length ? "none" : "block";
+  $("idList").innerHTML = db.ids.map(x => {
+    const n = votesOf(x.id).length;
+    return '<div class="id-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(x.statement) + '</div><div class="item-meta">' + x.createdAt + '</div></div>' +
+      '<div class="score">' + n + '<small> 票</small></div></div>' +
+      (x.oldGoal ? '<div class="goalflip"><span class="old">' + esc(x.oldGoal) + '</span> → <span class="new">' + esc(x.statement) + '</span></div>' : '') +
+      '<div class="chips"><span class="tag d' + esc(x.domain) + '">' + esc(x.domain) + '</span>' + (n >= 10 ? '<span class="tag d健康">身份成形中</span>' : '') + '</div>' +
+      '<div class="actions"><button class="primary" data-ivote="' + x.id + '">投一票</button><button class="del" data-idel="' + x.id + '">×</button></div></div>';
+  }).join("");
+}
+$("idList").addEventListener("click", e => {
+  const del = e.target.closest("[data-idel]");
+  if (del) {
+    const x = idById(del.dataset.idel);
+    if (!x) return;
+    if (!confirm('確定刪除「' + x.statement + '」？其投票與環境設計會一併刪除。')) return;
+    db.ids = db.ids.filter(i => i.id !== x.id);
+    db.votes = db.votes.filter(v => v.idId !== x.id);
+    db.envs = db.envs.filter(v => v.idId !== x.id);
+    saveAll(); renderAll(); toast("已刪除身份"); return;
+  }
+  const iv = e.target.closest("[data-ivote]");
+  if (iv) {
+    switchTab("tab-votes");
+    $("voteId").value = iv.dataset.ivote;
+  }
+});
+
+function fillIdSelect(sel){
+  sel.innerHTML = db.ids.length
+    ? db.ids.map(x => '<option value="' + x.id + '">' + esc(x.statement) + '</option>').join("")
+    : '<option value="">（先到「身份」建立身份宣告）</option>';
+}
+
+/* ---- votes ---- */
+$("addVoteBtn").addEventListener("click", () => {
+  const x = idById($("voteId").value);
+  if (!x) { toast("請先建立身份宣告"); return; }
+  const action = $("voteAction").value.trim();
+  if (!action) { toast("請輸入今天的小行動"); return; }
+  db.votes.unshift({ id: uid(), idId: x.id, action, date: today() });
+  saveAll();
+  $("voteAction").value = "";
+  renderAll();
+  toast("投下一票給「" + x.statement + "」");
+});
+
+function calcStreak(){
+  const days = new Set(db.votes.map(v => v.date));
+  let s = 0;
+  const d = new Date();
+  if (!days.has(d.toISOString().slice(0, 10))) d.setDate(d.getDate() - 1);
+  while (days.has(d.toISOString().slice(0, 10))) {
+    s += 1;
+    d.setDate(d.getDate() - 1);
+  }
+  return s;
+}
+
+function renderVotes(){
+  const t = today();
+  $("stTodayVotes").textContent = String(db.votes.filter(v => v.date === t).length);
+  $("stTotalVotes").textContent = String(db.votes.length);
+  $("stStreak").textContent = String(calcStreak());
+  $("voteEmpty").style.display = db.votes.length ? "none" : "block";
+  $("voteList").innerHTML = db.votes.slice(0, 30).map(v => {
+    const x = idById(v.idId);
+    return '<div class="vote-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(v.action) + '</div><div class="item-meta">' + v.date + ' · 投給「' + esc(x ? x.statement : "（已刪除身份）") + '」</div></div></div>' +
+      '<div class="actions"><button class="del" data-vdel="' + v.id + '">×</button></div></div>';
+  }).join("");
+}
+$("voteList").addEventListener("click", e => {
+  const del = e.target.closest("[data-vdel]");
+  if (!del) return;
+  db.votes = db.votes.filter(v => v.id !== del.dataset.vdel);
+  saveAll(); renderAll(); toast("已刪除投票");
+});
+
+/* ---- environment ---- */
+$("addEnvBtn").addEventListener("click", () => {
+  const x = idById($("envId").value);
+  if (!x) { toast("請先建立身份宣告"); return; }
+  const change = $("envChange").value.trim();
+  if (!change) { toast("請輸入環境調整"); return; }
+  db.envs.unshift({ id: uid(), idId: x.id, change, createdAt: today() });
+  saveAll();
+  $("envChange").value = "";
+  renderAll();
+  toast("已加入環境設計");
+});
+
+function renderEnvs(){
+  $("envEmpty").style.display = db.envs.length ? "none" : "block";
+  $("envList").innerHTML = db.envs.map(v => {
+    const x = idById(v.idId);
+    return '<div class="env-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(v.change) + '</div><div class="item-meta">' + v.createdAt + ' · 支持「' + esc(x ? x.statement : "（已刪除身份）") + '」</div></div></div>' +
+      '<div class="actions"><button class="del" data-endel="' + v.id + '">×</button></div></div>';
+  }).join("");
+}
+$("envList").addEventListener("click", e => {
+  const del = e.target.closest("[data-endel]");
+  if (!del) return;
+  db.envs = db.envs.filter(v => v.id !== del.dataset.endel);
+  saveAll(); renderAll(); toast("已刪除環境設計");
+});
+
+/* ---- relabel ---- */
+$("addRlBtn").addEventListener("click", () => {
+  const oldL = $("rlOld").value.trim();
+  const newL = $("rlNew").value.trim();
+  if (!oldL || !newL) { toast("兩句都要填"); return; }
+  db.rls.unshift({ id: uid(), oldL, newL, createdAt: today() });
+  saveAll();
+  $("rlOld").value = ""; $("rlNew").value = "";
+  renderAll();
+  toast("已更新身份標籤");
+});
+
+function renderRls(){
+  $("rlEmpty").style.display = db.rls.length ? "none" : "block";
+  $("rlList").innerHTML = db.rls.map(v => {
+    return '<div class="rl-card">' +
+      '<div class="item-meta">' + v.createdAt + '</div>' +
+      '<div class="arrowline"><span class="from">' + esc(v.oldL) + '</span></div>' +
+      '<div class="arrowline"><span>→</span><span class="to">' + esc(v.newL) + '</span></div>' +
+      '<div class="actions"><button class="del" data-rldel="' + v.id + '">×</button></div></div>';
+  }).join("");
+}
+$("rlList").addEventListener("click", e => {
+  const del = e.target.closest("[data-rldel]");
+  if (!del) return;
+  db.rls = db.rls.filter(v => v.id !== del.dataset.rldel);
+  saveAll(); renderAll(); toast("已刪除標籤更新");
+});
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvIds").textContent = String(db.ids.length);
+  $("rvVotes").textContent = String(db.votes.length);
+  $("rvStreak").textContent = String(calcStreak());
+  $("rvDesigns").textContent = String(db.envs.length + db.rls.length);
+  $("strengthCard").style.display = db.ids.length && db.votes.length ? "block" : "none";
+  const max = Math.max(1, ...db.ids.map(x => votesOf(x.id).length));
+  $("strengthBars").innerHTML = db.ids
+    .slice()
+    .sort((a, b) => votesOf(b.id).length - votesOf(a.id).length)
+    .map(x => {
+      const n = votesOf(x.id).length;
+      return '<div class="idbar"><div class="ib-top"><span>' + esc(x.statement) + '</span><span class="v">' + n + ' 票</span></div>' +
+        '<div class="track"><div class="fill" style="width:' + Math.round(n / max * 100) + '%"></div></div></div>';
+    }).join("");
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "identity-driven-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.ids) && Array.isArray(data.votes) && Array.isArray(data.envs) && Array.isArray(data.rls)) {
+        db = { ids:data.ids, votes:data.votes, envs:data.envs, rls:data.rls };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有身份、投票、環境設計與標籤紀錄嗎？此動作無法復原。")) return;
+  db = { ids:[], votes:[], envs:[], rls:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-votes") { fillIdSelect($("voteId")); renderVotes(); }
+  if (id === "tab-design") { fillIdSelect($("envId")); renderEnvs(); renderRls(); }
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderIds();
+  fillIdSelect($("voteId"));
+  fillIdSelect($("envId"));
+  renderVotes();
+  renderEnvs();
+  renderRls();
+  renderReview();
+}
+renderAll();
+</script>
+</body>
+</html>
