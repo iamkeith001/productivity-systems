@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="最小輸出">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%239A3B4A' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%239A3B4A'%3E出%3C/text%3E%3C/svg%3E">
+<title>最小可行輸出 · Minimum Viable Output</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#9A3B4A; --acc-soft:#F5E9EB;
+    --grid:rgba(154,59,74,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#D98A96; --acc-soft:#362328;
+    --grid:rgba(217,138,150,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:60px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .plan-card,.ship-card,.fb-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .plan-card{border-left:4px solid var(--acc)}
+  .ship-card{border-left:4px solid var(--green)}
+  .fb-card{border-left:4px solid var(--blue)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.form{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.time{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.ver{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.src{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .timer-box{text-align:center;padding:18px 0 6px}
+  .timer-display{font-family:"Songti TC","Noto Serif TC",serif;font-size:52px;font-weight:900;line-height:1;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+  .timer-sub{font-size:12px;color:var(--pencil);margin-top:8px;letter-spacing:.06em}
+  .timer-ring{width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px;vertical-align:1px}
+  .timer-ring.paused{background:var(--amber)}
+  .timer-ring.idle{background:var(--hairline)}
+
+  .mvo-def{background:var(--paper2);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.75;margin-bottom:12px}
+  .mvo-def b{color:var(--acc)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">出</text></svg>
+      <div>
+        <h1>最小可行輸出</h1>
+        <small>MINIMUM VIABLE OUTPUT</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-plan">
+    <div class="hero">
+      <p class="eyebrow">最小可行輸出</p>
+      <div class="hero-title serif">完成第一版，<br>勝過想像完美版。</div>
+      <p class="hero-text">很多人卡住不是因為能力不足，而是過度追求完美：一直規劃、一直研究、一直準備，卻遲遲沒有真正輸出。最小可行輸出用最少時間與心理阻力，產出第一個可被驗證的成果版本——不是粗糙，而是足以測試、足以使用、足以獲得回饋。</p>
+      <div class="quote-line serif">先輸出，讓真實回饋推動進化。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">定義 MVO</p>
+      <h2>替成果定義「最小」與「可行」</h2>
+      <p class="sub">最小：只保留核心價值、刪除非必要。可行：能解決一個問題、能被理解、能獲得回饋。</p>
+      <div class="templates-list" id="planTemplates"></div>
+      <label class="form-label" for="planTitle">想產出的成果 *</label>
+      <input type="text" id="planTitle" placeholder="例如：研究主題短文、產品簡報、AI 自動化流程">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="planForm">輸出形式</label>
+          <select id="planForm">
+            <option>短文章</option>
+            <option>一頁簡報</option>
+            <option>Prototype</option>
+            <option>Demo</option>
+            <option>AI 工作流</option>
+            <option>知識卡片</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="planTimebox">時間盒</label>
+          <select id="planTimebox">
+            <option value="30">30 分鐘版</option>
+            <option value="60" selected>1 小時版</option>
+            <option value="90">90 分鐘版</option>
+            <option value="120">2 小時版</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="planValue">核心價值：它要解決什麼問題、給誰用？ *</label>
+      <textarea id="planValue" placeholder="例如：讓主管三分鐘看懂提案方向；讓自己驗證這條研究線可不可行"></textarea>
+      <label class="form-label" for="planCut">第一版先砍掉什麼？</label>
+      <textarea id="planCut" placeholder="例如：完整文獻回顧、精美排版、次要功能、全部案例"></textarea>
+      <button class="btn" id="addPlanBtn">建立輸出計畫</button>
+    </div>
+
+    <div class="hint-box"><b>判斷標準：</b>第一版不需要完美，但需要有實際用途——一篇短文、一頁簡報、一版 prototype、一段 demo、一個小工作流，都算合格的 MVO。</div>
+    <div id="planEmpty" class="empty"><span class="zh">還沒有輸出計畫</span>挑一件拖了很久的事，先定義它的最小可行版。</div>
+    <div id="planList"></div>
+  </section>
+
+  <section class="tab" id="tab-sprint">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stPlans">0</div><div class="l">進行中計畫</div></div>
+      <div class="stat"><div class="n" id="stShips">0</div><div class="l">累計出貨</div></div>
+      <div class="stat"><div class="n" id="stTodayShips">0</div><div class="l">今日出貨</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">時間盒衝刺</p>
+      <h2>用時間限制降低完美主義</h2>
+      <p class="sub">時間限制會強迫聚焦、優先排序、快速決策，避免無限修飾。時間到就出貨，剩下的留給下一版。</p>
+      <label class="form-label" for="sprintPlan">選擇輸出計畫</label>
+      <select id="sprintPlan"></select>
+      <div class="mvo-def" id="sprintDef" style="display:none"></div>
+      <div class="timer-box">
+        <div class="timer-display" id="timerDisplay">60:00</div>
+        <div class="timer-sub"><span class="timer-ring idle" id="timerRing"></span><span id="timerState">尚未開始</span></div>
+      </div>
+      <div class="row2" style="margin-top:14px">
+        <div>
+          <label class="form-label" for="sprintMins">衝刺長度</label>
+          <select id="sprintMins">
+            <option value="15">15 分鐘</option>
+            <option value="30">30 分鐘</option>
+            <option value="45">45 分鐘</option>
+            <option value="60" selected>60 分鐘</option>
+            <option value="90">90 分鐘</option>
+            <option value="120">120 分鐘</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">&nbsp;</label>
+          <div class="mini-row">
+            <button class="btn ghost" id="timerStartBtn">開始</button>
+            <button class="btn line" id="timerResetBtn">重設</button>
+          </div>
+        </div>
+      </div>
+      <label class="form-label" for="shipNote">這一版交付了什麼？</label>
+      <input type="text" id="shipNote" placeholder="例如：完成 800 字草稿、可點擊的首頁原型">
+      <button class="btn" id="shipBtn" disabled>出貨這一版</button>
+    </div>
+
+    <div class="hint-box"><b>衝刺原則：</b>不要等「完全準備好」。很多真正的問題，只有在實際輸出後才看得到。時間到了還沒完美？照樣出貨，這正是重點。</div>
+  </section>
+
+  <section class="tab" id="tab-loop">
+    <div class="card">
+      <p class="eyebrow">回饋迴圈</p>
+      <h2>輸出 → 回饋 → 優化</h2>
+      <p class="sub">把每一版收到的回饋記下來，寫清楚下一版要改什麼，讓迭代速度變成你的核心優勢。</p>
+      <label class="form-label" for="fbPlan">哪個計畫的回饋？</label>
+      <select id="fbPlan"></select>
+      <div class="row2">
+        <div>
+          <label class="form-label" for="fbSrc">回饋來源</label>
+          <select id="fbSrc">
+            <option>自己複盤</option>
+            <option>使用者 / 讀者</option>
+            <option>同事 / 主管</option>
+            <option>市場反應</option>
+            <option>AI 協作</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="fbDate">收到日期</label>
+          <input type="text" id="fbDate" placeholder="留空＝今天">
+        </div>
+      </div>
+      <label class="form-label" for="fbText">回饋內容 *</label>
+      <textarea id="fbText" placeholder="例如：結論不夠明確、圖表比文字有說服力、流程第二步常出錯"></textarea>
+      <label class="form-label" for="fbNext">下一版要改什麼？</label>
+      <textarea id="fbNext" placeholder="例如：開頭先給結論、把案例換成數據圖"></textarea>
+      <button class="btn" id="addFbBtn">記錄回饋</button>
+    </div>
+
+    <div class="hint-box"><b>提醒：</b>市場反應本身就是學習資料。沒有回饋也是一種回饋——可能代表曝光不足，或問題不夠痛。</div>
+    <div id="fbEmpty" class="empty"><span class="zh">還沒有回饋紀錄</span>出貨第一版之後，把聽到、看到的反應記進來。</div>
+    <div id="fbList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>輸出計畫</h3><div class="cnt" id="rvPlans">0</div><div class="desc">定義過最小可行版的成果數。</div></div>
+      <div class="mini-card"><h3>累計出貨版本</h3><div class="cnt" id="rvShips">0</div><div class="desc">完成第一版比想像完美版更重要。</div></div>
+      <div class="mini-card"><h3>回饋筆數</h3><div class="cnt" id="rvFbs">0</div><div class="desc">每一筆回饋都是下一版的燃料。</div></div>
+      <div class="mini-card"><h3>迭代最多</h3><div class="cnt" id="rvTopPlan" style="font-size:15px;line-height:1.4">－</div><div class="desc">出貨版本數最多的計畫。</div></div>
+    </div>
+
+    <div id="shipEmpty" class="empty"><span class="zh">還沒有出貨紀錄</span>到「衝刺」分頁出貨第一版，這裡會留下版本軌跡。</div>
+    <div id="shipList"></div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>最小可行輸出的五個要點</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>定義「最小」與「可行」：只留核心價值，但要有實際用途。</li>
+          <li>用時間限制降低完美主義：30 分鐘版、1 小時版、今日版本。</li>
+          <li>建立「輸出 → 回饋 → 優化」循環，不等完全準備好。</li>
+          <li>把迭代速度視為核心優勢：快速輸出、快速學習、快速修正。</li>
+          <li>建立低摩擦輸出系統：模板化、模組化、批次化，讓開始更容易。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../mvp-progress/">最小可行進展法</a> · <a href="../two-minute/">兩分鐘啟動法則</a> · <a href="../task-batching/">任務批次化</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-plan"><svg viewBox="0 0 24 24"><path d="M12 3v12M12 15l-4-4M12 15l4-4M5 21h14"/></svg><span>定義</span></button>
+    <button class="tabbtn" data-tab="tab-sprint"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg><span>衝刺</span></button>
+    <button class="tabbtn" data-tab="tab-loop"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3"/></svg><span>回饋</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "mvo_output_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"plans":[],"ships":[],"feedbacks":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const planTemplates = [
+  { title:"研究主題可行性短文", form:"短文章", timebox:"60", value:"用 800 字驗證這條研究線值不值得深入，先寫給自己與指導者看。", cut:"完整文獻回顧、統計細節、精美圖表。" },
+  { title:"提案一頁簡報", form:"一頁簡報", timebox:"30", value:"讓主管三分鐘看懂提案方向，決定要不要繼續。", cut:"完整計畫書、預算細項、多套版型。" },
+  { title:"單一步驟 AI 自動化", form:"AI 工作流", timebox:"60", value:"先把最花時間的一個步驟自動化，驗證有效再擴展。", cut:"整合所有工具、例外處理、完美 prompt。" },
+  { title:"可點擊首頁原型", form:"Prototype", timebox:"90", value:"讓使用者摸得到核心流程，收集第一輪操作回饋。", cut:"完整功能、真實資料、視覺打磨。" }
+];
+$("planTemplates").innerHTML = planTemplates.map((t, i) => '<button class="template-btn" data-ptpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("planTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ptpl]");
+  if (!btn) return;
+  const t = planTemplates[btn.dataset.ptpl];
+  $("planTitle").value = t.title;
+  $("planForm").value = t.form;
+  $("planTimebox").value = t.timebox;
+  $("planValue").value = t.value;
+  $("planCut").value = t.cut;
+});
+
+function shipsOf(planId){ return db.ships.filter(s => s.planId === planId); }
+function planById(id){ return db.plans.find(p => p.id === id); }
+
+$("addPlanBtn").addEventListener("click", () => {
+  const title = $("planTitle").value.trim();
+  const value = $("planValue").value.trim();
+  if (!title) { toast("請輸入想產出的成果"); return; }
+  if (!value) { toast("請寫下核心價值"); return; }
+  db.plans.unshift({
+    id: uid(),
+    title,
+    form: $("planForm").value,
+    timebox: parseInt($("planTimebox").value, 10),
+    value,
+    cut: $("planCut").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  ["planTitle","planValue","planCut"].forEach(id => { $(id).value = ""; });
+  $("planForm").value = "短文章"; $("planTimebox").value = "60";
+  renderAll();
+  toast("已建立輸出計畫");
+});
+
+function renderPlans(){
+  $("planEmpty").style.display = db.plans.length ? "none" : "block";
+  $("planList").innerHTML = db.plans.map(p => {
+    const n = shipsOf(p.id).length;
+    return '<div class="plan-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(p.title) + '</div><div class="item-meta">' + p.createdAt + ' · ' + esc(p.form) + '</div></div>' +
+      '<div class="score">v' + n + '<small> 版</small></div></div>' +
+      '<div class="item-meta" style="margin-top:8px"><b>核心價值：</b>' + esc(p.value) + '</div>' +
+      (p.cut ? '<div class="item-meta" style="margin-top:6px"><b>先砍掉：</b>' + esc(p.cut) + '</div>' : '') +
+      '<div class="chips"><span class="tag form">' + esc(p.form) + '</span><span class="tag time">' + p.timebox + ' 分鐘盒</span>' + (n ? '<span class="tag ver">已出 ' + n + ' 版</span>' : '<span class="tag">尚未出貨</span>') + '</div>' +
+      '<div class="actions"><button class="primary" data-psprint="' + p.id + '">去衝刺</button><button class="del" data-pdel="' + p.id + '">×</button></div></div>';
+  }).join("");
+}
+$("planList").addEventListener("click", e => {
+  const del = e.target.closest("[data-pdel]");
+  if (del) {
+    const p = planById(del.dataset.pdel);
+    if (!p) return;
+    if (!confirm('確定刪除「' + p.title + '」？其出貨與回饋紀錄會一併刪除。')) return;
+    db.plans = db.plans.filter(x => x.id !== p.id);
+    db.ships = db.ships.filter(s => s.planId !== p.id);
+    db.feedbacks = db.feedbacks.filter(f => f.planId !== p.id);
+    saveAll(); renderAll(); toast("已刪除計畫"); return;
+  }
+  const sp = e.target.closest("[data-psprint]");
+  if (sp) {
+    switchTab("tab-sprint");
+    $("sprintPlan").value = sp.dataset.psprint;
+    onSprintPlanChange();
+  }
+});
+
+/* ---- sprint tab ---- */
+let timer = { remain: 0, total: 0, running: false, iv: null };
+
+function fmtTime(sec){
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+}
+function setTimerState(){
+  const ring = $("timerRing");
+  if (timer.running) { ring.className = "timer-ring"; $("timerState").textContent = "衝刺中"; $("timerStartBtn").textContent = "暫停"; }
+  else if (timer.remain > 0 && timer.remain < timer.total) { ring.className = "timer-ring paused"; $("timerState").textContent = "已暫停"; $("timerStartBtn").textContent = "繼續"; }
+  else { ring.className = "timer-ring idle"; $("timerState").textContent = "尚未開始"; $("timerStartBtn").textContent = "開始"; }
+}
+function resetTimer(){
+  clearInterval(timer.iv);
+  timer.total = parseInt($("sprintMins").value, 10) * 60;
+  timer.remain = timer.total;
+  timer.running = false;
+  $("timerDisplay").textContent = fmtTime(timer.remain);
+  setTimerState();
+}
+function tick(){
+  timer.remain -= 1;
+  if (timer.remain <= 0) {
+    timer.remain = 0;
+    clearInterval(timer.iv);
+    timer.running = false;
+    $("timerDisplay").textContent = fmtTime(0);
+    $("timerState").textContent = "時間到！照樣出貨";
+    $("timerRing").className = "timer-ring paused";
+    $("timerStartBtn").textContent = "開始";
+    toast("時間到！先出貨這一版");
+    return;
+  }
+  $("timerDisplay").textContent = fmtTime(timer.remain);
+}
+$("timerStartBtn").addEventListener("click", () => {
+  if (timer.running) {
+    clearInterval(timer.iv);
+    timer.running = false;
+  } else {
+    if (timer.remain <= 0) resetTimer();
+    timer.running = true;
+    timer.iv = setInterval(tick, 1000);
+  }
+  setTimerState();
+});
+$("timerResetBtn").addEventListener("click", () => { resetTimer(); });
+$("sprintMins").addEventListener("change", () => { resetTimer(); });
+
+function fillPlanSelect(sel){
+  sel.innerHTML = db.plans.length
+    ? db.plans.map(p => '<option value="' + p.id + '">' + esc(p.title) + '</option>').join("")
+    : '<option value="">（先到「定義」建立輸出計畫）</option>';
+}
+function onSprintPlanChange(){
+  const p = planById($("sprintPlan").value);
+  if (p) {
+    $("sprintDef").style.display = "block";
+    $("sprintDef").innerHTML = '<b>MVO 定義：</b>' + esc(p.value) + (p.cut ? '<br><b>先砍掉：</b>' + esc(p.cut) : '') + '<br><b>版本進度：</b>目前已出 ' + shipsOf(p.id).length + ' 版';
+    const mins = String(p.timebox);
+    if ([...$("sprintMins").options].some(o => o.value === mins)) $("sprintMins").value = mins;
+    $("shipBtn").disabled = false;
+  } else {
+    $("sprintDef").style.display = "none";
+    $("shipBtn").disabled = true;
+  }
+  resetTimer();
+}
+$("sprintPlan").addEventListener("change", onSprintPlanChange);
+
+$("shipBtn").addEventListener("click", () => {
+  const p = planById($("sprintPlan").value);
+  if (!p) { toast("請先選擇輸出計畫"); return; }
+  const ver = shipsOf(p.id).length + 1;
+  db.ships.unshift({ id: uid(), planId: p.id, ver, note: $("shipNote").value.trim(), date: today() });
+  $("shipNote").value = "";
+  saveAll();
+  renderAll();
+  toast("第 " + ver + " 版已出貨！");
+});
+
+function renderSprintStats(){
+  const t = today();
+  $("stPlans").textContent = String(db.plans.length);
+  $("stShips").textContent = String(db.ships.length);
+  $("stTodayShips").textContent = String(db.ships.filter(s => s.date === t).length);
+}
+
+/* ---- feedback tab ---- */
+$("addFbBtn").addEventListener("click", () => {
+  const p = planById($("fbPlan").value);
+  if (!p) { toast("請先建立輸出計畫"); return; }
+  const text = $("fbText").value.trim();
+  if (!text) { toast("請輸入回饋內容"); return; }
+  const d = $("fbDate").value.trim();
+  db.feedbacks.unshift({
+    id: uid(),
+    planId: p.id,
+    src: $("fbSrc").value,
+    text,
+    next: $("fbNext").value.trim(),
+    date: d || today()
+  });
+  saveAll();
+  ["fbText","fbNext","fbDate"].forEach(id => { $(id).value = ""; });
+  renderAll();
+  toast("已記錄回饋");
+});
+
+function renderFeedbacks(){
+  $("fbEmpty").style.display = db.feedbacks.length ? "none" : "block";
+  $("fbList").innerHTML = db.feedbacks.map(f => {
+    const p = planById(f.planId);
+    return '<div class="fb-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(p ? p.title : "（已刪除計畫）") + '</div><div class="item-meta">' + f.date + '</div></div>' +
+      '<span class="tag src">' + esc(f.src) + '</span></div>' +
+      '<div class="item-meta" style="margin-top:10px"><b>回饋：</b>' + esc(f.text) + '</div>' +
+      (f.next ? '<div class="item-meta" style="margin-top:6px"><b>下一版：</b>' + esc(f.next) + '</div>' : '') +
+      '<div class="actions"><button class="del" data-fdel="' + f.id + '">×</button></div></div>';
+  }).join("");
+}
+$("fbList").addEventListener("click", e => {
+  const del = e.target.closest("[data-fdel]");
+  if (!del) return;
+  db.feedbacks = db.feedbacks.filter(f => f.id !== del.dataset.fdel);
+  saveAll(); renderAll(); toast("已刪除回饋");
+});
+
+/* ---- review tab ---- */
+function renderReview(){
+  $("rvPlans").textContent = String(db.plans.length);
+  $("rvShips").textContent = String(db.ships.length);
+  $("rvFbs").textContent = String(db.feedbacks.length);
+  if (db.ships.length) {
+    const byPlan = {};
+    db.ships.forEach(s => { byPlan[s.planId] = (byPlan[s.planId] || 0) + 1; });
+    const topId = Object.keys(byPlan).sort((a, b) => byPlan[b] - byPlan[a])[0];
+    const p = planById(topId);
+    $("rvTopPlan").textContent = p ? p.title : "－";
+  } else {
+    $("rvTopPlan").textContent = "－";
+  }
+  $("shipEmpty").style.display = db.ships.length ? "none" : "block";
+  $("shipList").innerHTML = db.ships.map(s => {
+    const p = planById(s.planId);
+    return '<div class="ship-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(p ? p.title : "（已刪除計畫）") + '</div><div class="item-meta">' + s.date + (s.note ? ' · ' + esc(s.note) : '') + '</div></div>' +
+      '<div class="score">v' + s.ver + '</div></div>' +
+      '<div class="actions"><button class="del" data-shdel="' + s.id + '">×</button></div></div>';
+  }).join("");
+}
+$("shipList").addEventListener("click", e => {
+  const del = e.target.closest("[data-shdel]");
+  if (!del) return;
+  db.ships = db.ships.filter(s => s.id !== del.dataset.shdel);
+  saveAll(); renderAll(); toast("已刪除出貨紀錄");
+});
+
+/* ---- backup ---- */
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "mvo-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.plans) && Array.isArray(data.ships) && Array.isArray(data.feedbacks)) {
+        db = { plans:data.plans, ships:data.ships, feedbacks:data.feedbacks };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有輸出計畫、出貨與回饋紀錄嗎？此動作無法復原。")) return;
+  db = { plans:[], ships:[], feedbacks:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-sprint") { fillPlanSelect($("sprintPlan")); onSprintPlanChange(); renderSprintStats(); }
+  if (id === "tab-loop") { fillPlanSelect($("fbPlan")); renderFeedbacks(); }
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderPlans();
+  fillPlanSelect($("sprintPlan"));
+  fillPlanSelect($("fbPlan"));
+  renderSprintStats();
+  renderFeedbacks();
+  renderReview();
+}
+renderAll();
+resetTimer();
+</script>
+</body>
+</html>
