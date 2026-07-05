@@ -35,3 +35,4 @@
 - 限制條件重構：https://iamkeith001.github.io/productivity-systems/constraint-reframing/
 - 高階選擇權：https://iamkeith001.github.io/productivity-systems/strategic-optionality/
 - 身份驅動系統：https://iamkeith001.github.io/productivity-systems/identity-driven/
+- 系統邊界意識：https://iamkeith001.github.io/productivity-systems/system-boundary/
