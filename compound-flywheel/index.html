@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="複利飛輪">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23A87400' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23A87400'%3E輪%3C/text%3E%3C/svg%3E">
+<title>複利行動飛輪 · Compound Action Flywheel</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#A87400; --acc-soft:#F4EAD4;
+    --grid:rgba(168,116,0,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#D3A33A; --acc-soft:#362B17;
+    --grid:rgba(211,163,58,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],input[type=number],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:58px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .formula{background:var(--acc-soft);border-radius:6px;padding:12px 15px;margin-bottom:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:15.5px;font-weight:900;line-height:1.6;color:var(--ink)}
+  .formula .hl{color:var(--acc)}
+  .formula .ph{color:var(--pencil);font-weight:600}
+
+  .fly-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px;border-left:4px solid var(--acc)}
+  .fly-card.off{opacity:.62;border-left-color:var(--pencil)}
+  .fly-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .fly-title{font-weight:800;font-size:15px;letter-spacing:.02em}
+  .fly-area{font-size:11.5px;color:var(--acc);font-weight:800;margin-top:2px}
+  .momentum{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1;white-space:nowrap}
+  .momentum small{font-size:11px;color:var(--pencil);font-family:inherit;font-weight:600}
+  .cycle{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}
+  .cycle span{background:var(--paper2);border:1px solid var(--hairline-soft);border-radius:5px;padding:7px 8px;font-size:11.5px;font-weight:700;color:var(--pencil)}
+  .cycle b{display:block;color:var(--ink);font-size:12.5px}
+  .prog-bar{height:8px;background:var(--paper2);border-radius:4px;overflow:hidden;margin:10px 0 4px}
+  .prog-bar i{display:block;height:100%;background:var(--acc);border-radius:4px;transition:width .4s ease}
+  .prog-bar-label{font-size:11px;color:var(--pencil)}
+  .fly-meta{display:flex;gap:12px;font-size:11.5px;color:var(--pencil);margin-top:8px;flex-wrap:wrap}
+  .fly-meta .streak{color:var(--green);font-weight:800}
+  .fly-actions{display:flex;gap:7px;margin-top:11px}
+  .fly-actions button{border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .fly-actions button.del{color:var(--red)}
+  .fly-actions .spacer{flex:1}
+
+  .flywheel-visual{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:14px;margin-bottom:16px}
+  .flywheel-visual svg{width:100%;height:auto;display:block}
+  .wheel-ring{fill:none;stroke:var(--acc-soft);stroke-width:18}
+  .wheel-arc{fill:none;stroke:var(--acc);stroke-width:18;stroke-linecap:round;transform:rotate(-90deg);transform-origin:100px 100px}
+  .wheel-dot{fill:var(--acc)}
+  .wheel-text{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;fill:var(--ink)}
+  .wheel-small{font-size:8.5px;fill:var(--pencil);font-weight:700}
+  .wheel-label{font-size:7.5px;fill:var(--pencil);font-weight:800}
+
+  .progress-ring{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:16px}
+  .ring-txt .big{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;line-height:1.1}
+  .ring-txt .small{font-size:12px;color:var(--pencil);margin-top:3px}
+  .log-goal{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--acc)}
+  .log-goal.done-today{border-left-color:var(--green)}
+  .log-goal-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px}
+  .log-goal-title{font-weight:800;font-size:14.5px}
+  .log-goal-min{font-size:11.5px;color:var(--pencil);margin-bottom:10px}
+  .log-goal-min b{color:var(--acc)}
+  .today-amount{font-size:12px;color:var(--green);font-weight:800;margin-bottom:10px}
+  .log-amount-row{display:flex;gap:9px;align-items:flex-end;margin-bottom:8px}
+  .log-amount-row .amt{flex:none;width:110px}
+  .log-amount-row .amt input{margin-bottom:0}
+  .log-amount-row .unit{flex:none;color:var(--pencil);font-size:13px;font-weight:700;padding-bottom:11px}
+  .quick-fill{display:flex;gap:6px;margin-bottom:10px}
+  .quick-fill button{border:1px solid var(--hairline-soft);background:var(--paper2);color:var(--pencil);border-radius:5px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:24px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+  .prog-item,.review-item{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .prog-item{border-left:4px solid var(--acc)}
+  .prog-item-title{font-weight:800;font-size:14px;margin-bottom:2px}
+  .prog-item-sub{font-size:11.5px;color:var(--pencil);margin-bottom:10px}
+  .dots{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+  .dots .dot{width:16px;height:16px;border-radius:4px;background:var(--paper2);border:1px solid var(--hairline-soft)}
+  .dots .dot.part{background:var(--acc-soft);border-color:transparent}
+  .dots .dot.met{background:var(--acc);border-color:transparent}
+  .dots .dot.today{outline:2px solid var(--ink);outline-offset:1px}
+  .recent-log{border-top:1px solid var(--hairline-soft);margin-top:10px;padding-top:10px}
+  .recent-log .rl{font-size:12px;color:var(--pencil);line-height:1.6;margin-bottom:6px}
+  .recent-log .rl b{color:var(--ink)}
+  .recent-log .rl .next{color:var(--acc);font-weight:700}
+
+  .review-prompt{background:var(--paper2);border-radius:6px;padding:9px 12px;font-size:12px;color:var(--pencil);font-weight:700;margin-bottom:5px;line-height:1.5}
+  .review-date{font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;font-size:14px;margin-bottom:8px}
+  .review-qa{font-size:12.5px;line-height:1.65;margin-bottom:7px}
+  .review-qa .ql{display:block;font-size:11px;color:var(--pencil);font-weight:800;letter-spacing:.03em}
+  .review-qa.win .ql{color:var(--green)} .review-qa.friction .ql{color:var(--red)} .review-qa.next .ql{color:var(--acc)}
+  .review-del{border:none;background:none;color:var(--red);cursor:pointer;font-size:12px;font-weight:800;font-family:inherit;padding:0}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">輪</text></svg>
+      <div>
+        <h1>複利行動飛輪</h1>
+        <small>COMPOUND ACTION FLYWHEEL</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-build">
+    <div class="hero">
+      <p class="eyebrow">複利行動飛輪</p>
+      <div class="hero-title serif">讓小行動，<br>自己帶動下一次行動。</div>
+      <p class="hero-text">不要追求一次爆發。選一個值得長期累積的主軸，設計小到不容易失敗的每日推動，讓行動、成果、信心與動機形成回饋循環。</p>
+      <div class="quote-line serif">持續做對的小事，會讓時間替你放大成果。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">建立飛輪</p>
+      <h2>選一個最有槓桿效果的主軸</h2>
+      <label class="form-label" for="flyTitle">核心飛輪 *</label>
+      <input type="text" id="flyTitle" placeholder="例如：研究產出、寫作能力、健康管理">
+      <div class="templates-list" id="flyTemplates"></div>
+      <div class="row2">
+        <div>
+          <label class="form-label" for="flyArea">領域</label>
+          <select id="flyArea">
+            <option>學習能力</option><option>研究產出</option><option>寫作能力</option>
+            <option>健康管理</option><option>人脈經營</option><option>專業品牌</option><option>團隊流程改善</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="flySignal">回饋指標</label>
+          <select id="flySignal">
+            <option>連續天數</option><option>作品數</option><option>累積字數</option>
+            <option>卡片數</option><option>運動分鐘</option><option>流程改善數</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="flyAction">最小行動 *</label>
+      <input type="text" id="flyAction" placeholder="例如：每天整理一篇文獻重點">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="flyMin">每日最小量 *</label>
+          <input type="number" id="flyMin" min="1" placeholder="1">
+        </div>
+        <div>
+          <label class="form-label" for="flyUnit">單位 *</label>
+          <input type="text" id="flyUnit" placeholder="篇 / 字 / 分鐘 / 張">
+        </div>
+      </div>
+      <label class="form-label" for="flyOutcome">希望外溢成什麼成果？</label>
+      <textarea id="flyOutcome" placeholder="例如：每月形成一個研究構想，三個月後整理成投稿草稿"></textarea>
+      <div class="formula" id="formulaPreview"></div>
+      <button class="btn" id="addFlyBtn">建立這個飛輪</button>
+    </div>
+
+    <div id="flyEmpty" class="empty"><span class="zh">還沒有飛輪</span>先建立一個主軸，接著每天只需要推它一下。</div>
+    <div id="flyList"></div>
+
+    <details>
+      <summary>方法說明</summary>
+      <div class="body">
+        <ul>
+          <li><b>找到核心飛輪：</b>一次先推一個最值得長期累積的領域。</li>
+          <li><b>設計最小行動：</b>小到幾乎不會失敗，重點是每天能啟動。</li>
+          <li><b>建立回饋機制：</b>讓進展看得見，動機才會回流。</li>
+          <li><b>逐步優化：</b>穩定後再提高品質或難度。</li>
+          <li><b>擴大影響力：</b>讓成果外溢成作品、合作、流程或品牌。</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <section class="tab" id="tab-push">
+    <div class="progress-ring">
+      <svg width="58" height="58" viewBox="0 0 58 58" aria-hidden="true">
+        <circle cx="29" cy="29" r="25" fill="none" stroke="var(--paper2)" stroke-width="7"/>
+        <circle id="ringProg" cx="29" cy="29" r="25" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157" transform="rotate(-90 29 29)"/>
+      </svg>
+      <div class="ring-txt"><div class="big" id="ringLabel">0 / 0</div><div class="small" id="ringSub">今天推動了幾個飛輪</div></div>
+    </div>
+    <div id="logEmpty" class="empty"><span class="zh">先建立飛輪</span>建立後，這裡會出現今天可以推動的小行動。</div>
+    <div id="logList"></div>
+  </section>
+
+  <section class="tab" id="tab-dashboard">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stFly">0</div><div class="l">飛輪數</div></div>
+      <div class="stat"><div class="n" id="stToday">0</div><div class="l">今日推動</div></div>
+      <div class="stat"><div class="n" id="stBest">0</div><div class="l">最長連續</div></div>
+    </div>
+    <div class="flywheel-visual">
+      <svg viewBox="0 0 200 154" role="img" aria-label="飛輪動能圖">
+        <circle class="wheel-ring" cx="100" cy="74" r="48"/>
+        <circle class="wheel-arc" id="wheelArc" cx="100" cy="74" r="48" stroke-dasharray="302" stroke-dashoffset="302"/>
+        <circle class="wheel-dot" id="wheelDot" cx="100" cy="26" r="5"/>
+        <text class="wheel-text" x="100" y="80" text-anchor="middle" id="wheelScore">0</text>
+        <text class="wheel-small" x="100" y="95" text-anchor="middle">動能分</text>
+        <text class="wheel-label" x="100" y="13" text-anchor="middle">行動</text>
+        <text class="wheel-label" x="156" y="76" text-anchor="middle">成果</text>
+        <text class="wheel-label" x="100" y="139" text-anchor="middle">信心</text>
+        <text class="wheel-label" x="44" y="76" text-anchor="middle">動機</text>
+      </svg>
+    </div>
+    <div id="progressEmpty" class="empty"><span class="zh">還沒有資料</span>推動幾天後，這裡會出現 14 天累積、連續天數與最近紀錄。</div>
+    <div id="progressList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="card">
+      <p class="eyebrow">每週回顧</p>
+      <h2>讓飛輪變得更容易推</h2>
+      <label class="form-label" for="reviewFly">選擇飛輪</label>
+      <select id="reviewFly"></select>
+      <div class="review-prompt">本週哪個小行動真的帶來成果？</div>
+      <textarea id="reviewWin" placeholder="例如：每天早上先寫 100 字，讓文章有穩定進度"></textarea>
+      <div class="review-prompt">哪裡阻力最大？</div>
+      <textarea id="reviewFriction" placeholder="例如：晚上才開始太容易被打斷"></textarea>
+      <div class="review-prompt">下週要怎麼放大或降低門檻？</div>
+      <textarea id="reviewNext" placeholder="例如：改成早餐後 10 分鐘，並把最小量調為 1 張卡"></textarea>
+      <button class="btn" id="addReviewBtn">儲存回顧</button>
+    </div>
+
+    <div id="reviewEmpty" class="empty"><span class="zh">還沒有週回顧</span>每週記一次，飛輪會從單純重複變成持續改善。</div>
+    <div id="reviewList"></div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../mvp-progress/">最小可行進展</a> · <a href="../habit-stacking/">微習慣堆疊</a> · <a href="../knowledge-atom/">知識原子化</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-build"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>建立</span></button>
+    <button class="tabbtn" data-tab="tab-push"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>推動</span></button>
+    <button class="tabbtn" data-tab="tab-dashboard"><svg viewBox="0 0 24 24"><path d="M4 19V5M8 17v-5M12 17V8M16 17v-7M20 17V4"/></svg><span>動能</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "compound_action_flywheel_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const iso = d => d.toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"flywheels":[],"logs":[],"reviews":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const templates = [
+  { title:"研究產出", area:"研究產出", action:"每天整理一篇文獻重點", min:1, unit:"篇", signal:"作品數", outcome:"一年後形成可快速取用的研究資料庫" },
+  { title:"寫作能力", area:"寫作能力", action:"每天寫一段 100 字草稿", min:100, unit:"字", signal:"累積字數", outcome:"累積成文章、專業觀點與可發表作品" },
+  { title:"知識管理", area:"學習能力", action:"每天建立一張知識卡片", min:1, unit:"張", signal:"卡片數", outcome:"形成第二大腦，支援輸出、簡報與教學" },
+  { title:"健康管理", area:"健康管理", action:"每天走路或訓練 10 分鐘", min:10, unit:"分鐘", signal:"運動分鐘", outcome:"建立穩定體能，再逐步提高強度" },
+  { title:"團隊流程改善", area:"團隊流程改善", action:"每天修正一個流程小問題", min:1, unit:"項", signal:"流程改善數", outcome:"降低錯誤與重工，讓團隊效率累積提升" }
+];
+$("flyTemplates").innerHTML = templates.map((t, i) => '<button class="template-btn" data-tpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("flyTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-tpl]");
+  if (!btn) return;
+  const t = templates[btn.dataset.tpl];
+  $("flyTitle").value = t.title; $("flyArea").value = t.area; $("flyAction").value = t.action;
+  $("flyMin").value = t.min; $("flyUnit").value = t.unit; $("flySignal").value = t.signal; $("flyOutcome").value = t.outcome;
+  updateFormula();
+});
+["flyTitle","flyAction","flyMin","flyUnit","flyOutcome"].forEach(id => $(id).addEventListener("input", updateFormula));
+["flyArea","flySignal"].forEach(id => $(id).addEventListener("change", updateFormula));
+function updateFormula(){
+  const title = $("flyTitle").value.trim() || "核心飛輪";
+  const action = $("flyAction").value.trim() || "最小行動";
+  const min = $("flyMin").value.trim() || "1";
+  const unit = $("flyUnit").value.trim() || "單位";
+  $("formulaPreview").innerHTML = '<span class="hl">' + esc(title) + '</span>：每天做 <span class="hl">' + esc(min + " " + unit) + '</span> 的「' + esc(action) + '」，用清楚回饋讓它越轉越快。';
+}
+$("addFlyBtn").addEventListener("click", () => {
+  const title = $("flyTitle").value.trim();
+  const action = $("flyAction").value.trim();
+  const min = parseInt($("flyMin").value, 10);
+  const unit = $("flyUnit").value.trim();
+  if (!title || !action || !min || min < 1 || !unit) { toast("請補齊核心飛輪、最小行動與單位"); return; }
+  db.flywheels.unshift({
+    id: uid(), title, area: $("flyArea").value, action, min, unit,
+    signal: $("flySignal").value, outcome: $("flyOutcome").value.trim(),
+    active: true, createdAt: today(), minHistory: [{ date: today(), value: min }]
+  });
+  saveAll();
+  ["flyTitle","flyAction","flyMin","flyUnit","flyOutcome"].forEach(id => { $(id).value = ""; });
+  updateFormula();
+  renderAll();
+  toast("飛輪已建立！");
+});
+
+function flyLogs(id){ return db.logs.filter(l => l.flyId === id); }
+function totalAmount(id){ return flyLogs(id).reduce((s, l) => s + l.amount, 0); }
+function amountOnDate(id, date){ return flyLogs(id).filter(l => l.date === date).reduce((s, l) => s + l.amount, 0); }
+function activeDates(id){ return new Set(flyLogs(id).filter(l => l.amount > 0).map(l => l.date)); }
+function currentStreak(id){
+  const set = activeDates(id);
+  let count = 0;
+  const d = new Date();
+  if (!set.has(iso(d))) d.setDate(d.getDate() - 1);
+  while (set.has(iso(d))) { count++; d.setDate(d.getDate() - 1); }
+  return count;
+}
+function bestStreak(id){
+  const dates = [...activeDates(id)].sort();
+  let best = 0, cur = 0, prev = null;
+  dates.forEach(d => {
+    if (prev) { const gap = (new Date(d) - new Date(prev)) / 86400000; cur = gap === 1 ? cur + 1 : 1; }
+    else cur = 1;
+    best = Math.max(best, cur); prev = d;
+  });
+  return best;
+}
+function momentumScore(f){
+  const recent = last14(f.id, f.min);
+  const met = recent.filter(x => x.cls === "met").length;
+  const part = recent.filter(x => x.cls === "part").length;
+  return Math.min(100, Math.round((met * 7 + part * 3) + Math.min(30, currentStreak(f.id) * 3)));
+}
+
+function renderFlies(){
+  $("flyEmpty").style.display = db.flywheels.length ? "none" : "block";
+  $("flyList").innerHTML = db.flywheels.map(f => {
+    const score = momentumScore(f);
+    const streak = currentStreak(f.id);
+    const doneToday = amountOnDate(f.id, today()) > 0;
+    return '<div class="fly-card' + (f.active ? "" : " off") + '">' +
+      '<div class="fly-top"><div><div class="fly-title">' + esc(f.title) + '</div><div class="fly-area">' + esc(f.area) + '</div></div>' +
+      '<div class="momentum serif">' + score + '<small> 分</small></div></div>' +
+      '<div class="cycle"><span><b>行動</b>' + esc(f.action) + '</span><span><b>成果</b>' + esc(f.signal) + '</span><span><b>信心</b>' + (streak ? "連續 " + streak + " 天" : "等待第一天") + '</span><span><b>外溢</b>' + esc(f.outcome || "逐步形成可見成果") + '</span></div>' +
+      '<div class="prog-bar"><i style="width:' + score + '%"></i></div><div class="prog-bar-label">累積 ' + totalAmount(f.id) + ' ' + esc(f.unit) + ' · 每日最小 ' + f.min + ' ' + esc(f.unit) + '</div>' +
+      '<div class="fly-meta">' + (streak ? '<span class="streak">連續 ' + streak + ' 天</span>' : '<span>尚未連續</span>') + '<span>' + (doneToday ? "今天已推動" : "今天尚未推動") + '</span></div>' +
+      '<div class="fly-actions"><button data-goto="' + f.id + '">去推動</button><button data-toggle="' + f.id + '">' + (f.active ? "暫停" : "恢復") + '</button><span class="spacer"></span><button class="del" data-del="' + f.id + '">刪除</button></div></div>';
+  }).join("");
+}
+$("flyList").addEventListener("click", e => {
+  const goto = e.target.closest("[data-goto]");
+  if (goto) { switchTab("tab-push"); return; }
+  const toggle = e.target.closest("[data-toggle]");
+  if (toggle) {
+    const f = db.flywheels.find(x => x.id === toggle.dataset.toggle);
+    if (f) { f.active = !f.active; saveAll(); renderAll(); toast(f.active ? "飛輪已恢復" : "飛輪已暫停"); }
+    return;
+  }
+  const del = e.target.closest("[data-del]");
+  if (del) {
+    if (!confirm("刪除這個飛輪？相關紀錄與回顧會一併清除。")) return;
+    db.flywheels = db.flywheels.filter(f => f.id !== del.dataset.del);
+    db.logs = db.logs.filter(l => l.flyId !== del.dataset.del);
+    db.reviews = db.reviews.filter(r => r.flyId !== del.dataset.del);
+    saveAll(); renderAll(); toast("已刪除飛輪");
+  }
+});
+
+function renderLog(){
+  const flies = db.flywheels.filter(f => f.active);
+  $("logEmpty").style.display = flies.length ? "none" : "block";
+  const advanced = flies.filter(f => amountOnDate(f.id, today()) > 0).length;
+  const frac = flies.length ? advanced / flies.length : 0;
+  $("ringProg").style.strokeDashoffset = String(157 * (1 - frac));
+  $("ringLabel").textContent = advanced + " / " + flies.length;
+  $("ringSub").textContent = flies.length && advanced === flies.length ? "今天所有飛輪都推動了" : "今天推動了幾個飛輪";
+  $("logList").innerHTML = flies.map(f => {
+    const todayAmt = amountOnDate(f.id, today());
+    const met = todayAmt >= f.min;
+    return '<div class="log-goal' + (todayAmt > 0 ? " done-today" : "") + '" data-fly="' + f.id + '">' +
+      '<div class="log-goal-head"><span class="log-goal-title">' + esc(f.title) + '</span></div>' +
+      '<div class="log-goal-min">最小行動：<b>' + esc(f.action) + '</b> · ' + f.min + ' ' + esc(f.unit) + '</div>' +
+      (todayAmt > 0 ? '<div class="today-amount">今天已推 ' + todayAmt + ' ' + esc(f.unit) + (met ? ' · 達標' : ' · 有啟動') + '</div>' : "") +
+      '<div class="log-amount-row"><div class="amt"><input type="number" class="inAmt" min="0" placeholder="' + f.min + '"></div><span class="unit">' + esc(f.unit) + '</span></div>' +
+      '<div class="quick-fill"><button class="qf" data-fill="' + f.min + '">最小 ' + f.min + '</button><button class="qf" data-fill="' + (f.min * 2) + '">' + (f.min * 2) + '</button><button class="qf" data-fill="' + (f.min * 3) + '">' + (f.min * 3) + '</button></div>' +
+      '<textarea class="inResult" placeholder="今天產生了什麼成果或信心？（可留空）"></textarea>' +
+      '<textarea class="inFriction" placeholder="阻力 / 下一步調整（可留空）"></textarea>' +
+      '<button class="btn" data-logbtn="' + f.id + '">記錄今日推動</button></div>';
+  }).join("");
+}
+$("logList").addEventListener("click", e => {
+  const qf = e.target.closest("[data-fill]");
+  if (qf) { qf.closest(".log-goal").querySelector(".inAmt").value = qf.dataset.fill; return; }
+  const logBtn = e.target.closest("[data-logbtn]");
+  if (!logBtn) return;
+  const f = db.flywheels.find(x => x.id === logBtn.dataset.logbtn);
+  const wrap = logBtn.closest(".log-goal");
+  const amount = parseInt(wrap.querySelector(".inAmt").value, 10);
+  if (!amount || amount <= 0) { toast("請輸入今天推動的數量"); return; }
+  db.logs.unshift({
+    id: uid(), flyId: f.id, date: today(), amount,
+    result: wrap.querySelector(".inResult").value.trim(),
+    friction: wrap.querySelector(".inFriction").value.trim()
+  });
+  saveAll(); renderAll();
+  toast(amountOnDate(f.id, today()) >= f.min ? "達標，飛輪多了一點動能" : "有推動就會累積");
+});
+
+function last14(id, min){
+  const out = [];
+  const t = today();
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = iso(d); const amt = amountOnDate(id, ds);
+    out.push({ cls: amt >= min ? "met" : amt > 0 ? "part" : "", isToday: ds === t });
+  }
+  return out;
+}
+function renderProgress(){
+  $("progressEmpty").style.display = db.flywheels.length ? "none" : "block";
+  const active = db.flywheels.filter(f => f.active);
+  const todayCount = active.filter(f => amountOnDate(f.id, today()) > 0).length;
+  const best = db.flywheels.reduce((m, f) => Math.max(m, bestStreak(f.id)), 0);
+  const avgScore = db.flywheels.length ? Math.round(db.flywheels.reduce((s, f) => s + momentumScore(f), 0) / db.flywheels.length) : 0;
+  $("stFly").textContent = db.flywheels.length;
+  $("stToday").textContent = todayCount;
+  $("stBest").textContent = best;
+  $("wheelScore").textContent = avgScore;
+  $("wheelArc").style.strokeDashoffset = String(302 * (1 - avgScore / 100));
+  const angle = (avgScore / 100) * Math.PI * 2 - Math.PI / 2;
+  $("wheelDot").setAttribute("cx", String(100 + Math.cos(angle) * 48));
+  $("wheelDot").setAttribute("cy", String(74 + Math.sin(angle) * 48));
+  $("progressList").innerHTML = db.flywheels.map(f => {
+    const dots = last14(f.id, f.min).map(x => '<span class="dot ' + x.cls + (x.isToday ? " today" : "") + '"></span>').join("");
+    const recent = flyLogs(f.id).slice(0, 3).map(l =>
+      '<div class="rl"><b>' + l.date + '</b> +' + l.amount + ' ' + esc(f.unit) +
+      (l.result ? "：" + esc(l.result) : "") + (l.friction ? '<br><span class="next">↳ ' + esc(l.friction) + '</span>' : "") + '</div>'
+    ).join("");
+    return '<div class="prog-item"><div class="prog-item-title">' + esc(f.title) + ' · 動能 ' + momentumScore(f) + ' 分</div>' +
+      '<div class="prog-item-sub">累積 ' + totalAmount(f.id) + ' ' + esc(f.unit) + ' · 目前連續 ' + currentStreak(f.id) + ' 天 · 最長 ' + bestStreak(f.id) + ' 天</div>' +
+      '<div class="dots">' + dots + '</div>' + (recent ? '<div class="recent-log">' + recent + '</div>' : "") + '</div>';
+  }).join("");
+}
+
+function renderReview(){
+  $("reviewFly").innerHTML = db.flywheels.length ? db.flywheels.map(f => '<option value="' + f.id + '">' + esc(f.title) + '</option>').join("") : '<option value="">請先建立飛輪</option>';
+  $("reviewEmpty").style.display = db.reviews.length ? "none" : "block";
+  $("reviewList").innerHTML = db.reviews.map(r => {
+    const f = db.flywheels.find(x => x.id === r.flyId);
+    return '<div class="review-item"><div class="review-date">' + r.date + ' · ' + esc(f ? f.title : "已刪除飛輪") + '</div>' +
+      '<div class="review-qa win"><span class="ql">有效成果</span>' + esc(r.win) + '</div>' +
+      '<div class="review-qa friction"><span class="ql">主要阻力</span>' + esc(r.friction) + '</div>' +
+      '<div class="review-qa next"><span class="ql">下週調整</span>' + esc(r.next) + '</div>' +
+      '<button class="review-del" data-rdel="' + r.id + '">刪除回顧</button></div>';
+  }).join("");
+}
+$("addReviewBtn").addEventListener("click", () => {
+  const flyId = $("reviewFly").value;
+  if (!flyId) { toast("請先建立飛輪"); return; }
+  const win = $("reviewWin").value.trim();
+  const friction = $("reviewFriction").value.trim();
+  const next = $("reviewNext").value.trim();
+  if (!win && !friction && !next) { toast("至少寫下一項回顧"); return; }
+  db.reviews.unshift({ id: uid(), flyId, date: today(), win, friction, next });
+  saveAll();
+  ["reviewWin","reviewFriction","reviewNext"].forEach(id => { $(id).value = ""; });
+  renderReview(); toast("回顧已儲存");
+});
+$("reviewList").addEventListener("click", e => {
+  const del = e.target.closest("[data-rdel]");
+  if (!del) return;
+  db.reviews = db.reviews.filter(r => r.id !== del.dataset.rdel);
+  saveAll(); renderReview(); toast("已刪除回顧");
+});
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "compound-flywheel-backup-" + today() + ".json";
+  a.click(); URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.flywheels)) {
+        db = { flywheels:data.flywheels, logs:data.logs || [], reviews:data.reviews || [] };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else toast("備份檔格式不符！");
+    } catch (err) { toast("讀取備份檔案失敗！"); }
+  };
+  r.readAsText(f); e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有飛輪、推動紀錄與回顧嗎？此動作無法復原。")) return;
+  db = { flywheels:[], logs:[], reviews:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-build") renderFlies();
+  if (id === "tab-push") renderLog();
+  if (id === "tab-dashboard") renderProgress();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+function renderAll(){ renderFlies(); renderLog(); renderProgress(); renderReview(); }
+updateFormula();
+renderAll();
+</script>
+</body>
+</html>
