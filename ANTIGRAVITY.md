@@ -23,7 +23,7 @@
 - 版面：方格紙 hero、印章式 SVG seal（單一漢字）、底部四分頁 tabbar、深淺色主題（`prefers-color-scheme` + 手動切換）。
 - 無障礙：44px 觸控熱區、`focus-visible`、`prefers-reduced-motion`。
 
-## 🧩 工具清單（入口頁 24 張卡）
+## 🧩 工具清單（入口頁 25 張卡）
 
 | 目錄 | 名稱 | 印章 | 分類 | accent |
 |------|------|:---:|------|--------|
@@ -51,6 +51,7 @@
 | `task-switching-cost/` | 任務切換成本 | 換 | 精力與行動 | forest |
 | `flow-triggers/` | 心流觸發條件 | 流 | 精力與行動 | lagoon |
 | `visual-note-taking/` | 視覺筆記法 | 圖 | 思維與決策 | sepia |
+| `task-batching/` | 任務批次化 | 批 | 精力與行動 | denim |
 
 > 入口 `index.html` 提供：搜尋（比對中文標題／英文副標／描述）、分類篩選（思維與決策 / 精力與行動）、釘選（★，localStorage）、格狀/清單檢視切換。新增工具＝在 index.html 加一組 accent CSS 變數＋一張 `.card`（含 `data-category`、`data-id`）。
 

@@ -30,3 +30,4 @@
 - 任務切換成本：https://iamkeith001.github.io/productivity-systems/task-switching-cost/
 - 心流觸發條件：https://iamkeith001.github.io/productivity-systems/flow-triggers/
 - 視覺筆記法：https://iamkeith001.github.io/productivity-systems/visual-note-taking/
+- 任務批次化：https://iamkeith001.github.io/productivity-systems/task-batching/

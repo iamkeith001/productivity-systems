@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="任務批次">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%2335618E' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%2335618E'%3E批%3C/text%3E%3C/svg%3E">
+<title>任務批次化 · Task Batching</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --purple:#7A45B5; --purple-soft:#F0EAF8;
+    --acc:#35618E; --acc-soft:#E8EDF4;
+    --grid:rgba(53,97,142,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --purple:#B99AE0; --purple-soft:#2E2638;
+    --acc:#7FA8D9; --acc-soft:#222B36;
+    --grid:rgba(127,168,217,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:60px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .task-card,.slot-card,.session-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .task-card{border-left:4px solid var(--acc)}
+  .slot-card{border-left:4px solid var(--amber)}
+  .session-card{border-left:4px solid var(--green)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .slot-time{font-family:"Songti TC","Noto Serif TC",serif;font-size:18px;font-weight:900;margin-top:8px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.comm{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.create{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.analysis{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.admin{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.learn{background:var(--purple-soft);color:var(--purple);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .cat-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .cat-chip{border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:8px 13px;border-radius:30px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px;letter-spacing:.04em}
+  .cat-chip.active{background:var(--acc);color:var(--paper);border-color:transparent}
+  .cat-chip .cnt{font-family:"Songti TC","Noto Serif TC",serif;margin-left:4px}
+
+  .pick-item{display:flex;align-items:flex-start;gap:10px;padding:12px 4px;border-bottom:1px solid var(--hairline-soft);cursor:pointer}
+  .pick-item:last-child{border-bottom:none}
+  .pick-item input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--acc);flex:none;cursor:pointer}
+  .pick-item .pick-title{font-weight:700;font-size:14px;line-height:1.5}
+  .pick-item .pick-meta{font-size:11.5px;color:var(--pencil);margin-top:2px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">批</text></svg>
+      <div>
+        <h1>任務批次化</h1>
+        <small>TASK BATCHING</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-inbox">
+    <div class="hero">
+      <p class="eyebrow">任務批次化</p>
+      <div class="hero-title serif">同類的事，<br>一起完成。</div>
+      <p class="hero-text">任務批次化不是多工，而是反多工：把相似類型、相似工具、相似思考模式的任務集中在同一段時間處理，讓大腦保持在同一種工作模式，減少反覆啟動、停止、重新進入狀態的成本。</p>
+      <div class="quote-line serif">讓大腦少切換、多深入。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">收集箱</p>
+      <h2>新任務先暫存，別立刻切換</h2>
+      <p class="sub">當新任務出現時，不要立刻切換去做，先丟進收集箱並標上認知頻道，等對應批次時段再處理。</p>
+      <div class="templates-list" id="taskTemplates"></div>
+      <label class="form-label" for="taskTitle">任務內容 *</label>
+      <input type="text" id="taskTitle" placeholder="例如：回覆廠商 Email、更新月報表、讀論文摘要">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="taskCat">認知頻道</label>
+          <select id="taskCat">
+            <option value="comm">溝通型</option>
+            <option value="create">創作型</option>
+            <option value="analysis">分析型</option>
+            <option value="admin">行政型</option>
+            <option value="learn">學習型</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="taskNote">補充（選填）</label>
+          <input type="text" id="taskNote" placeholder="截止、對象、材料位置">
+        </div>
+      </div>
+      <button class="btn" id="addTaskBtn">丟進收集箱</button>
+    </div>
+
+    <div class="hint-box"><b>五種認知頻道：</b>溝通（Email、訊息、確認）、創作（寫作、設計、簡報）、分析（數據、研究、決策）、行政（表單、整理、歸檔）、學習（閱讀、課程、複習）。分類是為了找出哪些任務可以共用同一種大腦模式。</div>
+    <div id="taskEmpty" class="empty"><span class="zh">收集箱是空的</span>新任務出現時先丟進來，等批次時段一起處理。</div>
+    <div id="taskList"></div>
+  </section>
+
+  <section class="tab" id="tab-slots">
+    <div class="card">
+      <p class="eyebrow">批次時段</p>
+      <h2>替每種頻道預約固定時間盒</h2>
+      <p class="sub">固定時段可以降低每天重新決定的負擔，也能建立穩定節奏。邊界不是拖延，而是保護專注力。</p>
+      <div class="templates-list" id="slotTemplates"></div>
+      <label class="form-label" for="slotTitle">時段名稱 *</label>
+      <input type="text" id="slotTitle" placeholder="例如：上午深度創作、午前訊息批次">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="slotCat">認知頻道</label>
+          <select id="slotCat">
+            <option value="create">創作型</option>
+            <option value="comm">溝通型</option>
+            <option value="analysis">分析型</option>
+            <option value="admin">行政型</option>
+            <option value="learn">學習型</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="slotTime">時段</label>
+          <input type="text" id="slotTime" placeholder="例如：09:00-11:00">
+        </div>
+      </div>
+      <label class="form-label" for="slotRule">邊界規則</label>
+      <textarea id="slotRule" placeholder="例如：Email 只在這個時段開，其他時間不看信箱"></textarea>
+      <button class="btn" id="addSlotBtn">加入批次時段</button>
+    </div>
+
+    <div class="hint-box"><b>批次大小建議：</b>Email 每日 2–3 批；行政每日或每週一批（30–45 分）；創作每批 60–120 分鐘；會議盡量集中在半天內。批次太小降不了切換成本，太大容易累積壓力。</div>
+    <div id="slotEmpty" class="empty"><span class="zh">還沒有批次時段</span>先替最常見的頻道各設一個固定時間盒。</div>
+    <div id="slotList"></div>
+  </section>
+
+  <section class="tab" id="tab-run">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stPending">0</div><div class="l">收集箱待辦</div></div>
+      <div class="stat"><div class="n" id="stTodayBatches">0</div><div class="l">今日批次</div></div>
+      <div class="stat"><div class="n" id="stTodayCleared">0</div><div class="l">今日清空</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">執行批次</p>
+      <h2>一次只處理同一類事</h2>
+      <p class="sub">選一個認知頻道，勾選這一批要處理的任務。完成後一次結算，記成一個批次。</p>
+      <div class="cat-chips" id="runChips"></div>
+      <div id="runEmpty" class="empty" style="margin-bottom:12px"><span class="zh">這個頻道沒有待辦</span>先到收集箱丟幾個任務進來。</div>
+      <div id="runList"></div>
+      <button class="btn" id="finishBatchBtn" style="margin-top:12px" disabled>完成這一批（已勾 0 項）</button>
+    </div>
+
+    <div class="hint-box"><b>執行原則：</b>批次進行中出現的新任務，一樣先丟回收集箱，不要中途切換。高時效情境（緊急、危機）例外，快速回應優先。</div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>累計批次</h3><div class="cnt" id="rvBatches">0</div><div class="desc">完成的批次總數，節奏比數量重要。</div></div>
+      <div class="mini-card"><h3>累計清空任務</h3><div class="cnt" id="rvCleared">0</div><div class="desc">透過批次處理完成的任務總數。</div></div>
+      <div class="mini-card"><h3>平均每批</h3><div class="cnt" id="rvAvg">0</div><div class="desc">每個批次平均清掉幾項任務。</div></div>
+      <div class="mini-card"><h3>最常批次頻道</h3><div class="cnt" id="rvTopCat">－</div><div class="desc">批次次數最多的認知頻道。</div></div>
+    </div>
+
+    <div id="sessionEmpty" class="empty"><span class="zh">還沒有批次紀錄</span>到「執行」分頁完成第一批，這裡會留下軌跡。</div>
+    <div id="sessionList"></div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>任務批次化的五個步驟</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>先分類任務：找出哪些任務可以放在同一個認知頻道。</li>
+          <li>設定固定批次時段：把同類工作放進固定時間盒。</li>
+          <li>設定批次邊界：Email 不隨時開，訊息不即時回。</li>
+          <li>建立收集箱：新任務先暫存，等對應批次再處理。</li>
+          <li>控制批次大小：有節奏地集中處理，不是堆到最後。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../task-switching-cost/">任務切換成本</a> · <a href="../time-blocking/">時間分塊法</a> · <a href="../energy-blocking/">能量區塊優化</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-inbox"><svg viewBox="0 0 24 24"><path d="M3 13h5l2 3h4l2-3h5M5 6h14l2 7v6H3v-6z"/></svg><span>收集</span></button>
+    <button class="tabbtn" data-tab="tab-slots"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>時段</span></button>
+    <button class="tabbtn" data-tab="tab-run"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7M17 15l2.5 2.5L24 13" transform="translate(-2 0)"/></svg><span>執行</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "task_batching_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"tasks":[],"slots":[],"sessions":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const CATS = ["comm","create","analysis","admin","learn"];
+function catLabel(v){
+  return v === "comm" ? "溝通型" : v === "create" ? "創作型" : v === "analysis" ? "分析型" : v === "admin" ? "行政型" : "學習型";
+}
+
+const taskTemplates = [
+  { title:"回覆累積的 Email 與訊息", cat:"comm", note:"集中在溝通批次一次回" },
+  { title:"寫下一段簡報或文章草稿", cat:"create", note:"排進深度創作時段" },
+  { title:"更新報表與數據整理", cat:"analysis", note:"同類數據一起看" },
+  { title:"報帳、表單、檔案歸檔", cat:"admin", note:"行政雜務集中清" },
+  { title:"閱讀存下來的文章或論文", cat:"learn", note:"學習批次一起讀" }
+];
+$("taskTemplates").innerHTML = taskTemplates.map((t, i) => '<button class="template-btn" data-ttpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("taskTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ttpl]");
+  if (!btn) return;
+  const t = taskTemplates[btn.dataset.ttpl];
+  $("taskTitle").value = t.title;
+  $("taskCat").value = t.cat;
+  $("taskNote").value = t.note;
+});
+
+const slotTemplates = [
+  { title:"上午深度創作", cat:"create", time:"09:00-11:00", rule:"不開訊息、不查雜事，只做創作類任務。" },
+  { title:"午前訊息與 Email", cat:"comm", time:"11:30-12:00", rule:"Email 只在這段開，其他時間不看信箱。" },
+  { title:"下午分析批次", cat:"analysis", time:"14:00-15:00", rule:"數據、報表、研究集中處理。" },
+  { title:"傍晚行政整理", cat:"admin", time:"16:30-17:00", rule:"表單、報帳、歸檔一次清完。" },
+  { title:"晚間學習批次", cat:"learn", time:"21:00-21:45", rule:"只讀存好的材料，不臨時找新內容。" }
+];
+$("slotTemplates").innerHTML = slotTemplates.map((t, i) => '<button class="template-btn" data-sltpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("slotTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-sltpl]");
+  if (!btn) return;
+  const t = slotTemplates[btn.dataset.sltpl];
+  $("slotTitle").value = t.title;
+  $("slotCat").value = t.cat;
+  $("slotTime").value = t.time;
+  $("slotRule").value = t.rule;
+});
+
+$("addTaskBtn").addEventListener("click", () => {
+  const title = $("taskTitle").value.trim();
+  if (!title) { toast("請輸入任務內容"); return; }
+  db.tasks.unshift({
+    id: uid(),
+    title,
+    cat: $("taskCat").value,
+    note: $("taskNote").value.trim(),
+    createdAt: today(),
+    done: false,
+    doneAt: null
+  });
+  saveAll();
+  $("taskTitle").value = ""; $("taskNote").value = "";
+  renderAll();
+  toast("已丟進收集箱");
+});
+
+$("addSlotBtn").addEventListener("click", () => {
+  const title = $("slotTitle").value.trim();
+  if (!title) { toast("請輸入時段名稱"); return; }
+  db.slots.unshift({
+    id: uid(),
+    title,
+    cat: $("slotCat").value,
+    time: $("slotTime").value.trim(),
+    rule: $("slotRule").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  ["slotTitle","slotTime","slotRule"].forEach(id => { $(id).value = ""; });
+  $("slotCat").value = "create";
+  renderAll();
+  toast("已加入批次時段");
+});
+
+function pendingOf(cat){ return db.tasks.filter(t => !t.done && t.cat === cat); }
+function pendingAll(){ return db.tasks.filter(t => !t.done); }
+
+function renderTasks(){
+  const pending = pendingAll();
+  $("taskEmpty").style.display = pending.length ? "none" : "block";
+  $("taskList").innerHTML = pending.map(t => {
+    return '<div class="task-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(t.title) + '</div><div class="item-meta">' + t.createdAt + (t.note ? ' · ' + esc(t.note) : '') + '</div></div>' +
+      '<span class="tag ' + t.cat + '">' + catLabel(t.cat) + '</span></div>' +
+      '<div class="actions"><button data-torun="' + t.cat + '">去執行這一類</button><button class="del" data-tdel="' + t.id + '">×</button></div></div>';
+  }).join("");
+}
+$("taskList").addEventListener("click", e => {
+  const del = e.target.closest("[data-tdel]");
+  if (del) {
+    db.tasks = db.tasks.filter(t => t.id !== del.dataset.tdel);
+    saveAll(); renderAll(); toast("已刪除任務"); return;
+  }
+  const run = e.target.closest("[data-torun]");
+  if (run) {
+    runCat = run.dataset.torun;
+    switchTab("tab-run");
+  }
+});
+
+function renderSlots(){
+  $("slotEmpty").style.display = db.slots.length ? "none" : "block";
+  $("slotList").innerHTML = db.slots.map(s => {
+    const n = pendingOf(s.cat).length;
+    return '<div class="slot-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(s.title) + '</div><div class="item-meta">' + catLabel(s.cat) + ' · 待辦 ' + n + ' 項</div></div>' +
+      '<span class="tag ' + s.cat + '">' + catLabel(s.cat) + '</span></div>' +
+      (s.time ? '<div class="slot-time">' + esc(s.time) + '</div>' : '') +
+      (s.rule ? '<div class="item-meta">' + esc(s.rule) + '</div>' : '') +
+      '<div class="actions"><button class="primary" data-srun="' + s.cat + '">開始這一批</button><button class="del" data-sdel="' + s.id + '">×</button></div></div>';
+  }).join("");
+}
+$("slotList").addEventListener("click", e => {
+  const del = e.target.closest("[data-sdel]");
+  if (del) {
+    db.slots = db.slots.filter(s => s.id !== del.dataset.sdel);
+    saveAll(); renderSlots(); toast("已刪除時段"); return;
+  }
+  const run = e.target.closest("[data-srun]");
+  if (run) {
+    runCat = run.dataset.srun;
+    switchTab("tab-run");
+  }
+});
+
+let runCat = "comm";
+let picked = new Set();
+
+function renderRunChips(){
+  $("runChips").innerHTML = CATS.map(c => {
+    const n = pendingOf(c).length;
+    return '<button class="cat-chip' + (c === runCat ? ' active' : '') + '" data-runcat="' + c + '">' + catLabel(c) + '<span class="cnt">' + n + '</span></button>';
+  }).join("");
+}
+$("runChips").addEventListener("click", e => {
+  const btn = e.target.closest("[data-runcat]");
+  if (!btn) return;
+  runCat = btn.dataset.runcat;
+  picked = new Set();
+  renderRun();
+});
+
+function renderRunList(){
+  const list = pendingOf(runCat);
+  $("runEmpty").style.display = list.length ? "none" : "block";
+  $("runList").innerHTML = list.map(t => {
+    return '<label class="pick-item"><input type="checkbox" data-pick="' + t.id + '"' + (picked.has(t.id) ? ' checked' : '') + '>' +
+      '<div><div class="pick-title">' + esc(t.title) + '</div><div class="pick-meta">' + t.createdAt + (t.note ? ' · ' + esc(t.note) : '') + '</div></div></label>';
+  }).join("");
+  updateFinishBtn();
+}
+$("runList").addEventListener("change", e => {
+  const cb = e.target.closest("[data-pick]");
+  if (!cb) return;
+  if (cb.checked) picked.add(cb.dataset.pick); else picked.delete(cb.dataset.pick);
+  updateFinishBtn();
+});
+
+function updateFinishBtn(){
+  const n = picked.size;
+  $("finishBatchBtn").textContent = "完成這一批（已勾 " + n + " 項）";
+  $("finishBatchBtn").disabled = n === 0;
+}
+
+$("finishBatchBtn").addEventListener("click", () => {
+  if (!picked.size) return;
+  const ids = new Set(picked);
+  const titles = [];
+  db.tasks.forEach(t => {
+    if (ids.has(t.id)) { t.done = true; t.doneAt = today(); titles.push(t.title); }
+  });
+  db.sessions.unshift({ id: uid(), cat: runCat, count: titles.length, titles: titles, date: today() });
+  picked = new Set();
+  saveAll();
+  renderAll();
+  toast("完成一批！清掉 " + titles.length + " 項");
+});
+
+function renderRunStats(){
+  const t = today();
+  const todaySessions = db.sessions.filter(s => s.date === t);
+  $("stPending").textContent = String(pendingAll().length);
+  $("stTodayBatches").textContent = String(todaySessions.length);
+  $("stTodayCleared").textContent = String(todaySessions.reduce((a, s) => a + s.count, 0));
+}
+
+function renderRun(){
+  renderRunChips();
+  renderRunList();
+  renderRunStats();
+}
+
+function renderReview(){
+  const total = db.sessions.length;
+  const cleared = db.sessions.reduce((a, s) => a + s.count, 0);
+  $("rvBatches").textContent = String(total);
+  $("rvCleared").textContent = String(cleared);
+  $("rvAvg").textContent = total ? (cleared / total).toFixed(1) : "0";
+  if (total) {
+    const byCat = {};
+    db.sessions.forEach(s => { byCat[s.cat] = (byCat[s.cat] || 0) + 1; });
+    const top = Object.keys(byCat).sort((a, b) => byCat[b] - byCat[a])[0];
+    $("rvTopCat").textContent = catLabel(top).slice(0, 2);
+  } else {
+    $("rvTopCat").textContent = "－";
+  }
+  $("sessionEmpty").style.display = total ? "none" : "block";
+  $("sessionList").innerHTML = db.sessions.map(s => {
+    return '<div class="session-card">' +
+      '<div class="item-top"><div><div class="item-title">' + s.date + ' · ' + catLabel(s.cat) + '批次</div>' +
+      '<div class="item-meta">' + (s.titles || []).map(esc).join("、") + '</div></div>' +
+      '<div class="score">' + s.count + '<small> 項</small></div></div>' +
+      '<div class="actions"><button class="del" data-ssdel="' + s.id + '">×</button></div></div>';
+  }).join("");
+}
+$("sessionList").addEventListener("click", e => {
+  const del = e.target.closest("[data-ssdel]");
+  if (!del) return;
+  db.sessions = db.sessions.filter(s => s.id !== del.dataset.ssdel);
+  saveAll(); renderReview(); toast("已刪除批次紀錄");
+});
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "task-batching-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.tasks) && Array.isArray(data.slots) && Array.isArray(data.sessions)) {
+        db = { tasks:data.tasks, slots:data.slots, sessions:data.sessions };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有任務、批次時段與批次紀錄嗎？此動作無法復原。")) return;
+  db = { tasks:[], slots:[], sessions:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-run") { picked = new Set(); renderRun(); }
+  if (id === "tab-slots") renderSlots();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderTasks();
+  renderSlots();
+  renderRun();
+  renderReview();
+}
+renderAll();
+</script>
+</body>
+</html>
