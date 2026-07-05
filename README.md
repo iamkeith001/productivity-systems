@@ -32,3 +32,4 @@
 - 視覺筆記法：https://iamkeith001.github.io/productivity-systems/visual-note-taking/
 - 任務批次化：https://iamkeith001.github.io/productivity-systems/task-batching/
 - 最小可行輸出：https://iamkeith001.github.io/productivity-systems/mvo/
+- 限制條件重構：https://iamkeith001.github.io/productivity-systems/constraint-reframing/
