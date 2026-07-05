@@ -33,3 +33,4 @@
 - 任務批次化：https://iamkeith001.github.io/productivity-systems/task-batching/
 - 最小可行輸出：https://iamkeith001.github.io/productivity-systems/mvo/
 - 限制條件重構：https://iamkeith001.github.io/productivity-systems/constraint-reframing/
+- 高階選擇權：https://iamkeith001.github.io/productivity-systems/strategic-optionality/

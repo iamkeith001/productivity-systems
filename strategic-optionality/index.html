@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="選擇權">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%233C8578' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%233C8578'%3E選%3C/text%3E%3C/svg%3E">
+<title>高階選擇權 · Strategic Optionality</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --purple:#7A45B5; --purple-soft:#F0EAF8;
+    --acc:#3C8578; --acc-soft:#E7F1EF;
+    --grid:rgba(60,133,120,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --purple:#B99AE0; --purple-soft:#2E2638;
+    --acc:#6FC2B2; --acc-soft:#1E312D;
+    --grid:rgba(111,194,178,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:56px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .asset-card,.exp-card,.id-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .asset-card{border-left:4px solid var(--acc)}
+  .exp-card{border-left:4px solid var(--blue)}
+  .id-card{border-left:4px solid var(--purple)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.skill{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.income{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.platform{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.network{background:var(--purple-soft);color:var(--purple);border-color:transparent}
+  .tag.knowledge{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.warn{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .spread{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px}
+  .spread .cell{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:10px 4px;text-align:center;box-shadow:var(--shadow)}
+  .spread .cell .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:19px;font-weight:900;line-height:1}
+  .spread .cell .l{font-size:9.5px;color:var(--pencil);margin-top:4px;letter-spacing:.02em}
+  .spread .cell.low{border-color:var(--red);border-style:dashed}
+  .spread .cell.low .n{color:var(--red)}
+
+  .flexbar{margin-bottom:10px}
+  .flexbar .fb-top{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px}
+  .flexbar .fb-top .v{color:var(--acc);font-family:"Songti TC","Noto Serif TC",serif;font-weight:900}
+  .flexbar .track{height:8px;background:var(--paper2);border-radius:4px;overflow:hidden}
+  .flexbar .fill{height:100%;background:var(--acc);border-radius:4px;transition:width .3s ease}
+
+  .arrowline{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12.5px;line-height:1.6}
+  .arrowline .from{color:var(--red);text-decoration:line-through;font-weight:700}
+  .arrowline .to{color:var(--acc);font-weight:800}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">選</text></svg>
+      <div>
+        <h1>高階選擇權</h1>
+        <small>STRATEGIC OPTIONALITY</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-assets">
+    <div class="hero">
+      <p class="eyebrow">高階選擇權</p>
+      <div class="hero-title serif">真正的自由，<br>是未來還剩多少可能性。</div>
+      <p class="hero-text">概念源自金融選擇權：在不確定的未來中，「擁有選擇的權利」本身就有價值。與其把所有資源押在單一路徑，不如刻意保留、建立與擴大未來可能性——當世界改變時，你還有多少可轉換空間。</p>
+      <div class="quote-line serif">選擇權，本身就是長期競爭力。</div>
+    </div>
+
+    <div class="spread" id="spreadGrid"></div>
+
+    <div class="card">
+      <p class="eyebrow">選擇權資產</p>
+      <h2>盤點你的可轉換資產</h2>
+      <p class="sub">可遷移能力、收入來源、平台管道、人脈圈、知識資產——分散不是分心，而是降低單點失敗風險。</p>
+      <div class="templates-list" id="assetTemplates"></div>
+      <label class="form-label" for="assetTitle">資產名稱 *</label>
+      <input type="text" id="assetTitle" placeholder="例如：寫作能力、部落格、跨領域讀書會">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="assetType">資產類別</label>
+          <select id="assetType">
+            <option value="skill">可遷移能力</option>
+            <option value="income">收入來源</option>
+            <option value="platform">平台管道</option>
+            <option value="network">人脈圈</option>
+            <option value="knowledge">知識資產</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="assetPort">可轉換度</label>
+          <select id="assetPort">
+            <option value="1">1 綁死單一環境</option>
+            <option value="2">2</option>
+            <option value="3" selected>3 部分可轉</option>
+            <option value="4">4</option>
+            <option value="5">5 跨領域通用</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="assetNote">備註（選填）</label>
+      <input type="text" id="assetNote" placeholder="例如：可跨產業使用、依賴單一平台演算法">
+      <button class="btn" id="addAssetBtn">加入資產</button>
+    </div>
+
+    <div class="hint-box"><b>可遷移能力參考：</b>溝通、問題分析、系統思維、寫作、AI 協作、學習能力、知識整合——能跨產業、跨工具、跨時代使用的能力，選擇權最高。</div>
+    <div id="assetEmpty" class="empty"><span class="zh">還沒有盤點資產</span>從你最有信心的一項可遷移能力開始。</div>
+    <div id="assetList"></div>
+  </section>
+
+  <section class="tab" id="tab-buffer">
+    <div class="card">
+      <p class="eyebrow">彈性檢查</p>
+      <h2>彈性本身就是資產</h2>
+      <p class="sub">很多人把生活排到完全沒有空間，環境一變就無法調整。替五個彈性面向打分（1 完全沒空間 → 5 非常充裕）。</p>
+      <div id="flexInputs"></div>
+      <button class="btn" id="saveFlexBtn">儲存這次彈性檢查</button>
+    </div>
+
+    <div class="card" id="flexLatestCard" style="display:none">
+      <p class="eyebrow">最新彈性儀表</p>
+      <h2 id="flexLatestTitle">彈性總分</h2>
+      <p class="sub" id="flexLatestMeta"></p>
+      <div id="flexBars"></div>
+    </div>
+
+    <div class="hint-box"><b>保留建議：</b>時間 buffer（行事曆留白）、現金流彈性、學習空間、休息恢復能力、探索新領域的餘裕。低於 3 分的面向，就是下一個要鬆綁的地方。</div>
+    <div id="flexEmpty" class="empty"><span class="zh">還沒有彈性檢查</span>做第一次五面向自評，之後定期回來對比。</div>
+    <div id="flexHistory"></div>
+  </section>
+
+  <section class="tab" id="tab-explore">
+    <div class="card">
+      <p class="eyebrow">探索紀錄</p>
+      <h2>持續探索新可能性</h2>
+      <p class="sub">跨領域閱讀、測試新工具、接觸不同產業、建立新合作。探索未必立刻有回報，但長期會形成未來轉向能力。</p>
+      <label class="form-label" for="expWhat">探索了什麼 *</label>
+      <input type="text" id="expWhat" placeholder="例如：試用新的 AI 工具、讀了一本跨領域的書">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="expKind">探索類型</label>
+          <select id="expKind">
+            <option>跨領域閱讀</option>
+            <option>新工具測試</option>
+            <option>新產業接觸</option>
+            <option>新技術觀察</option>
+            <option>新合作 / 人脈</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="expInsight">得到什麼觀察？</label>
+          <input type="text" id="expInsight" placeholder="一句話心得">
+        </div>
+      </div>
+      <label class="form-label" for="expOption">它可能開出什麼未來選項？</label>
+      <input type="text" id="expOption" placeholder="例如：也許能發展成第二專長、可以接新型案子">
+      <button class="btn" id="addExpBtn">記錄探索</button>
+    </div>
+    <div id="expEmpty" class="empty" style="margin-bottom:16px"><span class="zh">還沒有探索紀錄</span>這週有沒有碰過一個熟悉圈以外的東西？</div>
+    <div id="expList"></div>
+
+    <div class="card">
+      <p class="eyebrow">身份彈性</p>
+      <h2>避免過早鎖死身份</h2>
+      <p class="sub">「我就是做這個的」會讓選擇權快速縮小。把鎖死的身份句，改寫成保留彈性的版本。</p>
+      <label class="form-label" for="idFixed">鎖死的身份句 *</label>
+      <input type="text" id="idFixed" placeholder="例如：我就是做檢驗的，不懂資訊">
+      <label class="form-label" for="idFlexible">改寫成彈性版本 *</label>
+      <input type="text" id="idFlexible" placeholder="例如：我以檢驗專業為核心，正在累積資訊與 AI 能力">
+      <button class="btn" id="addIdBtn">儲存身份改寫</button>
+    </div>
+    <div id="idEmpty" class="empty"><span class="zh">還沒有身份改寫</span>寫下一句你常說的「我就是／我只能」，試著鬆開它。</div>
+    <div id="idList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>選擇權資產</h3><div class="cnt" id="rvAssets">0</div><div class="desc">可遷移能力與多元管道的總數。</div></div>
+      <div class="mini-card"><h3>分散度</h3><div class="cnt" id="rvSpread">0/5</div><div class="desc">五個資產類別中已覆蓋幾類。</div></div>
+      <div class="mini-card"><h3>最新彈性分</h3><div class="cnt" id="rvFlex">－</div><div class="desc">五面向平均，滿分 5。</div></div>
+      <div class="mini-card"><h3>探索次數</h3><div class="cnt" id="rvExps">0</div><div class="desc">每一次探索都是在買未來的選擇權。</div></div>
+    </div>
+
+    <div class="card" id="optionCard" style="display:none">
+      <p class="eyebrow">選項清單</p>
+      <h2>探索開出的未來選項</h2>
+      <div id="optionList" style="font-size:13px;line-height:1.9;color:var(--pencil)"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>高階選擇權的五個做法</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>建立可遷移能力：能跨產業、跨工具、跨時代使用。</li>
+          <li>不押單一路徑：收入、學習、平台、人脈多元化。</li>
+          <li>保留時間與資源彈性：彈性本身就是資產。</li>
+          <li>持續探索新可能性：未必立刻回報，長期形成轉向能力。</li>
+          <li>避免過早鎖死身份：不依附單一標籤，持續更新自己。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="https://iamkeith001.github.io/choice-loop/">選擇迴圈</a> · <a href="../decision-tree/">決策樹思維</a> · <a href="../constraint-reframing/">限制條件重構</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-assets"><svg viewBox="0 0 24 24"><path d="M12 3v18M12 9c0-3 2.5-5 6-5-1 4-3 5-6 5zM12 15c0-3-2.5-5-6-5 1 4 3 5 6 5z"/></svg><span>盤點</span></button>
+    <button class="tabbtn" data-tab="tab-buffer"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0M12 12l3-3M4 17h16"/></svg><span>彈性</span></button>
+    <button class="tabbtn" data-tab="tab-explore"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg><span>探索</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "strategic_optionality_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"assets":[],"flex":[],"exps":[],"ids":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const TYPES = ["skill","income","platform","network","knowledge"];
+function typeLabel(v){
+  return v === "skill" ? "可遷移能力" : v === "income" ? "收入來源" : v === "platform" ? "平台管道" : v === "network" ? "人脈圈" : "知識資產";
+}
+const FLEX_DIMS = [
+  { key:"time", label:"時間 buffer" },
+  { key:"cash", label:"現金流彈性" },
+  { key:"learn", label:"學習空間" },
+  { key:"rest", label:"休息恢復" },
+  { key:"explore", label:"探索餘裕" }
+];
+
+const assetTemplates = [
+  { title:"寫作與表達能力", type:"skill", port:"5", note:"跨產業、跨工具、跨時代可用" },
+  { title:"AI 協作能力", type:"skill", port:"5", note:"工具會換，但協作方法可轉移" },
+  { title:"本業薪資", type:"income", port:"2", note:"穩定但綁定單一雇主" },
+  { title:"個人網站 / Email list", type:"platform", port:"4", note:"不受單一平台演算法控制" },
+  { title:"可攜式筆記系統", type:"knowledge", port:"4", note:"標準格式、多重備份、可跨工具遷移" }
+];
+$("assetTemplates").innerHTML = assetTemplates.map((t, i) => '<button class="template-btn" data-atpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("assetTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-atpl]");
+  if (!btn) return;
+  const t = assetTemplates[btn.dataset.atpl];
+  $("assetTitle").value = t.title;
+  $("assetType").value = t.type;
+  $("assetPort").value = t.port;
+  $("assetNote").value = t.note;
+});
+
+$("addAssetBtn").addEventListener("click", () => {
+  const title = $("assetTitle").value.trim();
+  if (!title) { toast("請輸入資產名稱"); return; }
+  db.assets.unshift({
+    id: uid(),
+    title,
+    type: $("assetType").value,
+    port: parseInt($("assetPort").value, 10),
+    note: $("assetNote").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  $("assetTitle").value = ""; $("assetNote").value = "";
+  $("assetType").value = "skill"; $("assetPort").value = "3";
+  renderAll();
+  toast("已加入選擇權資產");
+});
+
+function renderSpread(){
+  $("spreadGrid").innerHTML = TYPES.map(t => {
+    const n = db.assets.filter(a => a.type === t).length;
+    return '<div class="cell' + (n < 1 ? ' low' : '') + '"><div class="n">' + n + '</div><div class="l">' + typeLabel(t) + '</div></div>';
+  }).join("");
+}
+
+function renderAssets(){
+  $("assetEmpty").style.display = db.assets.length ? "none" : "block";
+  $("assetList").innerHTML = db.assets.map(a => {
+    return '<div class="asset-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(a.title) + '</div><div class="item-meta">' + a.createdAt + (a.note ? ' · ' + esc(a.note) : '') + '</div></div>' +
+      '<div class="score">' + a.port + '<small> /5</small></div></div>' +
+      '<div class="chips"><span class="tag ' + a.type + '">' + typeLabel(a.type) + '</span>' + (a.port <= 2 ? '<span class="tag warn">低轉換度</span>' : '') + '</div>' +
+      '<div class="actions"><button class="del" data-adel="' + a.id + '">×</button></div></div>';
+  }).join("");
+}
+$("assetList").addEventListener("click", e => {
+  const del = e.target.closest("[data-adel]");
+  if (!del) return;
+  db.assets = db.assets.filter(a => a.id !== del.dataset.adel);
+  saveAll(); renderAll(); toast("已刪除資產");
+});
+
+/* ---- flexibility ---- */
+$("flexInputs").innerHTML = FLEX_DIMS.map(d => {
+  return '<label class="form-label" for="fx_' + d.key + '">' + d.label + '</label>' +
+    '<select id="fx_' + d.key + '">' +
+    [1,2,3,4,5].map(v => '<option value="' + v + '"' + (v === 3 ? ' selected' : '') + '>' + v + (v === 1 ? " 完全沒空間" : v === 5 ? " 非常充裕" : "") + '</option>').join("") +
+    '</select>';
+}).join("");
+
+$("saveFlexBtn").addEventListener("click", () => {
+  const scores = {};
+  FLEX_DIMS.forEach(d => { scores[d.key] = parseInt($("fx_" + d.key).value, 10); });
+  db.flex.unshift({ id: uid(), date: today(), scores });
+  saveAll();
+  FLEX_DIMS.forEach(d => { $("fx_" + d.key).value = "3"; });
+  renderAll();
+  toast("已儲存彈性檢查");
+});
+
+function flexAvg(f){
+  const vals = FLEX_DIMS.map(d => f.scores[d.key] || 0);
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
+function renderFlex(){
+  const latest = db.flex[0];
+  $("flexEmpty").style.display = db.flex.length ? "none" : "block";
+  $("flexLatestCard").style.display = latest ? "block" : "none";
+  if (latest) {
+    $("flexLatestTitle").textContent = "彈性總分 " + flexAvg(latest).toFixed(1) + " / 5";
+    $("flexLatestMeta").textContent = latest.date + " · 低於 3 分的面向就是下一個要鬆綁的地方";
+    $("flexBars").innerHTML = FLEX_DIMS.map(d => {
+      const v = latest.scores[d.key];
+      return '<div class="flexbar"><div class="fb-top"><span>' + d.label + '</span><span class="v">' + v + '</span></div>' +
+        '<div class="track"><div class="fill" style="width:' + (v * 20) + '%"></div></div></div>';
+    }).join("");
+  }
+  $("flexHistory").innerHTML = db.flex.slice(1).map(f => {
+    return '<div class="asset-card" style="border-left-color:var(--amber)">' +
+      '<div class="item-top"><div><div class="item-title">彈性檢查 ' + flexAvg(f).toFixed(1) + ' / 5</div>' +
+      '<div class="item-meta">' + f.date + ' · ' + FLEX_DIMS.map(d => d.label.slice(0, 2) + " " + f.scores[d.key]).join("、") + '</div></div></div>' +
+      '<div class="actions"><button class="del" data-fdel="' + f.id + '">×</button></div></div>';
+  }).join("");
+}
+$("flexHistory").addEventListener("click", e => {
+  const del = e.target.closest("[data-fdel]");
+  if (!del) return;
+  db.flex = db.flex.filter(f => f.id !== del.dataset.fdel);
+  saveAll(); renderAll(); toast("已刪除紀錄");
+});
+
+/* ---- explore ---- */
+$("addExpBtn").addEventListener("click", () => {
+  const what = $("expWhat").value.trim();
+  if (!what) { toast("請輸入探索了什麼"); return; }
+  db.exps.unshift({
+    id: uid(),
+    what,
+    kind: $("expKind").value,
+    insight: $("expInsight").value.trim(),
+    option: $("expOption").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  ["expWhat","expInsight","expOption"].forEach(id => { $(id).value = ""; });
+  renderAll();
+  toast("已記錄探索");
+});
+
+function renderExps(){
+  $("expEmpty").style.display = db.exps.length ? "none" : "block";
+  $("expList").innerHTML = db.exps.map(x => {
+    return '<div class="exp-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(x.what) + '</div><div class="item-meta">' + x.createdAt + '</div></div>' +
+      '<span class="tag platform">' + esc(x.kind) + '</span></div>' +
+      (x.insight ? '<div class="item-meta" style="margin-top:8px"><b>觀察：</b>' + esc(x.insight) + '</div>' : '') +
+      (x.option ? '<div class="item-meta" style="margin-top:6px"><b>可能選項：</b>' + esc(x.option) + '</div>' : '') +
+      '<div class="actions"><button class="del" data-edel="' + x.id + '">×</button></div></div>';
+  }).join("");
+}
+$("expList").addEventListener("click", e => {
+  const del = e.target.closest("[data-edel]");
+  if (!del) return;
+  db.exps = db.exps.filter(x => x.id !== del.dataset.edel);
+  saveAll(); renderAll(); toast("已刪除探索紀錄");
+});
+
+/* ---- identity ---- */
+$("addIdBtn").addEventListener("click", () => {
+  const fixed = $("idFixed").value.trim();
+  const flexible = $("idFlexible").value.trim();
+  if (!fixed || !flexible) { toast("兩句都要填"); return; }
+  db.ids.unshift({ id: uid(), fixed, flexible, createdAt: today() });
+  saveAll();
+  $("idFixed").value = ""; $("idFlexible").value = "";
+  renderAll();
+  toast("已鬆開一個身份標籤");
+});
+
+function renderIds(){
+  $("idEmpty").style.display = db.ids.length ? "none" : "block";
+  $("idList").innerHTML = db.ids.map(x => {
+    return '<div class="id-card">' +
+      '<div class="item-meta">' + x.createdAt + '</div>' +
+      '<div class="arrowline"><span class="from">' + esc(x.fixed) + '</span></div>' +
+      '<div class="arrowline"><span>→</span><span class="to">' + esc(x.flexible) + '</span></div>' +
+      '<div class="actions"><button class="del" data-idel="' + x.id + '">×</button></div></div>';
+  }).join("");
+}
+$("idList").addEventListener("click", e => {
+  const del = e.target.closest("[data-idel]");
+  if (!del) return;
+  db.ids = db.ids.filter(x => x.id !== del.dataset.idel);
+  saveAll(); renderAll(); toast("已刪除身份改寫");
+});
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvAssets").textContent = String(db.assets.length);
+  const covered = TYPES.filter(t => db.assets.some(a => a.type === t)).length;
+  $("rvSpread").textContent = covered + "/5";
+  $("rvFlex").textContent = db.flex.length ? flexAvg(db.flex[0]).toFixed(1) : "－";
+  $("rvExps").textContent = String(db.exps.length);
+  const opts = db.exps.filter(x => x.option);
+  $("optionCard").style.display = opts.length ? "block" : "none";
+  $("optionList").innerHTML = opts.map(x => '「' + esc(x.what) + '」→ <b style="color:var(--acc)">' + esc(x.option) + '</b>').join("<br>");
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "strategic-optionality-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.assets) && Array.isArray(data.flex) && Array.isArray(data.exps) && Array.isArray(data.ids)) {
+        db = { assets:data.assets, flex:data.flex, exps:data.exps, ids:data.ids };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有資產、彈性檢查、探索與身份紀錄嗎？此動作無法復原。")) return;
+  db = { assets:[], flex:[], exps:[], ids:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-buffer") renderFlex();
+  if (id === "tab-explore") { renderExps(); renderIds(); }
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderSpread();
+  renderAssets();
+  renderFlex();
+  renderExps();
+  renderIds();
+  renderReview();
+}
+renderAll();
+</script>
+</body>
+</html>
