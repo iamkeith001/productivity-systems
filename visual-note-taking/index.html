@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="視覺筆記">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%238B5E3C' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%238B5E3C'%3E圖%3C/text%3E%3C/svg%3E">
+<title>視覺筆記法 · Visual Note-Taking</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#8B5E3C; --acc-soft:#F4ECE5;
+    --grid:rgba(139,94,60,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#C9A07C; --acc-soft:#33261D;
+    --grid:rgba(201,160,124,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:60px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .note-card,.icon-card,.insight-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .note-card{border-left:4px solid var(--acc)}
+  .icon-card{border-left:4px solid var(--amber)}
+  .insight-card{border-left:4px solid var(--blue)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.flow{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.map{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.note{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .icon-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .structure-map{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow);margin-bottom:16px}
+  .structure-map svg{width:100%;height:auto;display:block}
+  .zone1{fill:var(--green-soft)} .zone2{fill:var(--blue-soft)} .zone3{fill:var(--amber-soft)} .zone4{fill:var(--red-soft)}
+  .axis{stroke:var(--hairline);stroke-width:1} .dot{fill:var(--acc);stroke:var(--paper);stroke-width:1.5}
+  .axis-t{font-size:8px;fill:var(--pencil);font-weight:700} .zone-t{font-size:8.5px;fill:var(--ink);font-weight:800}
+
+  .diagram{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:14px;box-shadow:var(--shadow);margin-bottom:16px}
+  .diagram-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+  .diagram-title{font-weight:800;font-size:14px}
+  .diagram-body{display:grid;gap:8px}
+  .diagram-row{display:flex;align-items:flex-start;gap:8px}
+  .node{flex:none;min-width:68px;padding:7px 8px;border-radius:6px;background:var(--paper2);border:1px solid var(--hairline-soft);font-size:11.5px;font-weight:800;text-align:center}
+  .node.arrow{min-width:34px;background:transparent;border:none;color:var(--pencil)}
+  .node.main{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .node.sub{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .node.note{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.icon-grid{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">圖</text></svg>
+      <div>
+        <h1>視覺筆記法</h1>
+        <small>VISUAL NOTE-TAKING</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-capture">
+    <div class="hero">
+      <p class="eyebrow">視覺筆記法</p>
+      <div class="hero-title serif">不是畫得漂亮，<br>而是想得清楚。</div>
+      <p class="hero-text">視覺筆記的核心不是裝飾，而是把資訊轉成可回想、可比較、可連結的結構。文字、圖像、箭頭與空間位置，都是用來幫助理解的思考工具。</p>
+      <div class="quote-line serif">把內容變成地圖，而不是把句子抄下來。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">主幹先行</p>
+      <h2>先抓核心問題與結構</h2>
+      <div class="templates-list" id="noteTemplates"></div>
+      <label class="form-label" for="noteTitle">主題 *</label>
+      <input type="text" id="noteTitle" placeholder="例如：會議整理、論文閱讀、專案流程、課程重點">
+      <label class="form-label" for="noteQuestion">核心問題 *</label>
+      <textarea id="noteQuestion" placeholder="例如：這份論文想回答什麼？這次會議真正要決定什麼？"></textarea>
+      <div class="row2">
+        <div>
+          <label class="form-label" for="noteStructure">結構版型</label>
+          <select id="noteStructure">
+            <option value="flow">流程型</option>
+            <option value="mind">心智圖型</option>
+            <option value="table">比較表型</option>
+            <option value="timeline">時間軸型</option>
+            <option value="pyramid">金字塔型</option>
+            <option value="system">系統圖型</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="noteLayers">核心層數</label>
+          <select id="noteLayers">
+            <option value="2">2 層</option><option value="3" selected>3 層</option><option value="4">4 層</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="noteSummary">一句話結論</label>
+      <textarea id="noteSummary" placeholder="例如：真正的瓶頸不是資訊太少，而是結構不清楚。"></textarea>
+      <button class="btn" id="addNoteBtn">加入視覺筆記卡</button>
+    </div>
+
+    <div class="hint-box"><b>記錄順序：</b>先問核心問題，再決定版型，最後補細節。不要一開始就逐字抄寫。</div>
+    <div id="noteEmpty" class="empty"><span class="zh">還沒有筆記卡</span>先定義主題、核心問題與適合的結構版型。</div>
+    <div id="noteList"></div>
+  </section>
+
+  <section class="tab" id="tab-icons">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stNotes">0</div><div class="l">筆記卡</div></div>
+      <div class="stat"><div class="n" id="stIcons">0</div><div class="l">圖像語彙</div></div>
+      <div class="stat"><div class="n" id="stInsights">0</div><div class="l">一句話洞見</div></div>
+    </div>
+
+    <div class="icon-grid">
+      <div class="mini-card"><h3>流程與因果</h3><div class="cnt" id="mFlow">0</div><div class="desc">適合方法、步驟、操作、因果鏈。</div></div>
+      <div class="mini-card"><h3>分類與比較</h3><div class="cnt" id="mCompare">0</div><div class="desc">適合概念分類、優缺點比較、主題延伸。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">圖像語彙庫</p>
+      <h2>固定圖像，提升筆記速度</h2>
+      <div class="templates-list" id="iconTemplates"></div>
+      <label class="form-label" for="iconSymbol">符號 / 圖像 *</label>
+      <input type="text" id="iconSymbol" placeholder="例如：燈泡、齒輪、橋、火箭">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="iconMeaning">代表概念</label>
+          <input type="text" id="iconMeaning" placeholder="例如：想法、系統、連結、啟動">
+        </div>
+        <div>
+          <label class="form-label" for="iconUse">常用情境</label>
+          <input type="text" id="iconUse" placeholder="例如：發想、流程、策略">
+        </div>
+      </div>
+      <button class="btn" id="addIconBtn">加入圖像語彙</button>
+    </div>
+
+    <div class="structure-map">
+      <svg viewBox="0 0 300 220" role="img" aria-label="版型地圖">
+        <rect class="zone1" x="20" y="20" width="130" height="80" rx="6"/>
+        <rect class="zone2" x="150" y="20" width="130" height="80" rx="6"/>
+        <rect class="zone3" x="20" y="100" width="130" height="90" rx="6"/>
+        <rect class="zone4" x="150" y="100" width="130" height="90" rx="6"/>
+        <line class="axis" x1="150" y1="20" x2="150" y2="190"/>
+        <line class="axis" x1="20" y1="100" x2="280" y2="100"/>
+        <text class="zone-t" x="85" y="38" text-anchor="middle">流程 / 時間</text>
+        <text class="zone-t" x="215" y="38" text-anchor="middle">分類 / 發想</text>
+        <text class="zone-t" x="85" y="118" text-anchor="middle">比較 / 表格</text>
+        <text class="zone-t" x="215" y="118" text-anchor="middle">系統 / 層級</text>
+        <text class="axis-t" x="150" y="208" text-anchor="middle">結構清晰度</text>
+        <text class="axis-t" x="6" y="105" transform="rotate(-90 6 105)" text-anchor="middle">關係複雜度</text>
+        <circle class="dot" cx="85" cy="55" r="6"></circle>
+        <circle class="dot" cx="215" cy="55" r="6"></circle>
+        <circle class="dot" cx="85" cy="145" r="6"></circle>
+        <circle class="dot" cx="215" cy="145" r="6"></circle>
+      </svg>
+    </div>
+
+    <div id="iconEmpty" class="empty"><span class="zh">還沒有圖像語彙</span>固定常用圖示，會讓你記得更快，也更容易看回去。</div>
+    <div id="iconList"></div>
+  </section>
+
+  <section class="tab" id="tab-layout">
+    <div class="diagram">
+      <div class="diagram-head">
+        <div class="diagram-title">好筆記的三層</div>
+        <span class="tag map">文字＋圖像＋關係線</span>
+      </div>
+      <div class="diagram-body">
+        <div class="diagram-row"><span class="node main">關鍵詞</span><span class="node arrow">→</span><span class="node note">精準記憶</span></div>
+        <div class="diagram-row"><span class="node sub">圖像</span><span class="node arrow">→</span><span class="node note">快速辨識</span></div>
+        <div class="diagram-row"><span class="node sub">箭頭 / 框線</span><span class="node arrow">→</span><span class="node note">理解關係</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">一句話洞見</p>
+      <h2>把一頁內容收斂成可行動知識</h2>
+      <label class="form-label" for="insightTopic">來自哪一頁 / 哪個主題？ *</label>
+      <input type="text" id="insightTopic" placeholder="例如：研究方法比較、週會整理、專案風險圖">
+      <label class="form-label" for="insightLine">一句話結論 *</label>
+      <textarea id="insightLine" placeholder="例如：這頁最重要的洞見，是流程卡住其實源自角色權責不清。"></textarea>
+      <label class="form-label" for="insightAction">下一步行動</label>
+      <textarea id="insightAction" placeholder="例如：把責任人、截止日與決策點補進下一版會議圖。"></textarea>
+      <button class="btn" id="addInsightBtn">加入洞見</button>
+    </div>
+
+    <div id="insightEmpty" class="empty"><span class="zh">還沒有一句話洞見</span>每張視覺筆記最後都應該留下最重要的結論。</div>
+    <div id="insightList"></div>
+  </section>
+
+  <section class="tab" id="tab-backup">
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>讓筆記更像地圖的五件事</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>先抓主幹，不急著記完整句子。</li>
+          <li>固定圖像語彙，降低表達成本。</li>
+          <li>用版型取代流水帳，讓資訊有空間結構。</li>
+          <li>混用文字、圖像與關係線，讓重點更容易回想。</li>
+          <li>最後補上一句話結論，把內容轉成可行動知識。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../knowledge-atom/">知識原子化</a> · <a href="../knowledge-distill/">知識蒸餾法</a> · <a href="../flow-triggers/">心流觸發條件</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-capture"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V8M12 16V5M17 16v-3"/></svg><span>主幹</span></button>
+    <button class="tabbtn" data-tab="tab-icons"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>語彙</span></button>
+    <button class="tabbtn" data-tab="tab-layout"><svg viewBox="0 0 24 24"><path d="M12 3v18M4.5 8.5l15 7M4.5 15.5l15-7"/></svg><span>洞見</span></button>
+    <button class="tabbtn" data-tab="tab-backup"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>整理</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "visual_note_taking_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"notes":[],"icons":[],"insights":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const noteTemplates = [
+  { title:"論文閱讀", question:"這篇研究的問題、方法、結果與限制是什麼？", structure:"table", layers:"3", summary:"先理解研究邏輯，再談可用性。" },
+  { title:"會議整理", question:"這場會議真正要決定什麼、誰負責什麼、何時完成？", structure:"flow", layers:"3", summary:"討論不是結果，決策與責任才是結果。" },
+  { title:"專案規劃", question:"專案分成哪幾個階段，哪裡是瓶頸與關鍵里程碑？", structure:"timeline", layers:"4", summary:"先看全局，再拆出節點與風險。" },
+  { title:"創意發想", question:"這個主題有哪些分支、關聯與可延伸方向？", structure:"mind", layers:"3", summary:"先放大可能性，再收斂主軸。" }
+];
+$("noteTemplates").innerHTML = noteTemplates.map((t, i) => '<button class="template-btn" data-ntpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("noteTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ntpl]");
+  if (!btn) return;
+  const t = noteTemplates[btn.dataset.ntpl];
+  $("noteTitle").value = t.title;
+  $("noteQuestion").value = t.question;
+  $("noteStructure").value = t.structure;
+  $("noteLayers").value = t.layers;
+  $("noteSummary").value = t.summary;
+});
+
+const iconTemplates = [
+  { symbol:"燈泡", meaning:"想法", use:"發想 / 洞見" },
+  { symbol:"齒輪", meaning:"系統", use:"流程 / 機制" },
+  { symbol:"橋", meaning:"連結", use:"跨概念關係" },
+  { symbol:"時鐘", meaning:"時間", use:"時程 / 延遲 / 節點" },
+  { symbol:"放大鏡", meaning:"分析", use:"研究 / 檢查 / 比較" },
+  { symbol:"火箭", meaning:"啟動", use:"執行 / 開始 / 推進" }
+];
+$("iconTemplates").innerHTML = iconTemplates.map((t, i) => '<button class="template-btn" data-itpl="' + i + '">' + esc(t.symbol) + '</button>').join("");
+$("iconTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-itpl]");
+  if (!btn) return;
+  const t = iconTemplates[btn.dataset.itpl];
+  $("iconSymbol").value = t.symbol;
+  $("iconMeaning").value = t.meaning;
+  $("iconUse").value = t.use;
+});
+
+function structureLabel(v){
+  return v === "flow" ? "流程型" : v === "mind" ? "心智圖型" : v === "table" ? "比較表型" : v === "timeline" ? "時間軸型" : v === "pyramid" ? "金字塔型" : "系統圖型";
+}
+function noteScore(n){
+  const base = n.layers * 4;
+  const summary = n.summary ? 6 : 0;
+  const structure = n.structure === "system" || n.structure === "pyramid" ? 8 : 6;
+  return base + summary + structure;
+}
+
+$("addNoteBtn").addEventListener("click", () => {
+  const title = $("noteTitle").value.trim();
+  const question = $("noteQuestion").value.trim();
+  if (!title || !question) { toast("請補齊主題與核心問題"); return; }
+  db.notes.unshift({
+    id: uid(),
+    title,
+    question,
+    structure: $("noteStructure").value,
+    layers: parseInt($("noteLayers").value, 10),
+    summary: $("noteSummary").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  ["noteTitle","noteQuestion","noteSummary"].forEach(id => { $(id).value = ""; });
+  $("noteStructure").value = "flow"; $("noteLayers").value = "3";
+  renderAll();
+  toast("已加入視覺筆記卡");
+});
+
+$("addIconBtn").addEventListener("click", () => {
+  const symbol = $("iconSymbol").value.trim();
+  if (!symbol) { toast("請輸入符號或圖像"); return; }
+  db.icons.unshift({
+    id: uid(),
+    symbol,
+    meaning: $("iconMeaning").value.trim(),
+    use: $("iconUse").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  ["iconSymbol","iconMeaning","iconUse"].forEach(id => { $(id).value = ""; });
+  renderAll();
+  toast("已加入圖像語彙");
+});
+
+$("addInsightBtn").addEventListener("click", () => {
+  const topic = $("insightTopic").value.trim();
+  const line = $("insightLine").value.trim();
+  if (!topic || !line) { toast("請補齊主題與一句話結論"); return; }
+  db.insights.unshift({
+    id: uid(),
+    topic,
+    line,
+    action: $("insightAction").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  ["insightTopic","insightLine","insightAction"].forEach(id => { $(id).value = ""; });
+  renderInsights();
+  renderSummary();
+  toast("已加入洞見");
+});
+
+function renderNotes(){
+  $("noteEmpty").style.display = db.notes.length ? "none" : "block";
+  $("noteList").innerHTML = db.notes.map(n => {
+    const score = noteScore(n);
+    return '<div class="note-card"><div class="item-top"><div><div class="item-title">' + esc(n.title) + '</div><div class="item-meta">' + esc(structureLabel(n.structure)) + ' · ' + n.createdAt + '</div></div><div class="score">' + score + '<small> 分</small></div></div>' +
+      '<div class="item-meta" style="margin-top:10px;color:var(--ink)"><b>核心問題：</b>' + esc(n.question) + '</div>' +
+      '<div class="chips"><span class="tag flow">' + esc(structureLabel(n.structure)) + '</span><span class="tag">' + n.layers + ' 層</span>' + (n.summary ? '<span class="tag note">有結論</span>' : '') + '</div>' +
+      (n.summary ? '<div class="item-meta" style="margin-top:10px"><b>一句話：</b>' + esc(n.summary) + '</div>' : '') +
+      '<div class="actions"><button class="primary" data-insightfrom="' + n.id + '">轉成洞見</button><button class="del" data-ndel="' + n.id + '">×</button></div></div>';
+  }).join("");
+}
+$("noteList").addEventListener("click", e => {
+  const del = e.target.closest("[data-ndel]");
+  if (del) {
+    db.notes = db.notes.filter(n => n.id !== del.dataset.ndel);
+    saveAll(); renderAll(); toast("已刪除筆記卡"); return;
+  }
+  const insight = e.target.closest("[data-insightfrom]");
+  if (insight) {
+    const n = db.notes.find(x => x.id === insight.dataset.insightfrom);
+    if (!n) return;
+    $("insightTopic").value = n.title;
+    $("insightLine").value = n.summary || "";
+    switchTab("tab-layout");
+  }
+});
+
+function renderIcons(){
+  $("iconEmpty").style.display = db.icons.length ? "none" : "block";
+  $("iconList").innerHTML = db.icons.map(i => {
+    return '<div class="icon-card"><div class="item-top"><div><div class="item-title">' + esc(i.symbol) + '</div><div class="item-meta">' + esc(i.meaning || "未命名概念") + '</div></div><span class="tag map">圖像語彙</span></div>' +
+      (i.use ? '<div class="item-meta" style="margin-top:10px;color:var(--ink)"><b>常用情境：</b>' + esc(i.use) + '</div>' : '') +
+      '<div class="actions"><button class="del" data-idel="' + i.id + '">×</button></div></div>';
+  }).join("");
+}
+$("iconList").addEventListener("click", e => {
+  const del = e.target.closest("[data-idel]");
+  if (!del) return;
+  db.icons = db.icons.filter(i => i.id !== del.dataset.idel);
+  saveAll(); renderAll(); toast("已刪除圖像語彙");
+});
+
+function renderInsights(){
+  $("insightEmpty").style.display = db.insights.length ? "none" : "block";
+  $("insightList").innerHTML = db.insights.map(i => {
+    return '<div class="insight-card"><div class="item-top"><div><div class="item-title">' + esc(i.topic) + '</div><div class="item-meta">' + i.createdAt + '</div></div><span class="tag note">一句話洞見</span></div>' +
+      '<div class="item-meta" style="margin-top:10px;color:var(--ink)"><b>結論：</b>' + esc(i.line) + '</div>' +
+      (i.action ? '<div class="item-meta" style="margin-top:8px"><b>下一步：</b>' + esc(i.action) + '</div>' : '') +
+      '<div class="actions"><button class="del" data-adel="' + i.id + '">×</button></div></div>';
+  }).join("");
+}
+$("insightList").addEventListener("click", e => {
+  const del = e.target.closest("[data-adel]");
+  if (!del) return;
+  db.insights = db.insights.filter(i => i.id !== del.dataset.adel);
+  saveAll(); renderInsights(); renderSummary(); toast("已刪除洞見");
+});
+
+function renderSummary(){
+  $("stNotes").textContent = String(db.notes.length);
+  $("stIcons").textContent = String(db.icons.length);
+  $("stInsights").textContent = String(db.insights.length);
+  $("mFlow").textContent = String(db.notes.filter(n => n.structure === "flow" || n.structure === "timeline").length);
+  $("mCompare").textContent = String(db.notes.filter(n => n.structure === "table" || n.structure === "mind" || n.structure === "system" || n.structure === "pyramid").length);
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "visual-note-taking-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.notes) && Array.isArray(data.icons) && Array.isArray(data.insights)) {
+        db = { notes:data.notes, icons:data.icons, insights:data.insights };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有視覺筆記卡、圖像語彙與洞見嗎？此動作無法復原。")) return;
+  db = { notes:[], icons:[], insights:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-icons") renderIcons();
+  if (id === "tab-layout") renderInsights();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderNotes();
+  renderIcons();
+  renderInsights();
+  renderSummary();
+}
+renderAll();
+</script>
+</body>
+</html>

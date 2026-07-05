@@ -27,3 +27,6 @@
 - 80/20 檢視法：https://iamkeith001.github.io/productivity-systems/pareto-review/
 - 複利行動飛輪：https://iamkeith001.github.io/productivity-systems/compound-flywheel/
 - 決策疲勞管理：https://iamkeith001.github.io/productivity-systems/decision-fatigue/
+- 任務切換成本：https://iamkeith001.github.io/productivity-systems/task-switching-cost/
+- 心流觸發條件：https://iamkeith001.github.io/productivity-systems/flow-triggers/
+- 視覺筆記法：https://iamkeith001.github.io/productivity-systems/visual-note-taking/
