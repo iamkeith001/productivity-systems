@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="決策疲勞">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%2357687A' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%2357687A'%3E疲%3C/text%3E%3C/svg%3E">
+<title>決策疲勞管理 · Decision Fatigue Management</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#57687A; --acc-soft:#E8EDF2;
+    --grid:rgba(87,104,122,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#8FA6C4; --acc-soft:#1E2836;
+    --grid:rgba(143,166,196,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],input[type=number],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:60px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .drain-card,.rule-card,.journal-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .drain-card{border-left:4px solid var(--acc)}
+  .drain-card.low{border-left-color:var(--green)}
+  .drain-card.high{border-left-color:var(--red)}
+  .rule-card{border-left:4px solid var(--amber)}
+  .journal-card{border-left:4px solid var(--blue)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.low{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.high{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .tag.rule{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.journal{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .quad{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .quad-cell{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;position:relative}
+  .quad-cell::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;border-radius:4px 4px 0 0}
+  .quad-cell.high::before{background:var(--red)}
+  .quad-cell.low::before{background:var(--green)}
+  .quad-cell.med::before{background:var(--amber)}
+  .quad-cell h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .quad-cell .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .quad-cell .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .matrix-row{display:grid;grid-template-columns:70px 1fr 38px;gap:10px;align-items:center;margin-bottom:8px}
+  .matrix-row .lbl{font-size:12px;font-weight:700;color:var(--pencil)}
+  .track{height:10px;background:var(--paper2);border-radius:6px;overflow:hidden;border:1px solid var(--hairline-soft)}
+  .track i{display:block;height:100%;background:var(--acc);border-radius:6px}
+  .matrix-row .val{text-align:right;font-family:"Songti TC","Noto Serif TC",serif;font-size:14px;font-weight:900}
+
+  .decision-map{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow);margin-bottom:16px}
+  .decision-map svg{width:100%;height:auto;display:block}
+  .zone-1{fill:var(--green-soft)} .zone-2{fill:var(--amber-soft)} .zone-3{fill:var(--blue-soft)} .zone-4{fill:var(--red-soft)}
+  .axis{stroke:var(--hairline);stroke-width:1} .dot{fill:var(--acc);stroke:var(--paper);stroke-width:1.5}
+  .axis-t{font-size:8px;fill:var(--pencil);font-weight:700} .zone-t{font-size:8.5px;fill:var(--ink);font-weight:800}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"\2304";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"\2303"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.8}
+  details .body b{color:var(--ink)}
+  details .body ul{margin:6px 0;padding-left:18px}
+  details .body li{margin-bottom:4px}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.quad{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">疲</text></svg>
+      <div>
+        <h1>決策疲勞管理</h1>
+        <small>DECISION FATIGUE MANAGEMENT</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-audit">
+    <div class="hero">
+      <p class="eyebrow">決策疲勞管理</p>
+      <div class="hero-title serif">減少不必要選擇，<br>把清醒留給重要判斷。</div>
+      <p class="hero-text">問題通常不是沒有選項，而是選項太多、太雜、太頻繁。把小事自動化，中事標準化，大事深度化，才能保住真正重要時刻的判斷力。</p>
+      <div class="quote-line serif">管理決策，就是管理你的心智能量。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">耗損盤點</p>
+      <h2>哪些選擇最消耗你？</h2>
+      <div class="templates-list" id="drainTemplates"></div>
+      <label class="form-label" for="drainTitle">決策情境 *</label>
+      <input type="text" id="drainTitle" placeholder="例如：要不要立刻回訊息、今天先做哪件事">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="drainValue">價值層級</label>
+          <select id="drainValue">
+            <option value="low">低價值日常</option>
+            <option value="mid">中等例行</option>
+            <option value="high">高影響關鍵</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="drainOptions">選項複雜度</label>
+          <select id="drainOptions">
+            <option value="1">1 很單純</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 很複雜</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label class="form-label" for="drainFreq">出現頻率</label>
+          <select id="drainFreq">
+            <option value="1">1 很少</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 很常</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="drainUrgency">即時壓力</label>
+          <select id="drainUrgency">
+            <option value="1">1 不急</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 很急</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="drainNote">現在通常怎麼做？</label>
+      <textarea id="drainNote" placeholder="例如：每次都重新想一次，最後不是拖延就是選預設"></textarea>
+      <button class="btn" id="addDrainBtn">加入耗損點</button>
+    </div>
+
+    <div class="hint-box"><b>判讀方式：</b>低價值但高頻、選項多又有即時壓力的情境，通常最容易造成決策疲勞。先處理這些，再談高層策略。</div>
+    <div id="drainEmpty" class="empty"><span class="zh">還沒有耗損點</span>先列出那些反覆消耗你的小選擇。</div>
+    <div id="drainList"></div>
+  </section>
+
+  <section class="tab" id="tab-rules">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stDrains">0</div><div class="l">耗損點</div></div>
+      <div class="stat"><div class="n" id="stRules">0</div><div class="l">已標準化</div></div>
+      <div class="stat"><div class="n" id="stHot">0</div><div class="l">高風險耗損</div></div>
+    </div>
+    <div class="quad">
+      <div class="quad-cell high"><h3>高頻低價值</h3><div class="cnt" id="quadHighLow">0</div><div class="desc">先固定化。早餐、穿搭、開始流程、回覆節奏。</div></div>
+      <div class="quad-cell med"><h3>高頻中價值</h3><div class="cnt" id="quadHighMid">0</div><div class="desc">先做 SOP 或授權規則，不要每次從零判斷。</div></div>
+      <div class="quad-cell med"><h3>低頻高影響</h3><div class="cnt" id="quadLowHigh">0</div><div class="desc">安排到高能量時段，保留時間做深度分析。</div></div>
+      <div class="quad-cell low"><h3>已被保護</h3><div class="cnt" id="quadProtected">0</div><div class="desc">已經有規則或門檻的決策情境。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">決策規則</p>
+      <h2>把重複判斷改成框架</h2>
+      <div class="templates-list" id="ruleTemplates"></div>
+      <label class="form-label" for="ruleScenario">要處理的情境 *</label>
+      <input type="text" id="ruleScenario" placeholder="例如：收到非緊急訊息">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="ruleType">規則類型</label>
+          <select id="ruleType">
+            <option value="fixed">固定化</option>
+            <option value="threshold">門檻規則</option>
+            <option value="framework">決策框架</option>
+            <option value="delegate">授權 / 延後</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="ruleWhen">適用時機</label>
+          <input type="text" id="ruleWhen" placeholder="例如：平日 9:00-17:00">
+        </div>
+      </div>
+      <label class="form-label" for="ruleText">規則內容 *</label>
+      <textarea id="ruleText" placeholder="例如：非緊急訊息一律在 11:30 與 16:30 批次回覆"></textarea>
+      <button class="btn" id="addRuleBtn">加入規則</button>
+    </div>
+
+    <div id="ruleEmpty" class="empty"><span class="zh">還沒有規則</span>把小事自動化，中事標準化，大事留給清醒時刻。</div>
+    <div id="ruleList"></div>
+  </section>
+
+  <section class="tab" id="tab-energy">
+    <div class="card">
+      <p class="eyebrow">高能量時段</p>
+      <h2>先保住重要決策的時間</h2>
+      <div class="row2">
+        <div>
+          <label class="form-label" for="energyHigh">最清醒時段</label>
+          <input type="text" id="energyHigh" placeholder="例如：09:00-11:30">
+        </div>
+        <div>
+          <label class="form-label" for="energyLow">最疲勞時段</label>
+          <input type="text" id="energyLow" placeholder="例如：16:30 之後">
+        </div>
+      </div>
+      <label class="form-label" for="energyRule">保留規則</label>
+      <textarea id="energyRule" placeholder="例如：高能量時段只做策略、研究方向、預算與人才相關決策"></textarea>
+      <button class="btn" id="saveEnergyBtn">儲存安排</button>
+    </div>
+
+    <div class="decision-map">
+      <svg viewBox="0 0 300 220" role="img" aria-label="決策地圖">
+        <rect class="zone-1" x="20" y="20" width="130" height="80" rx="6"/>
+        <rect class="zone-2" x="150" y="20" width="130" height="80" rx="6"/>
+        <rect class="zone-3" x="20" y="100" width="130" height="90" rx="6"/>
+        <rect class="zone-4" x="150" y="100" width="130" height="90" rx="6"/>
+        <line class="axis" x1="150" y1="20" x2="150" y2="190"/>
+        <line class="axis" x1="20" y1="100" x2="280" y2="100"/>
+        <text class="zone-t" x="85" y="38" text-anchor="middle">小事自動化</text>
+        <text class="zone-t" x="215" y="38" text-anchor="middle">中事標準化</text>
+        <text class="zone-t" x="85" y="118" text-anchor="middle">可授權或延後</text>
+        <text class="zone-t" x="215" y="118" text-anchor="middle">大事深度化</text>
+        <text class="axis-t" x="150" y="208" text-anchor="middle">影響層級</text>
+        <text class="axis-t" x="6" y="105" transform="rotate(-90 6 105)" text-anchor="middle">頻率</text>
+        <circle class="dot" id="mapDot1" cx="90" cy="55" r="6"></circle>
+        <circle class="dot" id="mapDot2" cx="90" cy="145" r="6"></circle>
+        <circle class="dot" id="mapDot3" cx="215" cy="145" r="6"></circle>
+        <circle class="dot" id="mapDot4" cx="215" cy="55" r="6"></circle>
+      </svg>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">本週分配</p>
+      <h2>你的決策分層</h2>
+      <div class="matrix-row"><span class="lbl">小事自動化</span><div class="track"><i id="barAuto" style="width:0%"></i></div><span class="val" id="barAutoVal">0</span></div>
+      <div class="matrix-row"><span class="lbl">中事標準化</span><div class="track"><i id="barStd" style="width:0%"></i></div><span class="val" id="barStdVal">0</span></div>
+      <div class="matrix-row"><span class="lbl">可授權延後</span><div class="track"><i id="barDelay" style="width:0%"></i></div><span class="val" id="barDelayVal">0</span></div>
+      <div class="matrix-row"><span class="lbl">大事深度化</span><div class="track"><i id="barDeep" style="width:0%"></i></div><span class="val" id="barDeepVal">0</span></div>
+    </div>
+
+    <div class="hint-box"><b>原則：</b>重要判斷排在最清醒時段。疲勞時只做例行處理，不做高風險決策。</div>
+  </section>
+
+  <section class="tab" id="tab-journal">
+    <div class="card">
+      <p class="eyebrow">重要決策日誌</p>
+      <h2>把高影響決策留痕</h2>
+      <label class="form-label" for="journalTitle">決策主題 *</label>
+      <input type="text" id="journalTitle" placeholder="例如：是否接受新的合作案">
+      <label class="form-label" for="journalContext">背景與假設</label>
+      <textarea id="journalContext" placeholder="目前掌握的資料、時間壓力、核心目標"></textarea>
+      <label class="form-label" for="journalDecision">最後決定 *</label>
+      <textarea id="journalDecision" placeholder="選了哪個方向？為什麼？"></textarea>
+      <button class="btn" id="addJournalBtn">加入日誌</button>
+    </div>
+
+    <div id="journalEmpty" class="empty"><span class="zh">還沒有重要決策</span>把真正重要的判斷寫下來，未來遇到類似情境就不必重頭思考。</div>
+    <div id="journalList"></div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../pre-decision/">預先決策法</a> · <a href="../decision-journal/">決策日誌</a> · <a href="../time-blocking/">時間分塊法</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-audit"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V8M12 16V5M17 16v-3"/></svg><span>盤點</span></button>
+    <button class="tabbtn" data-tab="tab-rules"><svg viewBox="0 0 24 24"><path d="M7 4h10M5 8h14M7 12h10M9 16h6M11 20h2"/></svg><span>規則</span></button>
+    <button class="tabbtn" data-tab="tab-energy"><svg viewBox="0 0 24 24"><path d="M12 3v18M4.5 8.5l15 7M4.5 15.5l15-7"/></svg><span>分層</span></button>
+    <button class="tabbtn" data-tab="tab-journal"><svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6zM9 4v5h6"/></svg><span>日誌</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "decision_fatigue_management_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"drains":[],"rules":[],"journals":[],"energy":{"high":"","low":"","rule":""}}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const drainTemplates = [
+  { title:"今天先做哪件事", value:"low", options:3, freq:5, urgency:4, note:"整天反覆重排優先順序" },
+  { title:"收到訊息要不要立刻回", value:"low", options:3, freq:5, urgency:4, note:"被即時回覆壓力打斷" },
+  { title:"要不要接受臨時會議", value:"mid", options:4, freq:3, urgency:4, note:"每次都現場權衡" },
+  { title:"產品或內容細節要不要再改", value:"mid", options:4, freq:4, urgency:3, note:"小細節消耗太多判斷力" }
+];
+$("drainTemplates").innerHTML = drainTemplates.map((t, i) => '<button class="template-btn" data-tpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("drainTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-tpl]");
+  if (!btn) return;
+  const t = drainTemplates[btn.dataset.tpl];
+  $("drainTitle").value = t.title;
+  $("drainValue").value = t.value;
+  $("drainOptions").value = String(t.options);
+  $("drainFreq").value = String(t.freq);
+  $("drainUrgency").value = String(t.urgency);
+  $("drainNote").value = t.note;
+});
+
+const ruleTemplates = [
+  { scenario:"收到非緊急訊息", type:"fixed", when:"平日工作時段", text:"一律在 11:30 與 16:30 批次回覆，不即時打斷。" },
+  { scenario:"低金額或低風險請求", type:"threshold", when:"日常例行", text:"低於既定門檻直接批准，超過門檻才進入討論。" },
+  { scenario:"臨時會議邀請", type:"framework", when:"收到邀請當下", text:"先問：是否符合核心目標？是否只有我能決定？現在決定還是可延後？" },
+  { scenario:"一線成員的常規問題", type:"delegate", when:"例行營運", text:"先依 SOP 處理；只有影響長期方向或跨部門風險才升級。" }
+];
+$("ruleTemplates").innerHTML = ruleTemplates.map((t, i) => '<button class="template-btn" data-rtpl="' + i + '">' + esc(t.scenario) + '</button>').join("");
+$("ruleTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-rtpl]");
+  if (!btn) return;
+  const t = ruleTemplates[btn.dataset.rtpl];
+  $("ruleScenario").value = t.scenario;
+  $("ruleType").value = t.type;
+  $("ruleWhen").value = t.when;
+  $("ruleText").value = t.text;
+});
+
+function drainScore(d){
+  const base = d.options * 2 + d.freq * 3 + d.urgency * 2;
+  return d.value === "low" ? base + 4 : d.value === "mid" ? base + 2 : base;
+}
+function valueLabel(v){
+  return v === "low" ? "低價值日常" : v === "mid" ? "中等例行" : "高影響關鍵";
+}
+function ruleTypeLabel(v){
+  return v === "fixed" ? "固定化" : v === "threshold" ? "門檻規則" : v === "framework" ? "決策框架" : "授權 / 延後";
+}
+
+$("addDrainBtn").addEventListener("click", () => {
+  const title = $("drainTitle").value.trim();
+  if (!title) { toast("請輸入決策情境"); return; }
+  const entry = {
+    id: uid(),
+    title,
+    value: $("drainValue").value,
+    options: parseInt($("drainOptions").value, 10),
+    freq: parseInt($("drainFreq").value, 10),
+    urgency: parseInt($("drainUrgency").value, 10),
+    note: $("drainNote").value.trim(),
+    createdAt: today()
+  };
+  db.drains.unshift(entry);
+  saveAll();
+  ["drainTitle","drainNote"].forEach(id => { $(id).value = ""; });
+  $("drainValue").value = "low"; $("drainOptions").value = "3"; $("drainFreq").value = "3"; $("drainUrgency").value = "3";
+  renderAll();
+  toast("已加入耗損點");
+});
+
+$("addRuleBtn").addEventListener("click", () => {
+  const scenario = $("ruleScenario").value.trim();
+  const text = $("ruleText").value.trim();
+  if (!scenario || !text) { toast("請補齊情境與規則內容"); return; }
+  db.rules.unshift({
+    id: uid(),
+    scenario,
+    type: $("ruleType").value,
+    when: $("ruleWhen").value.trim(),
+    text,
+    createdAt: today()
+  });
+  saveAll();
+  ["ruleScenario","ruleWhen","ruleText"].forEach(id => { $(id).value = ""; });
+  $("ruleType").value = "fixed";
+  renderAll();
+  toast("已加入規則");
+});
+
+$("saveEnergyBtn").addEventListener("click", () => {
+  db.energy.high = $("energyHigh").value.trim();
+  db.energy.low = $("energyLow").value.trim();
+  db.energy.rule = $("energyRule").value.trim();
+  saveAll();
+  renderEnergy();
+  toast("已儲存時段安排");
+});
+
+$("addJournalBtn").addEventListener("click", () => {
+  const title = $("journalTitle").value.trim();
+  const decision = $("journalDecision").value.trim();
+  if (!title || !decision) { toast("請補齊決策主題與最後決定"); return; }
+  db.journals.unshift({
+    id: uid(),
+    title,
+    context: $("journalContext").value.trim(),
+    decision,
+    createdAt: today()
+  });
+  saveAll();
+  ["journalTitle","journalContext","journalDecision"].forEach(id => { $(id).value = ""; });
+  renderJournal();
+  toast("已加入決策日誌");
+});
+
+function renderDrains(){
+  $("drainEmpty").style.display = db.drains.length ? "none" : "block";
+  $("drainList").innerHTML = db.drains.map(d => {
+    const score = drainScore(d);
+    return '<div class="drain-card ' + esc(d.value) + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(d.title) + '</div><div class="item-meta">' + esc(valueLabel(d.value)) + ' · ' + d.createdAt + '</div></div>' +
+      '<div class="score">' + score + '<small> 分</small></div></div>' +
+      '<div class="chips"><span class="tag ' + esc(d.value) + '">' + esc(valueLabel(d.value)) + '</span><span class="tag">選項 ' + d.options + '</span><span class="tag">頻率 ' + d.freq + '</span><span class="tag">壓力 ' + d.urgency + '</span></div>' +
+      (d.note ? '<div class="item-meta" style="margin-top:10px">' + esc(d.note) + '</div>' : "") +
+      '<div class="actions"><button class="primary" data-rulefrom="' + d.id + '">轉成規則</button><button class="del" data-ddel="' + d.id + '">×</button></div></div>';
+  }).join("");
+}
+$("drainList").addEventListener("click", e => {
+  const del = e.target.closest("[data-ddel]");
+  if (del) {
+    db.drains = db.drains.filter(d => d.id !== del.dataset.ddel);
+    saveAll(); renderAll(); toast("已刪除耗損點"); return;
+  }
+  const from = e.target.closest("[data-rulefrom]");
+  if (from) {
+    const d = db.drains.find(x => x.id === from.dataset.rulefrom);
+    if (!d) return;
+    $("ruleScenario").value = d.title;
+    $("ruleType").value = d.value === "low" ? "fixed" : d.value === "mid" ? "threshold" : "framework";
+    $("ruleText").value = d.value === "low"
+      ? "把這個情境改成固定流程或固定時間，不再臨場重想。"
+      : d.value === "mid"
+      ? "先設定門檻：只有超過影響或成本界線時，才進入深度判斷。"
+      : "先用固定框架判斷：是否符合核心目標？是否需要更多資料？是否一定要現在決定？";
+    switchTab("tab-rules");
+  }
+});
+
+function renderRules(){
+  $("ruleEmpty").style.display = db.rules.length ? "none" : "block";
+  $("ruleList").innerHTML = db.rules.map(r => {
+    return '<div class="rule-card"><div class="item-top"><div><div class="item-title">' + esc(r.scenario) + '</div><div class="item-meta">' + esc(ruleTypeLabel(r.type)) + (r.when ? ' · ' + esc(r.when) : '') + '</div></div><span class="tag rule">' + esc(ruleTypeLabel(r.type)) + '</span></div>' +
+      '<div class="item-meta" style="margin-top:10px;color:var(--ink)">' + esc(r.text) + '</div>' +
+      '<div class="actions"><button class="del" data-rdel="' + r.id + '">×</button></div></div>';
+  }).join("");
+}
+$("ruleList").addEventListener("click", e => {
+  const del = e.target.closest("[data-rdel]");
+  if (!del) return;
+  db.rules = db.rules.filter(r => r.id !== del.dataset.rdel);
+  saveAll(); renderAll(); toast("已刪除規則");
+});
+
+function renderEnergy(){
+  $("energyHigh").value = db.energy.high || "";
+  $("energyLow").value = db.energy.low || "";
+  $("energyRule").value = db.energy.rule || "";
+
+  const total = db.drains.length || 1;
+  const auto = db.drains.filter(d => d.value === "low").length;
+  const std = db.rules.filter(r => r.type === "fixed" || r.type === "threshold").length;
+  const delay = db.rules.filter(r => r.type === "delegate").length;
+  const deep = db.drains.filter(d => d.value === "high").length + db.journals.length;
+  const max = Math.max(auto, std, delay, deep, 1);
+
+  $("barAuto").style.width = (auto / max * 100) + "%"; $("barAutoVal").textContent = String(auto);
+  $("barStd").style.width = (std / max * 100) + "%"; $("barStdVal").textContent = String(std);
+  $("barDelay").style.width = (delay / max * 100) + "%"; $("barDelayVal").textContent = String(delay);
+  $("barDeep").style.width = (deep / max * 100) + "%"; $("barDeepVal").textContent = String(deep);
+}
+
+function renderJournal(){
+  $("journalEmpty").style.display = db.journals.length ? "none" : "block";
+  $("journalList").innerHTML = db.journals.map(j => {
+    return '<div class="journal-card"><div class="item-top"><div><div class="item-title">' + esc(j.title) + '</div><div class="item-meta">' + j.createdAt + '</div></div><span class="tag journal">重要決策</span></div>' +
+      (j.context ? '<div class="item-meta" style="margin-top:10px"><b>背景：</b>' + esc(j.context) + '</div>' : '') +
+      '<div class="item-meta" style="margin-top:8px;color:var(--ink)"><b>決定：</b>' + esc(j.decision) + '</div>' +
+      '<div class="actions"><button class="del" data-jdel="' + j.id + '">×</button></div></div>';
+  }).join("");
+}
+$("journalList").addEventListener("click", e => {
+  const del = e.target.closest("[data-jdel]");
+  if (!del) return;
+  db.journals = db.journals.filter(j => j.id !== del.dataset.jdel);
+  saveAll(); renderAll(); toast("已刪除日誌");
+});
+
+function renderSummary(){
+  $("stDrains").textContent = String(db.drains.length);
+  $("stRules").textContent = String(db.rules.length);
+  $("stHot").textContent = String(db.drains.filter(d => drainScore(d) >= 22).length);
+
+  const highLow = db.drains.filter(d => d.value === "low" && d.freq >= 4).length;
+  const highMid = db.drains.filter(d => d.value === "mid" && d.freq >= 3).length;
+  const lowHigh = db.drains.filter(d => d.value === "high").length;
+  const protectedCount = db.rules.length;
+  $("quadHighLow").textContent = String(highLow);
+  $("quadHighMid").textContent = String(highMid);
+  $("quadLowHigh").textContent = String(lowHigh);
+  $("quadProtected").textContent = String(protectedCount);
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "decision-fatigue-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.drains) && Array.isArray(data.rules) && Array.isArray(data.journals)) {
+        db = { drains:data.drains, rules:data.rules, journals:data.journals, energy:data.energy || { high:"", low:"", rule:"" } };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有耗損點、規則與決策日誌嗎？此動作無法復原。")) return;
+  db = { drains:[], rules:[], journals:[], energy:{ high:"", low:"", rule:"" } };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-rules") renderRules();
+  if (id === "tab-energy") renderEnergy();
+  if (id === "tab-journal") renderJournal();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderDrains();
+  renderRules();
+  renderSummary();
+  renderEnergy();
+  renderJournal();
+}
+renderAll();
+</script>
+</body>
+</html>

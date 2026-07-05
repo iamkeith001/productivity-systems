@@ -26,3 +26,4 @@
 - 知識原子化：https://iamkeith001.github.io/productivity-systems/knowledge-atom/
 - 80/20 檢視法：https://iamkeith001.github.io/productivity-systems/pareto-review/
 - 複利行動飛輪：https://iamkeith001.github.io/productivity-systems/compound-flywheel/
+- 決策疲勞管理：https://iamkeith001.github.io/productivity-systems/decision-fatigue/
