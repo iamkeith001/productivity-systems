@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="能量矩陣">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23CE6A57' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23CE6A57'%3E矩%3C/text%3E%3C/svg%3E">
+<title>能量管理矩陣 · Energy Management Matrix</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#CE6A57; --acc-soft:#F8EBE7;
+    --grid:rgba(206,106,87,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#E89B8B; --acc-soft:#3A2822;
+    --grid:rgba(232,155,139,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .qbox{border:1px solid var(--hairline-soft);border-radius:6px;padding:4px 12px;margin-bottom:12px;background:var(--paper)}
+  .qline{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--hairline-soft);cursor:pointer}
+  .qline:last-child{border-bottom:none}
+  .qline input[type=checkbox]{width:20px;height:20px;accent-color:var(--acc);flex:none;cursor:pointer}
+  .qline .t{font-size:13.5px;font-weight:700}
+
+  .state-toggle{display:flex;gap:8px;margin-bottom:14px}
+  .state-btn{flex:1;border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:13px 8px;border-radius:6px;font-size:14.5px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.06em}
+  .state-btn.active{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .quad{border-radius:6px;padding:13px 14px;margin-bottom:12px;border:1px solid var(--hairline-soft)}
+  .quad h3{margin:0 0 3px;font-size:13.5px;font-weight:800;letter-spacing:.04em}
+  .quad p{margin:0;font-size:12px;color:var(--pencil);line-height:1.6}
+  .quad.q-deep{background:var(--green-soft)} .quad.q-deep h3{color:var(--green)}
+  .quad.q-build{background:var(--blue-soft)} .quad.q-build h3{color:var(--blue)}
+  .quad.q-routine{background:var(--amber-soft)} .quad.q-routine h3{color:var(--amber)}
+  .quad.q-danger{background:var(--red-soft)} .quad.q-danger h3{color:var(--red)}
+
+  .pick-item{display:flex;align-items:flex-start;gap:10px;padding:11px 4px;border-bottom:1px solid var(--hairline-soft)}
+  .pick-item:last-child{border-bottom:none}
+  .pick-item input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--green);flex:none;cursor:pointer}
+  .pick-item .t{font-weight:700;font-size:14px;line-height:1.5}
+  .pick-item .m{font-size:11.5px;color:var(--pencil);margin-top:2px}
+  .none-line{font-size:12.5px;color:var(--pencil);padding:10px 4px}
+
+  .task-card,.log-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .task-card{border-left:4px solid var(--acc)}
+  .task-card.lowd{border-left-color:var(--amber)}
+  .task-card.donecard{opacity:.7;border-left-color:var(--green)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.hi{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.lo{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.done{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+
+  .rbar{margin-bottom:10px}
+  .rbar .rb-top{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px}
+  .rbar .rb-top .v{color:var(--acc);font-family:"Songti TC","Noto Serif TC",serif;font-weight:900}
+  .rbar .track{height:8px;background:var(--paper2);border-radius:4px;overflow:hidden}
+  .rbar .fill{height:100%;background:var(--acc);border-radius:4px;transition:width .3s ease}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">矩</text></svg>
+      <div>
+        <h1>能量管理矩陣</h1>
+        <small>ENERGY MANAGEMENT MATRIX</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-tasks">
+    <div class="hero">
+      <p class="eyebrow">能量管理矩陣</p>
+      <div class="hero-title serif">不是「還有多少時間」，<br>而是「現在適合做什麼」。</div>
+      <p class="hero-text">高效能的關鍵不是管理時間，而是管理能量。把高能量用在高價值任務、低能量用在低耗能任務——很多低效不是時間不足，而是高價值任務被排在低能量時段，導致拖延、錯誤與品質下降。</p>
+      <div class="quote-line serif">把能量放對地方，時間才會真正放大成果。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">任務盤點</p>
+      <h2>三個問題，判定能量需求</h2>
+      <p class="sub">兩題以上答「是」＝高能量需求任務；只是整理、回覆、歸檔＝低能量需求任務。</p>
+      <div class="templates-list" id="taskTemplates"></div>
+      <label class="form-label" for="taskTitle">任務 *</label>
+      <input type="text" id="taskTitle" placeholder="例如：寫論文討論段、回覆累積信件">
+      <div class="qbox">
+        <label class="qline"><input type="checkbox" id="qFocus"><span class="t">需要高度專注嗎？</span></label>
+        <label class="qline"><input type="checkbox" id="qCreate"><span class="t">需要創造力或判斷力嗎？</span></label>
+        <label class="qline"><input type="checkbox" id="qCost"><span class="t">出錯成本高嗎？</span></label>
+      </div>
+      <button class="btn" id="addTaskBtn">加入任務</button>
+    </div>
+
+    <div id="taskEmpty" class="empty"><span class="zh">還沒有任務</span>先把今天或本週的任務倒進來。</div>
+    <div id="taskList"></div>
+  </section>
+
+  <section class="tab" id="tab-match">
+    <div class="card">
+      <p class="eyebrow">當下配對</p>
+      <h2>我現在的能量狀態是？</h2>
+      <div class="state-toggle">
+        <button class="state-btn active" data-state="high" id="stateHigh">⚡ 高能量</button>
+        <button class="state-btn" data-state="low" id="stateLow">🌙 低能量</button>
+      </div>
+      <div id="quadArea"></div>
+    </div>
+    <div class="hint-box"><b>每日微調：</b>上午狀態好就先做最難的；連續會議後不要立刻做重大決策；狀態低落時把任務拆成 10–20 分鐘小步驟。</div>
+  </section>
+
+  <section class="tab" id="tab-rhythm">
+    <div class="card">
+      <p class="eyebrow">能量節律</p>
+      <h2>連續記錄，找出你的黃金時段</h2>
+      <p class="sub">連續記 3–5 天，每個時段給自己的清醒度打分（1 很疲倦 → 5 很清醒）。</p>
+      <div class="row2">
+        <div>
+          <label class="form-label" for="logSlot">時段</label>
+          <select id="logSlot">
+            <option>清晨</option>
+            <option selected>上午</option>
+            <option>中午</option>
+            <option>下午</option>
+            <option>傍晚</option>
+            <option>晚上</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="logLevel">能量（1–5）</label>
+          <select id="logLevel">
+            <option value="1">1 很疲倦</option>
+            <option value="2">2</option>
+            <option value="3" selected>3 普通</option>
+            <option value="4">4</option>
+            <option value="5">5 很清醒</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="addLogBtn">記錄這個時段</button>
+    </div>
+
+    <div class="card" id="rhythmCard" style="display:none">
+      <p class="eyebrow">你的節律地圖</p>
+      <h2 id="goldenTitle">黃金時段：－</h2>
+      <p class="sub">把最重要的工作留給最高的長條；最低的長條拿來整理、回覆與恢復。</p>
+      <div id="rhythmBars"></div>
+    </div>
+
+    <div id="logEmpty" class="empty"><span class="zh">還沒有節律紀錄</span>從現在這個時段開始記第一筆。</div>
+    <div id="logList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>任務（高／低需求）</h3><div class="cnt" id="rvTasks">0/0</div><div class="desc">高需求留給高能量，別浪費好精神。</div></div>
+      <div class="mini-card"><h3>已完成</h3><div class="cnt" id="rvDone">0</div><div class="desc">在對的狀態下完成的任務。</div></div>
+      <div class="mini-card"><h3>節律紀錄</h3><div class="cnt" id="rvLogs">0</div><div class="desc">累計的時段能量觀察。</div></div>
+      <div class="mini-card"><h3>黃金時段</h3><div class="cnt" id="rvGolden" style="font-size:19px">－</div><div class="desc">平均能量最高的時段。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>能量矩陣的四個象限</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>高需求 × 高能量：做最重要的深度工作。</li>
+          <li>高需求 × 低能量：別硬撐——拆小、延後、降低決策風險。</li>
+          <li>低需求 × 高能量：學習、整理、建立未來資產。</li>
+          <li>低需求 × 低能量：例行、行政、收尾與恢復性任務。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../energy-blocking/">能量區塊優化</a> · <a href="https://iamkeith001.github.io/energy-first/">能量儀表板</a> · <a href="../time-blocking/">時間分塊法</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-tasks"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>任務</span></button>
+    <button class="tabbtn" data-tab="tab-match"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg><span>配對</span></button>
+    <button class="tabbtn" data-tab="tab-rhythm"><svg viewBox="0 0 24 24"><path d="M3 12h3l2-7 4 14 3-10 2 3h4"/></svg><span>節律</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "energy_matrix_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"tasks":[],"logs":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const SLOTS = ["清晨","上午","中午","下午","傍晚","晚上"];
+
+const taskTemplates = [
+  { title:"寫論文討論段", f:true, c:true, k:true },
+  { title:"設計新研究 / 專案架構", f:true, c:true, k:true },
+  { title:"回覆累積的信件與訊息", f:false, c:false, k:false },
+  { title:"整理文獻與檔案歸檔", f:false, c:false, k:false },
+  { title:"重要簡報準備", f:true, c:true, k:false }
+];
+$("taskTemplates").innerHTML = taskTemplates.map((t, i) => '<button class="template-btn" data-ttpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("taskTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ttpl]");
+  if (!btn) return;
+  const t = taskTemplates[btn.dataset.ttpl];
+  $("taskTitle").value = t.title;
+  $("qFocus").checked = t.f;
+  $("qCreate").checked = t.c;
+  $("qCost").checked = t.k;
+});
+
+$("addTaskBtn").addEventListener("click", () => {
+  const title = $("taskTitle").value.trim();
+  if (!title) { toast("請輸入任務"); return; }
+  const yes = [$("qFocus").checked, $("qCreate").checked, $("qCost").checked].filter(Boolean).length;
+  const demand = yes >= 2 ? "high" : "low";
+  db.tasks.unshift({
+    id: uid(),
+    title,
+    demand,
+    yes,
+    done: false,
+    createdAt: today()
+  });
+  saveAll();
+  $("taskTitle").value = "";
+  $("qFocus").checked = false; $("qCreate").checked = false; $("qCost").checked = false;
+  renderAll();
+  toast(demand === "high" ? "已加入：高能量需求任務" : "已加入：低能量需求任務");
+});
+
+function renderTasks(){
+  $("taskEmpty").style.display = db.tasks.length ? "none" : "block";
+  $("taskList").innerHTML = db.tasks.map(t => {
+    return '<div class="task-card' + (t.demand === "low" ? ' lowd' : '') + (t.done ? ' donecard' : '') + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(t.title) + '</div><div class="item-meta">' + t.createdAt + ' · 三問答「是」' + t.yes + ' 題</div></div>' +
+      '<span class="tag ' + (t.done ? 'done' : t.demand === "high" ? 'hi' : 'lo') + '">' + (t.done ? '已完成' : t.demand === "high" ? '高需求' : '低需求') + '</span></div>' +
+      '<div class="actions"><button class="del" data-tdel="' + t.id + '">×</button></div></div>';
+  }).join("");
+}
+$("taskList").addEventListener("click", e => {
+  const del = e.target.closest("[data-tdel]");
+  if (!del) return;
+  db.tasks = db.tasks.filter(t => t.id !== del.dataset.tdel);
+  saveAll(); renderAll(); toast("已刪除任務");
+});
+
+/* ---- match ---- */
+let myState = "high";
+document.querySelectorAll(".state-btn").forEach(b => b.addEventListener("click", () => {
+  myState = b.dataset.state;
+  document.querySelectorAll(".state-btn").forEach(x => x.classList.toggle("active", x === b));
+  renderMatch();
+}));
+
+function taskPicks(list){
+  if (!list.length) return '<div class="none-line">（這一格目前沒有待辦）</div>';
+  return list.map(t =>
+    '<label class="pick-item"><input type="checkbox" data-mdone="' + t.id + '">' +
+    '<div><div class="t">' + esc(t.title) + '</div><div class="m">' + (t.demand === "high" ? '高需求' : '低需求') + ' · ' + t.createdAt + '</div></div></label>'
+  ).join("");
+}
+
+function renderMatch(){
+  const hi = db.tasks.filter(t => !t.done && t.demand === "high");
+  const lo = db.tasks.filter(t => !t.done && t.demand === "low");
+  let html = "";
+  if (myState === "high") {
+    html += '<div class="quad q-deep"><h3>高需求 × 高能量　←現在做這些</h3><p>做最重要的深度工作，別把好精神浪費在瑣事上。完成就打勾。</p></div>' + taskPicks(hi);
+    html += '<div class="quad q-build" style="margin-top:14px"><h3>低需求 × 高能量　（也可以）</h3><p>學習、整理、建立未來資產。</p></div>' + taskPicks(lo);
+  } else {
+    html += '<div class="quad q-routine"><h3>低需求 × 低能量　←現在做這些</h3><p>例行、行政、收尾與恢復性任務，完成就打勾。</p></div>' + taskPicks(lo);
+    html += '<div class="quad q-danger" style="margin-top:14px"><h3>高需求 × 低能量　⚠ 別硬撐</h3><p>先拆成 10–20 分鐘小步驟、延後到黃金時段，或降低決策風險。現在不建議直接做。</p></div>' +
+      (hi.length ? hi.map(t => '<div class="pick-item"><div style="width:20px;flex:none;text-align:center;color:var(--red);font-weight:900">⏸</div><div><div class="t">' + esc(t.title) + '</div><div class="m">等狀態回來再做</div></div></div>').join("") : '<div class="none-line">（沒有被卡住的高需求任務）</div>');
+  }
+  $("quadArea").innerHTML = html;
+}
+$("quadArea").addEventListener("change", e => {
+  const cb = e.target.closest("[data-mdone]");
+  if (!cb) return;
+  const t = db.tasks.find(x => x.id === cb.dataset.mdone);
+  if (!t) return;
+  t.done = true;
+  saveAll(); renderAll();
+  toast("在對的狀態完成：" + t.title);
+});
+
+/* ---- rhythm ---- */
+$("addLogBtn").addEventListener("click", () => {
+  db.logs.unshift({ id: uid(), slot: $("logSlot").value, level: parseInt($("logLevel").value, 10), date: today() });
+  saveAll();
+  renderAll();
+  toast("已記錄 " + $("logSlot").value + " 的能量");
+});
+
+function slotAvg(slot){
+  const ls = db.logs.filter(l => l.slot === slot);
+  if (!ls.length) return null;
+  return ls.reduce((a, l) => a + l.level, 0) / ls.length;
+}
+function goldenSlot(){
+  let best = null, bestV = 0;
+  SLOTS.forEach(s => {
+    const v = slotAvg(s);
+    if (v !== null && v > bestV) { bestV = v; best = s; }
+  });
+  return best ? best + "（" + bestV.toFixed(1) + "）" : "－";
+}
+
+function renderRhythm(){
+  $("logEmpty").style.display = db.logs.length ? "none" : "block";
+  $("rhythmCard").style.display = db.logs.length ? "block" : "none";
+  $("goldenTitle").textContent = "黃金時段：" + goldenSlot();
+  $("rhythmBars").innerHTML = SLOTS.map(s => {
+    const v = slotAvg(s);
+    return '<div class="rbar"><div class="rb-top"><span>' + s + '</span><span class="v">' + (v === null ? "－" : v.toFixed(1)) + '</span></div>' +
+      '<div class="track"><div class="fill" style="width:' + (v === null ? 0 : v * 20) + '%"></div></div></div>';
+  }).join("");
+  $("logList").innerHTML = db.logs.slice(0, 20).map(l => {
+    return '<div class="log-card"><div class="item-top"><div><div class="item-title">' + esc(l.slot) + ' · 能量 ' + l.level + '</div><div class="item-meta">' + l.date + '</div></div>' +
+      '<button class="del" data-ldel="' + l.id + '" style="border:1px solid var(--hairline);background:var(--paper2);border-radius:6px;width:38px;min-height:36px;color:var(--red);font-weight:800;cursor:pointer">×</button></div></div>';
+  }).join("");
+}
+$("logList").addEventListener("click", e => {
+  const del = e.target.closest("[data-ldel]");
+  if (!del) return;
+  db.logs = db.logs.filter(l => l.id !== del.dataset.ldel);
+  saveAll(); renderAll(); toast("已刪除紀錄");
+});
+
+/* ---- review ---- */
+function renderReview(){
+  const hi = db.tasks.filter(t => t.demand === "high").length;
+  const lo = db.tasks.length - hi;
+  $("rvTasks").textContent = hi + "/" + lo;
+  $("rvDone").textContent = String(db.tasks.filter(t => t.done).length);
+  $("rvLogs").textContent = String(db.logs.length);
+  $("rvGolden").textContent = goldenSlot();
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "energy-matrix-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.tasks) && Array.isArray(data.logs)) {
+        db = { tasks:data.tasks, logs:data.logs };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有任務與節律紀錄嗎？此動作無法復原。")) return;
+  db = { tasks:[], logs:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-match") renderMatch();
+  if (id === "tab-rhythm") renderRhythm();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderTasks();
+  renderMatch();
+  renderRhythm();
+  renderReview();
+}
+renderAll();
+</script>
+</body>
+</html>
