@@ -23,7 +23,7 @@
 - 版面：方格紙 hero、印章式 SVG seal（單一漢字）、底部四分頁 tabbar、深淺色主題（`prefers-color-scheme` + 手動切換）。
 - 無障礙：44px 觸控熱區、`focus-visible`、`prefers-reduced-motion`。
 
-## 🧩 工具清單（入口頁 33 張卡）
+## 🧩 工具清單（入口頁 34 張卡）
 
 | 目錄 | 名稱 | 印章 | 分類 | accent |
 |------|------|:---:|------|--------|
@@ -60,6 +60,7 @@
 | `life-leverage/` | 人生槓桿設計 | 槓 | 決策與思維 | iris |
 | `compounding-life/` | 複利人生系統 | 複 | 習慣與行動 | copper |
 | `value-recovery/` | 價值回收機制 | 收 | 知識與學習 | sage |
+| `knowledge-compression/` | 知識壓縮力 | 縮 | 知識與學習 | graphite |
 
 > 入口 `index.html` 提供：搜尋（比對中文標題／英文副標／描述）、四分類篩選（決策與思維 `decide` / 知識與學習 `knowledge` / 專注與能量 `focus` / 習慣與行動 `action`）、釘選（★，localStorage）、格狀/清單檢視切換。「全部工具＋無搜尋」時顯示分類段落標題（`.cat-head`，卡片以 CSS `order` 依分類群組、釘選永遠最前）。新增工具＝在 index.html 加一組 accent CSS 變數＋一張 `.card`（含 `data-category`、`data-id`）。
 

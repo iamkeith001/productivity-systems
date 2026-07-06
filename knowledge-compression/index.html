@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="知識壓縮">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%234F4A42' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%234F4A42'%3E縮%3C/text%3E%3C/svg%3E">
+<title>知識壓縮力 · Knowledge Compression</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#4F4A42; --acc-soft:#ECEAE5;
+    --grid:rgba(79,74,66,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#C4BDAF; --acc-soft:#302D27;
+    --grid:rgba(196,189,175,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:56px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .cap-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px;border-left:4px solid var(--acc)}
+  .cap-card.verified{border-left-color:var(--green)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .oneliner{font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;line-height:1.6;letter-spacing:.03em;background:var(--acc-soft);border-radius:6px;padding:11px 13px;margin-top:9px}
+  .core-li{font-size:12.5px;color:var(--pencil);line-height:1.7;padding-left:14px;position:relative;margin-top:4px}
+  .core-li::before{content:"·";position:absolute;left:2px;font-weight:900;color:var(--acc)}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.ok{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.warn{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .check-item{display:flex;align-items:flex-start;gap:10px;padding:11px 4px;border-bottom:1px solid var(--hairline-soft);cursor:pointer}
+  .check-item:last-child{border-bottom:none}
+  .check-item input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--green);flex:none;cursor:pointer}
+  .check-item .t{font-weight:700;font-size:13.5px;line-height:1.5}
+  .check-item .d{font-size:11.5px;color:var(--pencil);margin-top:2px;line-height:1.5}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">縮</text></svg>
+      <div>
+        <h1>知識壓縮力</h1>
+        <small>KNOWLEDGE COMPRESSION</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-compress">
+    <div class="hero">
+      <p class="eyebrow">知識壓縮力</p>
+      <div class="hero-title serif">不是知道更多，<br>而是能把複雜變得可傳遞。</div>
+      <p class="hero-text">真正的壓縮不是亂刪：保留核心、去除噪音、建立結構、強化可理解性——就像好的 ZIP 檔，在盡量保留重要資訊的前提下，降低理解與傳播成本。知識壓縮力不等於知道比較少，而是能讓別人更快理解。</p>
+      <div class="quote-line serif">真正厲害的人，能快速抓到本質並簡潔傳遞。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">壓縮工作台</p>
+      <h2>把一團複雜，壓成一顆膠囊</h2>
+      <p class="sub">三步：找出真正重要的 20% → 刪掉不影響理解的噪音 → 濃縮成一句話。</p>
+      <div class="templates-list" id="capTemplates"></div>
+      <label class="form-label" for="capTitle">原始材料 *</label>
+      <input type="text" id="capTitle" placeholder="例如：20 頁會議紀錄、一篇長論文、一場演講">
+      <label class="form-label" for="capCore">① 真正重要的 20%（一行一個關鍵） *</label>
+      <textarea id="capCore" placeholder="真正影響結果的部分是什麼？&#10;哪些概念是核心骨架？" style="min-height:90px"></textarea>
+      <label class="form-label" for="capNoise">② 刪掉了哪些噪音？（選填）</label>
+      <input type="text" id="capNoise" placeholder="例如：重複敘述、過多術語、無關背景故事">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="capStruct">③ 壓縮後結構</label>
+          <select id="capStruct">
+            <option>一句話</option>
+            <option>四欄表格</option>
+            <option>Checklist</option>
+            <option>流程圖</option>
+            <option>SOP</option>
+            <option>心智模型</option>
+            <option>FAQ</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="capOne">一句話高密度版本 *</label>
+      <input type="text" id="capOne" placeholder="例如：當指標變成目標，它就失去作為好指標的功能">
+      <button class="btn" id="addCapBtn">封裝成知識膠囊</button>
+    </div>
+
+    <div class="hint-box"><b>常見噪音：</b>重複敘述、過多術語、無關細節、情緒性語言、缺乏結構、不必要的背景故事。刻意刪除「不影響理解的資訊」。</div>
+    <div id="capHint" class="empty"><span class="zh">還沒有知識膠囊</span>挑一份最近讓你頭痛的長材料，壓縮它。</div>
+  </section>
+
+  <section class="tab" id="tab-capsules">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stCaps">0</div><div class="l">知識膠囊</div></div>
+      <div class="stat"><div class="n" id="stVerified">0</div><div class="l">通過檢驗</div></div>
+      <div class="stat"><div class="n" id="stCores">0</div><div class="l">核心關鍵數</div></div>
+    </div>
+    <div class="hint-box"><b>膠囊是可攜式知識模組：</b>一句話＋核心關鍵，隨時可以複製貼進簡報、筆記或 prompt。</div>
+    <div id="capEmpty" class="empty"><span class="zh">膠囊庫是空的</span>到「壓縮」分頁封裝第一顆。</div>
+    <div id="capList"></div>
+  </section>
+
+  <section class="tab" id="tab-verify">
+    <div class="card">
+      <p class="eyebrow">費曼檢驗</p>
+      <h2>無法簡單解釋，就是還沒真正理解</h2>
+      <p class="sub">壓縮品質不是自己說了算——別人也能快速理解才算數。挑一顆膠囊，誠實勾選。</p>
+      <label class="form-label" for="vfCap">選擇膠囊</label>
+      <select id="vfCap"></select>
+      <div id="vfChecks"></div>
+      <button class="btn" id="saveVfBtn" style="margin-top:12px">儲存檢驗結果</button>
+    </div>
+    <div class="hint-box"><b>及格線：</b>五項中通過四項，就算高壓縮品質。沒過也沒關係——回壓縮台再壓一輪，這正是訓練。</div>
+    <div id="vfResult"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>知識膠囊</h3><div class="cnt" id="rvCaps">0</div><div class="desc">被壓縮成可傳遞形式的複雜材料。</div></div>
+      <div class="mini-card"><h3>高壓縮品質</h3><div class="cnt" id="rvVerified">0</div><div class="desc">費曼檢驗通過（≥4/5）的膠囊。</div></div>
+      <div class="mini-card"><h3>平均檢驗分</h3><div class="cnt" id="rvAvg">－</div><div class="desc">已檢驗膠囊的平均通過項數。</div></div>
+      <div class="mini-card"><h3>最常用結構</h3><div class="cnt" id="rvStruct" style="font-size:17px;line-height:1.4">－</div><div class="desc">你最擅長的壓縮形式。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>知識壓縮的五個步驟</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>先找出真正重要的 20%：什麼才是決定結果的關鍵？</li>
+          <li>去除資訊噪音：刪掉不影響理解的資訊。</li>
+          <li>建立可視化結構：表格、流程圖、Checklist、Framework。</li>
+          <li>使用高密度語句：把複雜概念濃縮成一句話。</li>
+          <li>用教學驗證壓縮品質：別人也能快速理解才算數。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../knowledge-distill/">知識蒸餾法</a> · <a href="../knowledge-atom/">知識原子化</a> · <a href="../cognitive-load/">認知負荷管理</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-compress"><svg viewBox="0 0 24 24"><path d="M12 3v5M12 8l-2.5-2.5M12 8l2.5-2.5M12 21v-5M12 16l-2.5 2.5M12 16l2.5 2.5M5 12h14"/></svg><span>壓縮</span></button>
+    <button class="tabbtn" data-tab="tab-capsules"><svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="6" rx="3"/><path d="M12 9v6"/></svg><span>膠囊庫</span></button>
+    <button class="tabbtn" data-tab="tab-verify"><svg viewBox="0 0 24 24"><path d="M4 6h9M4 12h6M4 18h5M14 15l2.5 2.5L21 13M18 4v5"/></svg><span>檢驗</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "knowledge_compression_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"caps":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const capById = id => db.caps.find(c => c.id === id);
+const VF_ITEMS = [
+  { key:"minute", t:"能用 1 分鐘講清楚", d:"對著空氣講一遍，不超時、不繞路。" },
+  { key:"layman", t:"非專業者能理解", d:"不靠術語也能讓外行人聽懂。" },
+  { key:"visual", t:"能轉成圖表或表格", d:"結構清楚到可以畫出來。" },
+  { key:"sop", t:"能變成 SOP 或 Checklist", d:"可以被別人照著操作。" },
+  { key:"ai", t:"能被 AI 直接使用", d:"貼進 prompt 就能產生正確行為。" }
+];
+function vfScore(c){
+  if (!c.checks) return null;
+  return VF_ITEMS.filter(i => c.checks[i.key]).length;
+}
+function isVerified(c){ const s = vfScore(c); return s !== null && s >= 4; }
+
+const capTemplates = [
+  { title:"20 頁會議紀錄", core:"要解決的核心問題\n拍板的決策\n下一步與負責人", noise:"過程中的來回討論、情緒性發言", struct:"四欄表格", one:"問題、原因、決策、下一步——四欄講完這場會。" },
+  { title:"Goodhart's Law 相關文獻", core:"指標一旦變成目標就會被操弄\n測量行為會改變被測量的系統", noise:"歷史軼事、數學推導細節", struct:"一句話", one:"當指標變成目標，它就失去作為好指標的功能。" },
+  { title:"一篇深度工作長文", core:"注意力殘留會拖慢切換後的表現\n深度工作需要整段不中斷時間", noise:"作者個人生活故事、重複舉例", struct:"Checklist", one:"未完成的任務會殘留部分注意力。" }
+];
+$("capTemplates").innerHTML = capTemplates.map((t, i) => '<button class="template-btn" data-ctpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("capTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ctpl]");
+  if (!btn) return;
+  const t = capTemplates[btn.dataset.ctpl];
+  $("capTitle").value = t.title;
+  $("capCore").value = t.core;
+  $("capNoise").value = t.noise;
+  $("capStruct").value = t.struct;
+  $("capOne").value = t.one;
+});
+
+$("addCapBtn").addEventListener("click", () => {
+  const title = $("capTitle").value.trim();
+  if (!title) { toast("請輸入原始材料"); return; }
+  const core = $("capCore").value.split("\n").map(s => s.trim()).filter(Boolean);
+  if (!core.length) { toast("先找出真正重要的 20%"); return; }
+  const one = $("capOne").value.trim();
+  if (!one) { toast("濃縮成一句話——這是關鍵一步"); return; }
+  db.caps.unshift({
+    id: uid(),
+    title,
+    core,
+    noise: $("capNoise").value.trim(),
+    struct: $("capStruct").value,
+    one,
+    checks: null,
+    createdAt: today()
+  });
+  saveAll();
+  ["capTitle","capCore","capNoise","capOne"].forEach(id => { $(id).value = ""; });
+  $("capStruct").value = "一句話";
+  renderAll();
+  switchTab("tab-capsules");
+  toast("已封裝一顆知識膠囊");
+});
+
+function renderCaps(){
+  const caps = db.caps;
+  $("stCaps").textContent = String(caps.length);
+  $("stVerified").textContent = String(caps.filter(isVerified).length);
+  $("stCores").textContent = String(caps.reduce((a, c) => a + c.core.length, 0));
+  $("capHint").style.display = caps.length ? "none" : "block";
+  $("capEmpty").style.display = caps.length ? "none" : "block";
+  $("capList").innerHTML = caps.map(c => {
+    const s = vfScore(c);
+    return '<div class="cap-card' + (isVerified(c) ? ' verified' : '') + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(c.title) + '</div><div class="item-meta">' + c.createdAt + (c.noise ? ' · 已去噪：' + esc(c.noise) : '') + '</div></div>' +
+      (s !== null ? '<div class="score">' + s + '<small> /5</small></div>' : '') + '</div>' +
+      '<div class="oneliner serif">「' + esc(c.one) + '」</div>' +
+      '<div style="margin-top:6px">' + c.core.map(k => '<div class="core-li">' + esc(k) + '</div>').join("") + '</div>' +
+      '<div class="chips"><span class="tag acc">' + esc(c.struct) + '</span>' +
+      (isVerified(c) ? '<span class="tag ok">高壓縮品質</span>' : (s !== null ? '<span class="tag warn">再壓一輪</span>' : '<span class="tag">未檢驗</span>')) + '</div>' +
+      '<div class="actions"><button data-ccopy="' + c.id + '">複製膠囊</button><button class="primary" data-cvf="' + c.id + '">去檢驗</button><button class="del" data-cdel="' + c.id + '">×</button></div></div>';
+  }).join("");
+}
+$("capList").addEventListener("click", e => {
+  const del = e.target.closest("[data-cdel]");
+  if (del) {
+    db.caps = db.caps.filter(c => c.id !== del.dataset.cdel);
+    saveAll(); renderAll(); toast("已刪除膠囊"); return;
+  }
+  const cp = e.target.closest("[data-ccopy]");
+  if (cp) {
+    const c = capById(cp.dataset.ccopy);
+    if (!c) return;
+    const text = "「" + c.one + "」\n來源：" + c.title + "（" + c.struct + "）\n核心：\n" + c.core.map(k => "· " + k).join("\n");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => toast("已複製膠囊內容")).catch(() => toast("複製失敗，請手動選取"));
+    } else {
+      toast("此瀏覽器不支援複製");
+    }
+    return;
+  }
+  const vf = e.target.closest("[data-cvf]");
+  if (vf) {
+    switchTab("tab-verify");
+    $("vfCap").value = vf.dataset.cvf;
+    renderVfChecks();
+  }
+});
+
+/* ---- verify ---- */
+function fillVfSelect(){
+  $("vfCap").innerHTML = db.caps.length
+    ? db.caps.map(c => '<option value="' + c.id + '">' + esc(c.title) + '</option>').join("")
+    : '<option value="">（先到「壓縮」封裝膠囊）</option>';
+}
+function renderVfChecks(){
+  const c = capById($("vfCap").value);
+  $("vfChecks").innerHTML = VF_ITEMS.map(i => {
+    const checked = c && c.checks && c.checks[i.key];
+    return '<label class="check-item"><input type="checkbox" data-vfk="' + i.key + '"' + (checked ? ' checked' : '') + '>' +
+      '<div><div class="t">' + i.t + '</div><div class="d">' + i.d + '</div></div></label>';
+  }).join("");
+  renderVfResult();
+}
+$("vfCap").addEventListener("change", renderVfChecks);
+
+$("saveVfBtn").addEventListener("click", () => {
+  const c = capById($("vfCap").value);
+  if (!c) { toast("請先封裝膠囊"); return; }
+  const checks = {};
+  document.querySelectorAll("#vfChecks [data-vfk]").forEach(cb => { checks[cb.dataset.vfk] = cb.checked; });
+  c.checks = checks;
+  saveAll();
+  renderAll();
+  renderVfChecks();
+  const s = vfScore(c);
+  toast(s >= 4 ? "通過！高壓縮品質（" + s + "/5）" : "還差一點（" + s + "/5），回去再壓一輪");
+});
+
+function renderVfResult(){
+  const verified = db.caps.filter(c => c.checks);
+  $("vfResult").innerHTML = verified.map(c => {
+    const s = vfScore(c);
+    return '<div class="cap-card' + (isVerified(c) ? ' verified' : '') + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(c.title) + '</div><div class="item-meta">「' + esc(c.one) + '」</div></div>' +
+      '<div class="score">' + s + '<small> /5</small></div></div>' +
+      '<div class="chips">' + (isVerified(c) ? '<span class="tag ok">高壓縮品質</span>' : '<span class="tag warn">再壓一輪</span>') + '</div></div>';
+  }).join("");
+}
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvCaps").textContent = String(db.caps.length);
+  $("rvVerified").textContent = String(db.caps.filter(isVerified).length);
+  const checked = db.caps.filter(c => c.checks);
+  $("rvAvg").textContent = checked.length ? (checked.reduce((a, c) => a + vfScore(c), 0) / checked.length).toFixed(1) : "－";
+  if (db.caps.length) {
+    const by = {};
+    db.caps.forEach(c => { by[c.struct] = (by[c.struct] || 0) + 1; });
+    $("rvStruct").textContent = Object.keys(by).sort((a, b) => by[b] - by[a])[0];
+  } else {
+    $("rvStruct").textContent = "－";
+  }
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "knowledge-compression-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.caps)) {
+        db = { caps: data.caps };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有知識膠囊與檢驗紀錄嗎？此動作無法復原。")) return;
+  db = { caps: [] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-capsules") renderCaps();
+  if (id === "tab-verify") { fillVfSelect(); renderVfChecks(); }
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderCaps();
+  fillVfSelect();
+  renderVfResult();
+  renderReview();
+}
+renderAll();
+renderVfChecks();
+</script>
+</body>
+</html>
