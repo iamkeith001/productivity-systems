@@ -27,38 +27,38 @@
 
 | 目錄 | 名稱 | 印章 | 分類 | accent |
 |------|------|:---:|------|--------|
-| 外部 repo | 能量儀表板 energy-first | 能 | 精力與行動 | green |
-| 外部 repo | 腦袋清空站 mind-offload | 空 | 精力與行動 | red |
-| 外部 repo | 選擇迴圈 choice-loop | 循 | 思維與決策 | amber |
-| 外部 repo | 情境預演 premortem-thinking | 預 | 思維與決策 | blue |
-| `decision-journal/` | 決策日誌 | 誌 | 思維與決策 | purple |
-| `action-trigger/` | 行動觸發 | 觸 | 精力與行動 | teal |
-| `mental-models/` | 心智模型 | 模 | 思維與決策 | slate |
-| `cognitive-load/` | 認知負荷管理 | 荷 | 精力與行動 | rust |
-| `knowledge-distill/` | 知識蒸餾法 | 萃 | 思維與決策 | indigo |
-| `info-diet/` | 資訊飲食管理 | 食 | 精力與行動 | plum |
-| `energy-blocking/` | 能量區塊優化 | 律 | 精力與行動 | olive |
-| `two-minute/` | 兩分鐘啟動法則 | 啟 | 精力與行動 | rose |
-| `habit-stacking/` | 微習慣堆疊法 | 疊 | 精力與行動 | coffee |
-| `pre-decision/` | 預先決策法 | 策 | 思維與決策 | cerulean |
-| `mvp-progress/` | 最小可行進展法 | 進 | 精力與行動 | violet |
-| `time-blocking/` | 時間分塊法 | 塊 | 精力與行動 | pumpkin |
-| `decision-tree/` | 決策樹思維 | 樹 | 思維與決策 | emerald |
-| `knowledge-atom/` | 知識原子化 | 原 | 思維與決策 | magenta |
-| `pareto-review/` | 80/20 檢視法 | 檢 | 精力與行動 | cobalt |
-| `compound-flywheel/` | 複利行動飛輪 | 輪 | 精力與行動 | saffron |
-| `decision-fatigue/` | 決策疲勞管理 | 疲 | 精力與行動 | inkstone |
-| `task-switching-cost/` | 任務切換成本 | 換 | 精力與行動 | forest |
-| `flow-triggers/` | 心流觸發條件 | 流 | 精力與行動 | lagoon |
-| `visual-note-taking/` | 視覺筆記法 | 圖 | 思維與決策 | sepia |
-| `task-batching/` | 任務批次化 | 批 | 精力與行動 | denim |
-| `mvo/` | 最小可行輸出 | 出 | 精力與行動 | wine |
-| `constraint-reframing/` | 限制條件重構 | 限 | 思維與決策 | midnight |
-| `strategic-optionality/` | 高階選擇權 | 選 | 思維與決策 | verdigris |
-| `identity-driven/` | 身份驅動系統 | 身 | 精力與行動 | mauve |
-| `system-boundary/` | 系統邊界意識 | 界 | 思維與決策 | aubergine |
+| 外部 repo | 能量儀表板 energy-first | 能 | 專注與能量 | green |
+| 外部 repo | 腦袋清空站 mind-offload | 空 | 專注與能量 | red |
+| 外部 repo | 選擇迴圈 choice-loop | 循 | 決策與思維 | amber |
+| 外部 repo | 情境預演 premortem-thinking | 預 | 決策與思維 | blue |
+| `decision-journal/` | 決策日誌 | 誌 | 決策與思維 | purple |
+| `action-trigger/` | 行動觸發 | 觸 | 習慣與行動 | teal |
+| `mental-models/` | 心智模型 | 模 | 決策與思維 | slate |
+| `cognitive-load/` | 認知負荷管理 | 荷 | 專注與能量 | rust |
+| `knowledge-distill/` | 知識蒸餾法 | 萃 | 知識與學習 | indigo |
+| `info-diet/` | 資訊飲食管理 | 食 | 知識與學習 | plum |
+| `energy-blocking/` | 能量區塊優化 | 律 | 專注與能量 | olive |
+| `two-minute/` | 兩分鐘啟動法則 | 啟 | 習慣與行動 | rose |
+| `habit-stacking/` | 微習慣堆疊法 | 疊 | 習慣與行動 | coffee |
+| `pre-decision/` | 預先決策法 | 策 | 決策與思維 | cerulean |
+| `mvp-progress/` | 最小可行進展法 | 進 | 習慣與行動 | violet |
+| `time-blocking/` | 時間分塊法 | 塊 | 專注與能量 | pumpkin |
+| `decision-tree/` | 決策樹思維 | 樹 | 決策與思維 | emerald |
+| `knowledge-atom/` | 知識原子化 | 原 | 知識與學習 | magenta |
+| `pareto-review/` | 80/20 檢視法 | 檢 | 習慣與行動 | cobalt |
+| `compound-flywheel/` | 複利行動飛輪 | 輪 | 習慣與行動 | saffron |
+| `decision-fatigue/` | 決策疲勞管理 | 疲 | 決策與思維 | inkstone |
+| `task-switching-cost/` | 任務切換成本 | 換 | 專注與能量 | forest |
+| `flow-triggers/` | 心流觸發條件 | 流 | 專注與能量 | lagoon |
+| `visual-note-taking/` | 視覺筆記法 | 圖 | 知識與學習 | sepia |
+| `task-batching/` | 任務批次化 | 批 | 專注與能量 | denim |
+| `mvo/` | 最小可行輸出 | 出 | 習慣與行動 | wine |
+| `constraint-reframing/` | 限制條件重構 | 限 | 決策與思維 | midnight |
+| `strategic-optionality/` | 高階選擇權 | 選 | 決策與思維 | verdigris |
+| `identity-driven/` | 身份驅動系統 | 身 | 習慣與行動 | mauve |
+| `system-boundary/` | 系統邊界意識 | 界 | 決策與思維 | aubergine |
 
-> 入口 `index.html` 提供：搜尋（比對中文標題／英文副標／描述）、分類篩選（思維與決策 / 精力與行動）、釘選（★，localStorage）、格狀/清單檢視切換。新增工具＝在 index.html 加一組 accent CSS 變數＋一張 `.card`（含 `data-category`、`data-id`）。
+> 入口 `index.html` 提供：搜尋（比對中文標題／英文副標／描述）、四分類篩選（決策與思維 `decide` / 知識與學習 `knowledge` / 專注與能量 `focus` / 習慣與行動 `action`）、釘選（★，localStorage）、格狀/清單檢視切換。「全部工具＋無搜尋」時顯示分類段落標題（`.cat-head`，卡片以 CSS `order` 依分類群組、釘選永遠最前）。新增工具＝在 index.html 加一組 accent CSS 變數＋一張 `.card`（含 `data-category`、`data-id`）。
 
 ## 🛠️ 技術備忘
 
@@ -73,13 +73,14 @@
    ```bash
    awk '/<script>/{f=1;next} /<\/script>/{f=0} f' <tool>/index.html > /tmp/x.js && node --check /tmp/x.js
    ```
-3. 本機預覽 `python3 -m http.server`，用瀏覽器工具端到端測（iPhone 尺寸），確認 console 零錯誤後清掉測試 localStorage。
+3. 本機預覽用 node 靜態伺服器（`python3 -m http.server` 在此 iCloud 目錄會因沙盒 `PermissionError` 起不來），用瀏覽器工具端到端測（iPhone 尺寸），確認 console 零錯誤後清掉測試 localStorage。
 4. 敏感字掃描 → `git add -A` → commit（`feat: ...`）→ `git push`。
 5. **主動觸發 Pages 重建**（Pages 偶發卡在 building/errored）：
    ```bash
    gh api -X POST repos/iamkeith001/productivity-systems/pages/builds
    ```
    等 `status=built` 後 `curl` 驗證線上 200 ＋ 功能特徵字串。
+   若卡在 `building` 超過 10 分鐘且重觸發無效，**推一個空 commit 重踢管線**（2026-07-05 實證有效）：`git commit --allow-empty -m "chore: retrigger pages build" && git push`。
 
 ## 🔗 相關位置
 
