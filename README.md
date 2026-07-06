@@ -40,3 +40,4 @@
 - 複利人生系統：https://iamkeith001.github.io/productivity-systems/compounding-life/
 - 價值回收機制：https://iamkeith001.github.io/productivity-systems/value-recovery/
 - 知識壓縮力：https://iamkeith001.github.io/productivity-systems/knowledge-compression/
+- 低依賴高彈性：https://iamkeith001.github.io/productivity-systems/low-dependency/
