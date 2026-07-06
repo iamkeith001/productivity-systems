@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="人生槓桿">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23545CB8' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23545CB8'%3E槓%3C/text%3E%3C/svg%3E">
+<title>人生槓桿設計 · Life Leverage Design</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --purple:#7A45B5; --purple-soft:#F0EAF8;
+    --acc:#545CB8; --acc-soft:#EAEBF6;
+    --grid:rgba(84,92,184,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --purple:#B99AE0; --purple-soft:#2E2638;
+    --acc:#A3A9EE; --acc-soft:#252739;
+    --grid:rgba(163,169,238,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:56px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .spread{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:16px}
+  .spread .cell{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:10px 2px;text-align:center;box-shadow:var(--shadow)}
+  .spread .cell .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:19px;font-weight:900;line-height:1}
+  .spread .cell .l{font-size:9.5px;color:var(--pencil);margin-top:4px;letter-spacing:.02em}
+  .spread .cell.low{border-color:var(--hairline);border-style:dashed}
+  .spread .cell.low .n{color:var(--pencil)}
+  @media (max-width:420px){.spread{grid-template-columns:repeat(3,1fr)}}
+
+  .lever-card,.asset-card,.cut-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .lever-card{border-left:4px solid var(--acc)}
+  .asset-card{border-left:4px solid var(--green)}
+  .cut-card{border-left:4px solid var(--red)}
+  .cut-card.done{border-left-color:var(--green)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.green{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.amber{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.red{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .cut-line{display:flex;align-items:flex-start;gap:10px}
+  .cut-line input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--green);flex:none;cursor:pointer}
+  .cut-line .t{font-weight:700;font-size:14px;line-height:1.5}
+  .cut-line .t.donetext{text-decoration:line-through;color:var(--pencil)}
+
+  .lvbar{margin-bottom:10px}
+  .lvbar .lv-top{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;gap:8px}
+  .lvbar .lv-top .v{color:var(--acc);font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;flex:none}
+  .lvbar .track{height:8px;background:var(--paper2);border-radius:4px;overflow:hidden}
+  .lvbar .fill{height:100%;background:var(--acc);border-radius:4px;transition:width .3s ease}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">槓</text></svg>
+      <div>
+        <h1>人生槓桿設計</h1>
+        <small>LIFE LEVERAGE DESIGN</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-lever">
+    <div class="hero">
+      <p class="eyebrow">人生槓桿設計</p>
+      <div class="hero-title serif">不是做得最滿，<br>而是最懂得選支點。</div>
+      <p class="hero-text">低槓桿行動是「做一次，只產生一次結果」；高槓桿行動是「做一次，未來能被重複使用、複製、放大或自動運作」。寫一封臨時回覆是低槓桿，建立一套回覆模板是高槓桿。核心不是做更多，而是讓每一次投入產生更長尾的價值。</p>
+      <div class="quote-line serif">用最小的關鍵投入，撬動最大的長期成長。</div>
+    </div>
+
+    <div class="spread" id="ampGrid"></div>
+
+    <div class="card">
+      <p class="eyebrow">槓桿支點</p>
+      <h2>找出高槓桿領域</h2>
+      <p class="sub">哪些能力一旦提升，很多事都變容易？哪些流程一旦標準化，能反覆節省時間？哪些作品一旦完成，能長期帶來信任？</p>
+      <div class="templates-list" id="leverTemplates"></div>
+      <label class="form-label" for="leverTitle">支點名稱 *</label>
+      <input type="text" id="leverTitle" placeholder="例如：報表自動化、寫作能力、決策準則">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="leverKind">支點類型</label>
+          <select id="leverKind">
+            <option>能力提升</option>
+            <option>流程標準化</option>
+            <option>長期作品</option>
+            <option>關係建立</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="leverAmp">放大器</label>
+          <select id="leverAmp">
+            <option>時間</option>
+            <option>知識</option>
+            <option>技術</option>
+            <option>關係</option>
+            <option>資本</option>
+            <option>品牌</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="leverWhy">為什麼是高槓桿？（一旦⋯就⋯）</label>
+      <textarea id="leverWhy" placeholder="例如：一旦報表自動化，每週省 3 小時且不再出錯"></textarea>
+      <button class="btn" id="addLeverBtn">記下這個支點</button>
+    </div>
+
+    <div class="hint-box"><b>六種放大器：</b>時間（排程、批次、自動化）、知識（框架、教學、決策工具）、技術（AI、程式）、關係（合作、信任、社群）、資本（資產、設備）、品牌（作品持續建立可信度）。</div>
+    <div id="leverEmpty" class="empty"><span class="zh">還沒有槓桿支點</span>想一件「一旦做好，很多事都變容易」的事。</div>
+    <div id="leverList"></div>
+  </section>
+
+  <section class="tab" id="tab-assets">
+    <div class="stats" style="display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px">
+      <div style="text-align:center;padding:15px 6px 12px"><div class="score" id="stAssets" style="font-size:25px">0</div><div style="font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em">系統資產</div></div>
+      <div style="text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)"><div class="score" id="stUses" style="font-size:25px">0</div><div style="font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em">累計重用</div></div>
+      <div style="text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)"><div class="score" id="stMulti" style="font-size:25px">－</div><div style="font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em">平均槓桿倍數</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">系統資產</p>
+      <h2>把成功經驗沉澱成可複製的形式</h2>
+      <p class="sub">模板、SOP、checklist、prompt library、筆記庫、自動化流程、決策準則——讓能力不只停留在個人狀態，而是變成系統資產。每次重複使用就按「重用 +1」，看著槓桿倍數長大。</p>
+      <div class="templates-list" id="assetTemplates"></div>
+      <label class="form-label" for="assetTitle">資產名稱 *</label>
+      <input type="text" id="assetTitle" placeholder="例如：週報模板、實驗 SOP、常用 prompt 庫">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="assetType">資產形式</label>
+          <select id="assetType">
+            <option>模板</option>
+            <option>SOP</option>
+            <option>Checklist</option>
+            <option>Prompt 庫</option>
+            <option>知識庫</option>
+            <option>自動化流程</option>
+            <option>決策準則</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="assetFrom">源自哪次經驗？</label>
+          <input type="text" id="assetFrom" placeholder="例如：上月報告被稱讚的結構">
+        </div>
+      </div>
+      <button class="btn" id="addAssetBtn">存入資產庫</button>
+    </div>
+
+    <div id="assetEmpty" class="empty"><span class="zh">資產庫是空的</span>把最近一次做得不錯的東西，沉澱成可重用的形式。</div>
+    <div id="assetList"></div>
+  </section>
+
+  <section class="tab" id="tab-cut">
+    <div class="card">
+      <p class="eyebrow">淘汰低槓桿</p>
+      <h2>刪除低回報行動</h2>
+      <p class="sub">哪些事做了很多次卻沒有累積？哪些成果無法重用？哪些習慣只是維持忙碌感？槓桿設計不只增加高價值行動，也要刪除低回報行動。</p>
+      <div class="templates-list" id="cutTemplates"></div>
+      <label class="form-label" for="cutTitle">低槓桿行動 *</label>
+      <input type="text" id="cutTitle" placeholder="例如：每天手動整理同一份數據">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="cutVerdict">處置方式</label>
+          <select id="cutVerdict">
+            <option>停止</option>
+            <option>委派</option>
+            <option>自動化</option>
+            <option>模板化</option>
+            <option>批次化</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="cutReason">為什麼是低槓桿？</label>
+          <input type="text" id="cutReason" placeholder="例如：重複做卻沒有累積">
+        </div>
+      </div>
+      <button class="btn" id="addCutBtn">列入淘汰清單</button>
+    </div>
+
+    <div class="hint-box"><b>提醒：</b>「自動化／模板化」處理完後，記得回「資產」分頁把它存成一項系統資產——低槓桿的終點，常是高槓桿的起點。</div>
+    <div id="cutEmpty" class="empty"><span class="zh">還沒有淘汰清單</span>找一件只是維持忙碌感的事，給它一個處置。</div>
+    <div id="cutList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>槓桿支點</h3><div class="cnt" id="rvLevers">0</div><div class="desc">值得長期投入的高槓桿領域。</div></div>
+      <div class="mini-card"><h3>系統資產</h3><div class="cnt" id="rvAssets">0</div><div class="desc">可重複使用的模板、SOP 與流程。</div></div>
+      <div class="mini-card"><h3>累計重用</h3><div class="cnt" id="rvUses">0</div><div class="desc">做一次的東西，總共被用了幾次。</div></div>
+      <div class="mini-card"><h3>已處置低槓桿</h3><div class="cnt" id="rvCuts">0</div><div class="desc">已處置／全部淘汰項目。</div></div>
+    </div>
+
+    <div class="card" id="topAssetCard" style="display:none">
+      <p class="eyebrow">槓桿排行</p>
+      <h2>重用最多的系統資產</h2>
+      <div id="topAssetBars"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>人生槓桿設計的五個步驟</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>找出高槓桿領域：哪些能力一旦提升，很多事都變容易？</li>
+          <li>聚焦少數關鍵行動：80/20，把精力放在最有影響的 20%。</li>
+          <li>建立可複製系統：模板、SOP、prompt 庫、自動化流程。</li>
+          <li>運用資源放大器：時間、知識、技術、關係、資本、品牌。</li>
+          <li>持續淘汰低效槓桿：刪除只維持忙碌感的低回報行動。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../pareto-review/">80/20 檢視法</a> · <a href="../compound-flywheel/">複利行動飛輪</a> · <a href="../mvo/">最小可行輸出</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-lever"><svg viewBox="0 0 24 24"><path d="M3 17l9-6 9 2M12 11V5M8 21h8M10 8l2-3 2 3z"/></svg><span>支點</span></button>
+    <button class="tabbtn" data-tab="tab-assets"><svg viewBox="0 0 24 24"><path d="M4 7l8-4 8 4-8 4zM4 12l8 4 8-4M4 17l8 4 8-4"/></svg><span>資產</span></button>
+    <button class="tabbtn" data-tab="tab-cut"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.2 8.2 20 20M8.2 15.8 20 4"/></svg><span>淘汰</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "life_leverage_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"levers":[],"assets":[],"cuts":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const AMPS = ["時間","知識","技術","關係","資本","品牌"];
+
+const leverTemplates = [
+  { title:"報表自動化", kind:"流程標準化", amp:"技術", why:"一旦自動化，每週省 3 小時且不再出錯。" },
+  { title:"寫作與表達能力", kind:"能力提升", amp:"知識", why:"一旦提升，簡報、論文、溝通全部變容易。" },
+  { title:"高品質知識庫", kind:"長期作品", amp:"知識", why:"一旦建立，每次學習都能變成可回收的資產。" },
+  { title:"跨科合作關係", kind:"關係建立", amp:"關係", why:"一旦建立信任，未來合作與推薦會自己來。" }
+];
+$("leverTemplates").innerHTML = leverTemplates.map((t, i) => '<button class="template-btn" data-lvtpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("leverTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-lvtpl]");
+  if (!btn) return;
+  const t = leverTemplates[btn.dataset.lvtpl];
+  $("leverTitle").value = t.title;
+  $("leverKind").value = t.kind;
+  $("leverAmp").value = t.amp;
+  $("leverWhy").value = t.why;
+});
+
+$("addLeverBtn").addEventListener("click", () => {
+  const title = $("leverTitle").value.trim();
+  if (!title) { toast("請輸入支點名稱"); return; }
+  db.levers.unshift({
+    id: uid(),
+    title,
+    kind: $("leverKind").value,
+    amp: $("leverAmp").value,
+    why: $("leverWhy").value.trim(),
+    createdAt: today()
+  });
+  saveAll();
+  $("leverTitle").value = ""; $("leverWhy").value = "";
+  $("leverKind").value = "能力提升"; $("leverAmp").value = "時間";
+  renderAll();
+  toast("已記下槓桿支點");
+});
+
+function renderAmpGrid(){
+  $("ampGrid").innerHTML = AMPS.map(a => {
+    const n = db.levers.filter(l => l.amp === a).length;
+    return '<div class="cell' + (n < 1 ? ' low' : '') + '"><div class="n">' + n + '</div><div class="l">' + a + '槓桿</div></div>';
+  }).join("");
+}
+
+function renderLevers(){
+  $("leverEmpty").style.display = db.levers.length ? "none" : "block";
+  $("leverList").innerHTML = db.levers.map(l => {
+    return '<div class="lever-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(l.title) + '</div><div class="item-meta">' + l.createdAt + '</div></div>' +
+      '<span class="tag acc">' + esc(l.amp) + '槓桿</span></div>' +
+      (l.why ? '<div class="item-meta" style="margin-top:8px">' + esc(l.why) + '</div>' : '') +
+      '<div class="chips"><span class="tag">' + esc(l.kind) + '</span></div>' +
+      '<div class="actions"><button class="del" data-lvdel="' + l.id + '">×</button></div></div>';
+  }).join("");
+}
+$("leverList").addEventListener("click", e => {
+  const del = e.target.closest("[data-lvdel]");
+  if (!del) return;
+  db.levers = db.levers.filter(l => l.id !== del.dataset.lvdel);
+  saveAll(); renderAll(); toast("已刪除支點");
+});
+
+/* ---- assets ---- */
+const assetTemplates = [
+  { title:"週報模板", type:"模板", from:"上月被稱讚的報告結構" },
+  { title:"檢驗異常處理 SOP", type:"SOP", from:"處理過三次同類異常的經驗" },
+  { title:"常用 prompt 庫", type:"Prompt 庫", from:"反覆試出來的高品質指令" },
+  { title:"出貨前檢查 checklist", type:"Checklist", from:"上次漏做造成返工的教訓" }
+];
+$("assetTemplates").innerHTML = assetTemplates.map((t, i) => '<button class="template-btn" data-astpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("assetTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-astpl]");
+  if (!btn) return;
+  const t = assetTemplates[btn.dataset.astpl];
+  $("assetTitle").value = t.title;
+  $("assetType").value = t.type;
+  $("assetFrom").value = t.from;
+});
+
+$("addAssetBtn").addEventListener("click", () => {
+  const title = $("assetTitle").value.trim();
+  if (!title) { toast("請輸入資產名稱"); return; }
+  db.assets.unshift({
+    id: uid(),
+    title,
+    type: $("assetType").value,
+    from: $("assetFrom").value.trim(),
+    uses: 0,
+    createdAt: today()
+  });
+  saveAll();
+  $("assetTitle").value = ""; $("assetFrom").value = "";
+  $("assetType").value = "模板";
+  renderAll();
+  toast("已存入資產庫");
+});
+
+function renderAssets(){
+  const total = db.assets.length;
+  const uses = db.assets.reduce((a, x) => a + x.uses, 0);
+  $("stAssets").textContent = String(total);
+  $("stUses").textContent = String(uses);
+  $("stMulti").textContent = total ? "×" + (uses / total).toFixed(1) : "－";
+  $("assetEmpty").style.display = total ? "none" : "block";
+  $("assetList").innerHTML = db.assets.map(x => {
+    return '<div class="asset-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(x.title) + '</div><div class="item-meta">' + x.createdAt + (x.from ? ' · 源自：' + esc(x.from) : '') + '</div></div>' +
+      '<div class="score">×' + x.uses + '</div></div>' +
+      '<div class="chips"><span class="tag green">' + esc(x.type) + '</span>' + (x.uses >= 5 ? '<span class="tag acc">高槓桿資產</span>' : '') + '</div>' +
+      '<div class="actions"><button class="primary" data-asuse="' + x.id + '">重用 +1</button><button class="del" data-asdel="' + x.id + '">×</button></div></div>';
+  }).join("");
+}
+$("assetList").addEventListener("click", e => {
+  const use = e.target.closest("[data-asuse]");
+  if (use) {
+    const x = db.assets.find(a => a.id === use.dataset.asuse);
+    if (!x) return;
+    x.uses += 1;
+    saveAll(); renderAll();
+    toast("「" + x.title + "」已重用 " + x.uses + " 次");
+    return;
+  }
+  const del = e.target.closest("[data-asdel]");
+  if (del) {
+    db.assets = db.assets.filter(a => a.id !== del.dataset.asdel);
+    saveAll(); renderAll(); toast("已刪除資產");
+  }
+});
+
+/* ---- cuts ---- */
+const cutTemplates = [
+  { title:"每天手動整理同一份數據", verdict:"自動化", reason:"重複做卻沒有累積" },
+  { title:"每封信都從零開始寫", verdict:"模板化", reason:"同類內容反覆重寫" },
+  { title:"逐一回覆可以集中處理的訊息", verdict:"批次化", reason:"切換成本吃掉專注力" },
+  { title:"參加沒有決策價值的例行會議", verdict:"停止", reason:"只維持忙碌感" }
+];
+$("cutTemplates").innerHTML = cutTemplates.map((t, i) => '<button class="template-btn" data-cttpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("cutTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-cttpl]");
+  if (!btn) return;
+  const t = cutTemplates[btn.dataset.cttpl];
+  $("cutTitle").value = t.title;
+  $("cutVerdict").value = t.verdict;
+  $("cutReason").value = t.reason;
+});
+
+$("addCutBtn").addEventListener("click", () => {
+  const title = $("cutTitle").value.trim();
+  if (!title) { toast("請輸入低槓桿行動"); return; }
+  db.cuts.unshift({
+    id: uid(),
+    title,
+    verdict: $("cutVerdict").value,
+    reason: $("cutReason").value.trim(),
+    done: false,
+    createdAt: today()
+  });
+  saveAll();
+  $("cutTitle").value = ""; $("cutReason").value = "";
+  $("cutVerdict").value = "停止";
+  renderAll();
+  toast("已列入淘汰清單");
+});
+
+function renderCuts(){
+  $("cutEmpty").style.display = db.cuts.length ? "none" : "block";
+  $("cutList").innerHTML = db.cuts.map(c => {
+    return '<div class="cut-card' + (c.done ? ' done' : '') + '"><div class="cut-line">' +
+      '<input type="checkbox" data-ctdone="' + c.id + '"' + (c.done ? ' checked' : '') + '>' +
+      '<div style="flex:1"><div class="t' + (c.done ? ' donetext' : '') + '">' + esc(c.title) + '</div>' +
+      '<div class="item-meta">' + c.createdAt + (c.reason ? ' · ' + esc(c.reason) : '') + '</div>' +
+      '<div class="chips"><span class="tag ' + (c.done ? 'green' : 'red') + '">' + esc(c.verdict) + (c.done ? '・已處置' : '') + '</span></div></div>' +
+      '<button class="del" data-ctdel="' + c.id + '" style="border:1px solid var(--hairline);background:var(--paper2);border-radius:6px;width:38px;min-height:36px;color:var(--red);font-weight:800;cursor:pointer">×</button>' +
+      '</div></div>';
+  }).join("");
+}
+$("cutList").addEventListener("click", e => {
+  const del = e.target.closest("[data-ctdel]");
+  if (del) {
+    db.cuts = db.cuts.filter(c => c.id !== del.dataset.ctdel);
+    saveAll(); renderAll(); toast("已刪除項目"); return;
+  }
+});
+$("cutList").addEventListener("change", e => {
+  const cb = e.target.closest("[data-ctdone]");
+  if (!cb) return;
+  const c = db.cuts.find(x => x.id === cb.dataset.ctdone);
+  if (!c) return;
+  c.done = cb.checked;
+  saveAll(); renderAll();
+  toast(c.done ? "已處置一項低槓桿行動" : "已改回待處置");
+});
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvLevers").textContent = String(db.levers.length);
+  $("rvAssets").textContent = String(db.assets.length);
+  $("rvUses").textContent = String(db.assets.reduce((a, x) => a + x.uses, 0));
+  $("rvCuts").textContent = db.cuts.filter(c => c.done).length + "/" + db.cuts.length;
+  const used = db.assets.filter(x => x.uses > 0);
+  $("topAssetCard").style.display = used.length ? "block" : "none";
+  const max = Math.max(1, ...used.map(x => x.uses));
+  $("topAssetBars").innerHTML = used
+    .slice()
+    .sort((a, b) => b.uses - a.uses)
+    .slice(0, 8)
+    .map(x => {
+      return '<div class="lvbar"><div class="lv-top"><span>' + esc(x.title) + '</span><span class="v">×' + x.uses + '</span></div>' +
+        '<div class="track"><div class="fill" style="width:' + Math.round(x.uses / max * 100) + '%"></div></div></div>';
+    }).join("");
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "life-leverage-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.levers) && Array.isArray(data.assets) && Array.isArray(data.cuts)) {
+        db = { levers:data.levers, assets:data.assets, cuts:data.cuts };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有支點、資產與淘汰紀錄嗎？此動作無法復原。")) return;
+  db = { levers:[], assets:[], cuts:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-assets") renderAssets();
+  if (id === "tab-cut") renderCuts();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderAmpGrid();
+  renderLevers();
+  renderAssets();
+  renderCuts();
+  renderReview();
+}
+renderAll();
+</script>
+</body>
+</html>
