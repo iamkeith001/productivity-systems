@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="複利人生">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23B26E3F' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23B26E3F'%3E複%3C/text%3E%3C/svg%3E">
+<title>複利人生系統 · Compounding Life System</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --purple:#7A45B5; --purple-soft:#F0EAF8;
+    --acc:#B26E3F; --acc-soft:#F5ECE4;
+    --grid:rgba(178,110,63,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --purple:#B99AE0; --purple-soft:#2E2638;
+    --acc:#E0A879; --acc-soft:#38291C;
+    --grid:rgba(224,168,121,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:56px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .spread{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:16px}
+  .spread .cell{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:10px 2px;text-align:center;box-shadow:var(--shadow)}
+  .spread .cell .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:19px;font-weight:900;line-height:1}
+  .spread .cell .l{font-size:9.5px;color:var(--pencil);margin-top:4px;letter-spacing:.02em}
+  .spread .cell.low{border-color:var(--hairline);border-style:dashed}
+  .spread .cell.low .n{color:var(--pencil)}
+  @media (max-width:420px){.spread{grid-template-columns:repeat(3,1fr)}}
+
+  .dep-card,.rec-card,.check-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .dep-card{border-left:4px solid var(--acc)}
+  .rec-card{border-left:4px solid var(--green)}
+  .check-card{border-left:4px solid var(--amber)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.green{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .left-line{background:var(--acc-soft);border-radius:6px;padding:9px 12px;font-size:12.5px;line-height:1.65;margin-top:8px}
+  .left-line b{color:var(--acc)}
+
+  .deriv{display:flex;align-items:flex-start;gap:9px;padding:8px 2px;border-bottom:1px solid var(--hairline-soft)}
+  .deriv:last-child{border-bottom:none}
+  .deriv input[type=checkbox]{width:19px;height:19px;margin:1px 0 0;accent-color:var(--green);flex:none;cursor:pointer}
+  .deriv .t{font-size:13px;font-weight:700;line-height:1.5}
+  .deriv .t.donetext{text-decoration:line-through;color:var(--pencil)}
+
+  .flexbar{margin-bottom:10px}
+  .flexbar .fb-top{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px}
+  .flexbar .fb-top .v{color:var(--acc);font-family:"Songti TC","Noto Serif TC",serif;font-weight:900}
+  .flexbar .track{height:8px;background:var(--paper2);border-radius:4px;overflow:hidden}
+  .flexbar .fill{height:100%;background:var(--acc);border-radius:4px;transition:width .3s ease}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">複</text></svg>
+      <div>
+        <h1>複利人生系統</h1>
+        <small>COMPOUNDING LIFE SYSTEM</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-deposit">
+    <div class="hero">
+      <p class="eyebrow">複利人生系統</p>
+      <div class="hero-title serif">一般努力做完就結束，<br>複利系統做完還留下東西。</div>
+      <p class="hero-text">讀一本書只是讀完，價值停在當下；整理成筆記、提煉成觀點、用在決策中，這本書就進入複利系統。真正拉開差距的，不是一次巨大努力，而是那些會持續累積、彼此加成的小系統。</p>
+      <div class="quote-line serif">不只是做事，而是讓每次做事都留下未來的推力。</div>
+    </div>
+
+    <div class="spread" id="dimGrid"></div>
+
+    <div class="card">
+      <p class="eyebrow">複利存款</p>
+      <h2>今天做的事，留下了什麼？</h2>
+      <p class="sub">每完成一件事，問自己：它留下了什麼能幫助未來的東西？把它記成一筆複利存款。</p>
+      <div class="templates-list" id="depTemplates"></div>
+      <label class="form-label" for="depAct">做了什麼事 *</label>
+      <input type="text" id="depAct" placeholder="例如：讀完一篇文獻、完成一個專案、跑完一次分析">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="depLeft">留下了什麼？ *</label>
+          <input type="text" id="depLeft" placeholder="例如：可引用筆記、SOP、pipeline">
+        </div>
+        <div style="flex:0 0 118px">
+          <label class="form-label" for="depDim">複利維度</label>
+          <select id="depDim">
+            <option>輸入</option>
+            <option>知識</option>
+            <option>輸出</option>
+            <option>能力</option>
+            <option>關係</option>
+            <option>系統</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="addDepBtn">存入這筆複利</button>
+    </div>
+
+    <div class="hint-box"><b>六種複利：</b>輸入（篩選過的資訊）、知識（整理與連結）、輸出（可重用的成果）、能力（可遷移技能）、關係（累積的信任）、系統（自我強化的流程）。</div>
+    <div id="depEmpty" class="empty"><span class="zh">還沒有複利存款</span>回想今天做完的一件事，它留下了什麼？</div>
+    <div id="depList"></div>
+  </section>
+
+  <section class="tab" id="tab-recycle">
+    <div class="card">
+      <p class="eyebrow">輸出轉化鏈</p>
+      <h2>一次輸出，不只服務一次</h2>
+      <p class="sub">一篇文章可以變成簡報、課程、圖卡、講稿；一段研究筆記可以變成論文段落。列出一份成果的轉化清單，完成一項勾一項。</p>
+      <div class="templates-list" id="recTemplates"></div>
+      <label class="form-label" for="recSource">原始成果 *</label>
+      <input type="text" id="recSource" placeholder="例如：TAT 監控系統介紹長文">
+      <label class="form-label" for="recDerivs">可轉化成什麼？（一行一個） *</label>
+      <textarea id="recDerivs" placeholder="部門簡報&#10;教學案例&#10;社群短文&#10;海報摘要" style="min-height:96px"></textarea>
+      <button class="btn" id="addRecBtn">建立轉化鏈</button>
+    </div>
+
+    <div id="recEmpty" class="empty"><span class="zh">還沒有轉化鏈</span>挑一份你最滿意的成果，列出它的第二、第三生命。</div>
+    <div id="recList"></div>
+  </section>
+
+  <section class="tab" id="tab-check">
+    <div class="card">
+      <p class="eyebrow">複利健檢</p>
+      <h2>會複利的系統有五個特徵</h2>
+      <p class="sub">替你目前的生活系統打分（1 完全沒有 → 5 穩定運作）。低分的特徵，就是下一個要補的洞。</p>
+      <div id="checkInputs"></div>
+      <button class="btn" id="saveCheckBtn">儲存這次健檢</button>
+    </div>
+
+    <div class="card" id="checkLatestCard" style="display:none">
+      <p class="eyebrow">最新健檢</p>
+      <h2 id="checkLatestTitle">複利指數</h2>
+      <p class="sub" id="checkLatestMeta"></p>
+      <div id="checkBars"></div>
+    </div>
+
+    <div class="hint-box"><b>五特徵：</b>輸入會被篩選、知識會被整理、輸出會被重用、經驗會被回收、系統會自我修正。五件事疊加，人生就不只是「努力過」，而是「越來越容易前進」。</div>
+    <div id="checkEmpty" class="empty"><span class="zh">還沒有健檢紀錄</span>做第一次五特徵自評，之後每月回來對比。</div>
+    <div id="checkHistory"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>複利存款</h3><div class="cnt" id="rvDeps">0</div><div class="desc">做完還留下東西的次數。</div></div>
+      <div class="mini-card"><h3>連續沉澱</h3><div class="cnt" id="rvStreak">0</div><div class="desc">連續有存款的天數。</div></div>
+      <div class="mini-card"><h3>轉化完成</h3><div class="cnt" id="rvDerivs">0/0</div><div class="desc">輸出轉化鏈的完成進度。</div></div>
+      <div class="mini-card"><h3>最新複利指數</h3><div class="cnt" id="rvCheck">－</div><div class="desc">五特徵平均，滿分 5。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>六種複利的建立方式</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>輸入複利：建立資訊過濾系統，讓輸入越來越有選擇性。</li>
+          <li>知識複利：整理、連結、重用——新知識接到舊知識上。</li>
+          <li>輸出複利：一次輸出被多次引用、改寫、組合與延伸。</li>
+          <li>能力複利：優先投資能跨場景反覆回本的可遷移能力。</li>
+          <li>關係複利：穩定交付與長期一致訊號，累積信任。</li>
+          <li>系統複利：收尾留下一步、復盤更新模板，越跑越順。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../compound-flywheel/">複利行動飛輪</a> · <a href="../life-leverage/">人生槓桿設計</a> · <a href="../knowledge-atom/">知識原子化</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-deposit"><svg viewBox="0 0 24 24"><path d="M12 3v10M12 13l-3.5-3.5M12 13l3.5-3.5M4 15v4h16v-4M4 19l3-8M20 19l-3-8" transform="scale(.94) translate(.7 .7)"/></svg><span>沉澱</span></button>
+    <button class="tabbtn" data-tab="tab-recycle"><svg viewBox="0 0 24 24"><path d="M7 4h10l3 5-8 11L4 9zM4 9h16M12 20 9 9M12 20l3-11"/></svg><span>轉化</span></button>
+    <button class="tabbtn" data-tab="tab-check"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7zM9 12l2 2 4-4"/></svg><span>健檢</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 16c3 0 4-9 7-9M13 7c2 0 3 4 5 4" transform="translate(0 1)"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "compounding_life_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"deps":[],"recs":[],"checks":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const DIMS = ["輸入","知識","輸出","能力","關係","系統"];
+const CHECK_DIMS = [
+  { key:"filter", label:"輸入會被篩選" },
+  { key:"organize", label:"知識會被整理" },
+  { key:"reuse", label:"輸出會被重用" },
+  { key:"recycle", label:"經驗會被回收" },
+  { key:"selffix", label:"系統會自我修正" }
+];
+
+const depTemplates = [
+  { act:"讀完一篇文獻", left:"整理成可引用筆記", dim:"知識" },
+  { act:"完成一次專案", left:"留下 SOP 與復盤紀錄", dim:"系統" },
+  { act:"跑完一次資料分析", left:"沉澱成可重複 pipeline", dim:"能力" },
+  { act:"協助同事解決問題", left:"累積一次可靠的信任", dim:"關係" },
+  { act:"發布一篇文章", left:"素材可再轉成簡報與圖卡", dim:"輸出" }
+];
+$("depTemplates").innerHTML = depTemplates.map((t, i) => '<button class="template-btn" data-dtpl="' + i + '">' + esc(t.act) + '</button>').join("");
+$("depTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-dtpl]");
+  if (!btn) return;
+  const t = depTemplates[btn.dataset.dtpl];
+  $("depAct").value = t.act;
+  $("depLeft").value = t.left;
+  $("depDim").value = t.dim;
+});
+
+$("addDepBtn").addEventListener("click", () => {
+  const act = $("depAct").value.trim();
+  const left = $("depLeft").value.trim();
+  if (!act) { toast("請輸入做了什麼事"); return; }
+  if (!left) { toast("重點是留下了什麼——填一下"); return; }
+  db.deps.unshift({ id: uid(), act, left, dim: $("depDim").value, date: today() });
+  saveAll();
+  $("depAct").value = ""; $("depLeft").value = "";
+  $("depDim").value = "輸入";
+  renderAll();
+  toast("已存入一筆複利");
+});
+
+function renderDimGrid(){
+  $("dimGrid").innerHTML = DIMS.map(d => {
+    const n = db.deps.filter(x => x.dim === d).length;
+    return '<div class="cell' + (n < 1 ? ' low' : '') + '"><div class="n">' + n + '</div><div class="l">' + d + '複利</div></div>';
+  }).join("");
+}
+
+function renderDeps(){
+  $("depEmpty").style.display = db.deps.length ? "none" : "block";
+  $("depList").innerHTML = db.deps.slice(0, 30).map(x => {
+    return '<div class="dep-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(x.act) + '</div><div class="item-meta">' + x.date + '</div></div>' +
+      '<span class="tag acc">' + esc(x.dim) + '複利</span></div>' +
+      '<div class="left-line"><b>留下：</b>' + esc(x.left) + '</div>' +
+      '<div class="actions"><button class="del" data-ddel="' + x.id + '">×</button></div></div>';
+  }).join("");
+}
+$("depList").addEventListener("click", e => {
+  const del = e.target.closest("[data-ddel]");
+  if (!del) return;
+  db.deps = db.deps.filter(x => x.id !== del.dataset.ddel);
+  saveAll(); renderAll(); toast("已刪除存款");
+});
+
+/* ---- recycle chains ---- */
+const recTemplates = [
+  { source:"一篇長文", derivs:"部門簡報\n教學課程\n社群短文\n圖卡" },
+  { source:"一段研究筆記", derivs:"論文段落\n文獻回顧素材\n口頭報告" },
+  { source:"一次專案復盤", derivs:"SOP 更新\n避錯清單\n新人教材" }
+];
+$("recTemplates").innerHTML = recTemplates.map((t, i) => '<button class="template-btn" data-rtpl="' + i + '">' + esc(t.source) + '</button>').join("");
+$("recTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-rtpl]");
+  if (!btn) return;
+  const t = recTemplates[btn.dataset.rtpl];
+  $("recSource").value = t.source;
+  $("recDerivs").value = t.derivs;
+});
+
+$("addRecBtn").addEventListener("click", () => {
+  const source = $("recSource").value.trim();
+  if (!source) { toast("請輸入原始成果"); return; }
+  const lines = $("recDerivs").value.split("\n").map(s => s.trim()).filter(Boolean);
+  if (!lines.length) { toast("至少列一個轉化形式"); return; }
+  db.recs.unshift({
+    id: uid(),
+    source,
+    derivs: lines.map(t => ({ id: uid(), text: t, done: false })),
+    createdAt: today()
+  });
+  saveAll();
+  $("recSource").value = ""; $("recDerivs").value = "";
+  renderAll();
+  toast("已建立轉化鏈");
+});
+
+function renderRecs(){
+  $("recEmpty").style.display = db.recs.length ? "none" : "block";
+  $("recList").innerHTML = db.recs.map(r => {
+    const done = r.derivs.filter(d => d.done).length;
+    return '<div class="rec-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(r.source) + '</div><div class="item-meta">' + r.createdAt + '</div></div>' +
+      '<div class="score">' + done + '<small> /' + r.derivs.length + '</small></div></div>' +
+      '<div style="margin-top:8px">' + r.derivs.map(d =>
+        '<label class="deriv"><input type="checkbox" data-rid="' + r.id + '" data-did="' + d.id + '"' + (d.done ? ' checked' : '') + '>' +
+        '<span class="t' + (d.done ? ' donetext' : '') + '">' + esc(d.text) + '</span></label>'
+      ).join("") + '</div>' +
+      (done === r.derivs.length ? '<div class="chips"><span class="tag green">轉化完成，一次思考被用了 ' + (r.derivs.length + 1) + ' 次</span></div>' : '') +
+      '<div class="actions"><button class="del" data-rdel="' + r.id + '">×</button></div></div>';
+  }).join("");
+}
+$("recList").addEventListener("click", e => {
+  const del = e.target.closest("[data-rdel]");
+  if (!del) return;
+  db.recs = db.recs.filter(r => r.id !== del.dataset.rdel);
+  saveAll(); renderAll(); toast("已刪除轉化鏈");
+});
+$("recList").addEventListener("change", e => {
+  const cb = e.target.closest("[data-rid]");
+  if (!cb) return;
+  const r = db.recs.find(x => x.id === cb.dataset.rid);
+  if (!r) return;
+  const d = r.derivs.find(x => x.id === cb.dataset.did);
+  if (!d) return;
+  d.done = cb.checked;
+  saveAll(); renderAll();
+  toast(d.done ? "完成一次轉化" : "已改回未完成");
+});
+
+/* ---- check ---- */
+$("checkInputs").innerHTML = CHECK_DIMS.map(d => {
+  return '<label class="form-label" for="ck_' + d.key + '">' + d.label + '</label>' +
+    '<select id="ck_' + d.key + '">' +
+    [1,2,3,4,5].map(v => '<option value="' + v + '"' + (v === 3 ? ' selected' : '') + '>' + v + (v === 1 ? " 完全沒有" : v === 5 ? " 穩定運作" : "") + '</option>').join("") +
+    '</select>';
+}).join("");
+
+$("saveCheckBtn").addEventListener("click", () => {
+  const scores = {};
+  CHECK_DIMS.forEach(d => { scores[d.key] = parseInt($("ck_" + d.key).value, 10); });
+  db.checks.unshift({ id: uid(), date: today(), scores });
+  saveAll();
+  CHECK_DIMS.forEach(d => { $("ck_" + d.key).value = "3"; });
+  renderAll();
+  toast("已儲存複利健檢");
+});
+
+function checkAvg(c){
+  const vals = CHECK_DIMS.map(d => c.scores[d.key] || 0);
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
+function renderChecks(){
+  const latest = db.checks[0];
+  $("checkEmpty").style.display = db.checks.length ? "none" : "block";
+  $("checkLatestCard").style.display = latest ? "block" : "none";
+  if (latest) {
+    $("checkLatestTitle").textContent = "複利指數 " + checkAvg(latest).toFixed(1) + " / 5";
+    $("checkLatestMeta").textContent = latest.date + " · 低分特徵就是下一個要補的洞";
+    $("checkBars").innerHTML = CHECK_DIMS.map(d => {
+      const v = latest.scores[d.key];
+      return '<div class="flexbar"><div class="fb-top"><span>' + d.label + '</span><span class="v">' + v + '</span></div>' +
+        '<div class="track"><div class="fill" style="width:' + (v * 20) + '%"></div></div></div>';
+    }).join("");
+  }
+  $("checkHistory").innerHTML = db.checks.slice(1).map(c => {
+    return '<div class="check-card">' +
+      '<div class="item-top"><div><div class="item-title">複利健檢 ' + checkAvg(c).toFixed(1) + ' / 5</div>' +
+      '<div class="item-meta">' + c.date + '</div></div></div>' +
+      '<div class="actions"><button class="del" data-ckdel="' + c.id + '">×</button></div></div>';
+  }).join("");
+}
+$("checkHistory").addEventListener("click", e => {
+  const del = e.target.closest("[data-ckdel]");
+  if (!del) return;
+  db.checks = db.checks.filter(c => c.id !== del.dataset.ckdel);
+  saveAll(); renderAll(); toast("已刪除健檢紀錄");
+});
+
+/* ---- review ---- */
+function calcStreak(){
+  const days = new Set(db.deps.map(x => x.date));
+  let s = 0;
+  const d = new Date();
+  if (!days.has(d.toISOString().slice(0, 10))) d.setDate(d.getDate() - 1);
+  while (days.has(d.toISOString().slice(0, 10))) {
+    s += 1;
+    d.setDate(d.getDate() - 1);
+  }
+  return s;
+}
+
+function renderReview(){
+  $("rvDeps").textContent = String(db.deps.length);
+  $("rvStreak").textContent = String(calcStreak());
+  const all = db.recs.reduce((a, r) => a + r.derivs.length, 0);
+  const done = db.recs.reduce((a, r) => a + r.derivs.filter(d => d.done).length, 0);
+  $("rvDerivs").textContent = done + "/" + all;
+  $("rvCheck").textContent = db.checks.length ? checkAvg(db.checks[0]).toFixed(1) : "－";
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "compounding-life-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.deps) && Array.isArray(data.recs) && Array.isArray(data.checks)) {
+        db = { deps:data.deps, recs:data.recs, checks:data.checks };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有複利存款、轉化鏈與健檢紀錄嗎？此動作無法復原。")) return;
+  db = { deps:[], recs:[], checks:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-recycle") renderRecs();
+  if (id === "tab-check") renderChecks();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderDimGrid();
+  renderDeps();
+  renderRecs();
+  renderChecks();
+  renderReview();
+}
+renderAll();
+</script>
+</body>
+</html>

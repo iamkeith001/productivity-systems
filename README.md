@@ -37,3 +37,4 @@
 - 身份驅動系統：https://iamkeith001.github.io/productivity-systems/identity-driven/
 - 系統邊界意識：https://iamkeith001.github.io/productivity-systems/system-boundary/
 - 人生槓桿設計：https://iamkeith001.github.io/productivity-systems/life-leverage/
+- 複利人生系統：https://iamkeith001.github.io/productivity-systems/compounding-life/
