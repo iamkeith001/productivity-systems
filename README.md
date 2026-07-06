@@ -38,3 +38,4 @@
 - 系統邊界意識：https://iamkeith001.github.io/productivity-systems/system-boundary/
 - 人生槓桿設計：https://iamkeith001.github.io/productivity-systems/life-leverage/
 - 複利人生系統：https://iamkeith001.github.io/productivity-systems/compounding-life/
+- 價值回收機制：https://iamkeith001.github.io/productivity-systems/value-recovery/

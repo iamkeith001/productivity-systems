@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="價值回收">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%236A7F53' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%236A7F53'%3E收%3C/text%3E%3C/svg%3E">
+<title>價值回收機制 · Value Recovery</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --purple:#7A45B5; --purple-soft:#F0EAF8;
+    --acc:#6A7F53; --acc-soft:#EDF1E7;
+    --grid:rgba(106,127,83,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --purple:#B99AE0; --purple-soft:#2E2638;
+    --acc:#AEC29A; --acc-soft:#28301F;
+    --grid:rgba(174,194,154,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:56px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  .row2{display:flex;gap:9px}
+  .row2>div{flex:1}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:25px;font-weight:900;line-height:1}
+  .stat .l{font-size:10px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+
+  .pool-card,.rec-card,.fail-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .pool-card{border-left:4px solid var(--amber)}
+  .pool-card.recovered{border-left-color:var(--green);opacity:.75}
+  .rec-card{border-left:4px solid var(--acc)}
+  .fail-card{border-left:4px solid var(--red)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .score{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1;white-space:nowrap}
+  .score small{font-size:11px;color:var(--pencil);font-family:inherit}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.A{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.B{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.C{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.D{background:var(--purple-soft);color:var(--purple);border-color:transparent}
+  .tag.done{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.fail{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+  .actions button.primary{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .flow-line{background:var(--acc-soft);border-radius:6px;padding:9px 12px;font-size:12.5px;line-height:1.65;margin-top:8px}
+  .flow-line b{color:var(--acc)}
+  .lesson-li{font-size:12.5px;color:var(--pencil);line-height:1.7;padding-left:14px;position:relative;margin-top:4px}
+  .lesson-li::before{content:"·";position:absolute;left:2px;font-weight:900;color:var(--red)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">收</text></svg>
+      <div>
+        <h1>價值回收機制</h1>
+        <small>VALUE RECOVERY</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-pool">
+    <div class="hero">
+      <p class="eyebrow">價值回收機制</p>
+      <div class="hero-title serif">半成品不是問題，<br>沒有回收機制才是。</div>
+      <p class="hero-text">知識工作最大的浪費，不是沒有努力，而是努力做過的東西沒有被回收，散失在時間裡：沒寫完的草稿、失敗的方案、開會的洞見、被刪掉的段落。判斷的重點不是「完成了嗎」，而是「它還能變成什麼」。</p>
+      <div class="quote-line serif">失敗沒有回收是成本，被回收就是資產。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">半成品收件匣</p>
+      <h2>別讓有潛力的材料直接消失</h2>
+      <p class="sub">未完成草稿、舊簡報、會議靈感、失敗方案、AI 產出——先收進回收池，不需要整齊，重點是保住潛力。</p>
+      <div class="templates-list" id="poolTemplates"></div>
+      <label class="form-label" for="poolTitle">半成品是什麼 *</label>
+      <input type="text" id="poolTitle" placeholder="例如：寫一半的教學文、上季被否決的提案">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="poolType">材料類型</label>
+          <select id="poolType">
+            <option>未完成草稿</option>
+            <option>舊簡報 / 報告</option>
+            <option>會議紀錄 / 靈感</option>
+            <option>失敗方案</option>
+            <option>研究資料</option>
+            <option>AI 產出</option>
+            <option>舊筆記</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="poolCls">可回收價值</label>
+          <select id="poolCls">
+            <option value="A">A 可直接再用</option>
+            <option value="B">B 可改寫再用</option>
+            <option value="C">C 可萃取經驗</option>
+            <option value="D">D 可轉化教學</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="poolNote">它還能變成什麼？（選填）</label>
+      <input type="text" id="poolNote" placeholder="例如：其中一個概念可以獨立成短文">
+      <button class="btn" id="addPoolBtn">收進回收池</button>
+    </div>
+
+    <div class="hint-box"><b>用「可回收價值」分類，不用完成度分類：</b>A 可直接再用（模板、段落、圖表）、B 可改寫再用（草稿、舊文）、C 可萃取經驗（失敗、踩坑）、D 可轉化教學（決策、修正歷程）。</div>
+    <div id="poolEmpty" class="empty"><span class="zh">回收池是空的</span>想一個被你封存的半成品，先收進來。</div>
+    <div id="poolList"></div>
+  </section>
+
+  <section class="tab" id="tab-recover">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stPending">0</div><div class="l">池中待回收</div></div>
+      <div class="stat"><div class="n" id="stRecovered">0</div><div class="l">已回收</div></div>
+      <div class="stat"><div class="n" id="stRate">－</div><div class="l">回收率</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">再加工</p>
+      <h2>把半成品變成新資產</h2>
+      <p class="sub">從回收池挑一件，決定它的新形式：模板、短文、簡報、避錯清單、教學案例——完成後記一筆回收。</p>
+      <label class="form-label" for="recPool">從回收池挑選</label>
+      <select id="recPool"></select>
+      <div class="row2">
+        <div>
+          <label class="form-label" for="recForm">產出形式</label>
+          <select id="recForm">
+            <option>模板</option>
+            <option>短文 / 貼文</option>
+            <option>簡報</option>
+            <option>避錯清單</option>
+            <option>教學案例</option>
+            <option>知識卡</option>
+            <option>SOP</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="recInto">回收成了什麼？ *</label>
+          <input type="text" id="recInto" placeholder="例如：改寫成三篇社群短文">
+        </div>
+      </div>
+      <button class="btn" id="addRecBtn">完成這筆回收</button>
+    </div>
+
+    <div class="hint-box"><b>盤點節奏建議：</b>每週 15 分鐘整理半成品、每次專案結束做一次價值回收。目的不是清理乾淨，而是重新發現價值。AI 可以協助回收，但判斷哪些值得再加工的，是你。</div>
+    <div id="recEmpty" class="empty"><span class="zh">還沒有回收成果</span>從池子裡挑一件，給它第二生命。</div>
+    <div id="recList"></div>
+  </section>
+
+  <section class="tab" id="tab-fail">
+    <div class="card">
+      <p class="eyebrow">失敗資產</p>
+      <h2>失敗是高密度資訊來源</h2>
+      <p class="sub">人們通常只想趕快忘記失敗，但一次失敗可以回收成風險清單、避錯清單、決策紀錄、教學案例。把學到的東西一行一行列出來。</p>
+      <div class="templates-list" id="failTemplates"></div>
+      <label class="form-label" for="failEvent">失敗事件 *</label>
+      <input type="text" id="failEvent" placeholder="例如：研究設計因樣本不足被退回">
+      <div class="row2">
+        <div>
+          <label class="form-label" for="failAsset">回收成哪種資產</label>
+          <select id="failAsset">
+            <option>避錯清單</option>
+            <option>風險清單</option>
+            <option>決策紀錄</option>
+            <option>教學案例</option>
+            <option>診斷框架</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label" for="failLessons">萃取出的教訓（一行一個） *</label>
+      <textarea id="failLessons" placeholder="樣本數要先做 power 計算&#10;收案條件要提前和臨床端確認&#10;先跑 pilot 再全面收案" style="min-height:90px"></textarea>
+      <button class="btn" id="addFailBtn">存成失敗資產</button>
+    </div>
+
+    <div id="failEmpty" class="empty"><span class="zh">還沒有失敗資產</span>最近一次不順利的事，萃取出了什麼？</div>
+    <div id="failList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>回收池</h3><div class="cnt" id="rvPool">0</div><div class="desc">被保住的半成品總數。</div></div>
+      <div class="mini-card"><h3>回收成果</h3><div class="cnt" id="rvRecs">0</div><div class="desc">獲得第二生命的產出。</div></div>
+      <div class="mini-card"><h3>回收率</h3><div class="cnt" id="rvRate">－</div><div class="desc">池中材料被再加工的比例。</div></div>
+      <div class="mini-card"><h3>失敗資產</h3><div class="cnt" id="rvFails">0</div><div class="desc">被整理過的失敗，累計教訓數見下。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">盤點提問</p>
+      <h2>回收盤點的四個問題</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>這裡面有什麼仍然有用？</li>
+          <li>哪些可以變成模板？</li>
+          <li>哪些可以變成文章、教案或案例？</li>
+          <li>哪些失敗經驗值得保存成避錯清單？</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>價值回收的六個做法</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>建立半成品收件匣：別讓有潛力的材料直接消失。</li>
+          <li>用「可回收價值」分類：問「它還能變成什麼」。</li>
+          <li>定期回收盤點：每週 15 分鐘、每次專案結束一次。</li>
+          <li>把失敗轉成資產：風險清單、避錯清單、教學案例。</li>
+          <li>把舊輸出拆成新模組：長文變圖卡、簡報、課程。</li>
+          <li>讓 AI 協助回收：但價值判斷仍然在你。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../compounding-life/">複利人生系統</a> · <a href="../knowledge-distill/">知識蒸餾法</a> · <a href="../mvo/">最小可行輸出</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-pool"><svg viewBox="0 0 24 24"><path d="M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM4 8l2-4h12l2 4M12 12v5M12 12l-2.5 2.5M12 12l2.5 2.5" transform="scale(.96) translate(.5 .5)"/></svg><span>回收池</span></button>
+    <button class="tabbtn" data-tab="tab-recover"><svg viewBox="0 0 24 24"><path d="M7 19a5 5 0 0 1 0-10 6 6 0 0 1 11.3 1.9A4.5 4.5 0 0 1 17.5 19z"/><path d="M12 12v5M9.8 14.2 12 12l2.2 2.2"/></svg><span>再加工</span></button>
+    <button class="tabbtn" data-tab="tab-fail"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3zM12 10v4M12 17.5v.5"/></svg><span>失敗資產</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "value_recovery_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"pool":[],"recs":[],"fails":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+const poolById = id => db.pool.find(p => p.id === id);
+const clsLabel = c => c === "A" ? "A 可直接再用" : c === "B" ? "B 可改寫再用" : c === "C" ? "C 可萃取經驗" : "D 可轉化教學";
+
+const poolTemplates = [
+  { title:"寫一半的教學文", type:"未完成草稿", cls:"B", note:"其中一個概念可獨立成短文" },
+  { title:"被否決的改善提案", type:"失敗方案", cls:"C", note:"否決理由可整理成提案檢查清單" },
+  { title:"上次會議的討論洞見", type:"會議紀錄 / 靈感", cls:"A", note:"可直接整理成決策紀錄" },
+  { title:"沒放進論文的圖表", type:"研究資料", cls:"A", note:"可當 supplement 或教學素材" },
+  { title:"AI 生成但沒用上的段落", type:"AI 產出", cls:"B", note:"可改造成新的 prompt 模板" }
+];
+$("poolTemplates").innerHTML = poolTemplates.map((t, i) => '<button class="template-btn" data-ptpl="' + i + '">' + esc(t.title) + '</button>').join("");
+$("poolTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ptpl]");
+  if (!btn) return;
+  const t = poolTemplates[btn.dataset.ptpl];
+  $("poolTitle").value = t.title;
+  $("poolType").value = t.type;
+  $("poolCls").value = t.cls;
+  $("poolNote").value = t.note;
+});
+
+$("addPoolBtn").addEventListener("click", () => {
+  const title = $("poolTitle").value.trim();
+  if (!title) { toast("請輸入半成品是什麼"); return; }
+  db.pool.unshift({
+    id: uid(),
+    title,
+    type: $("poolType").value,
+    cls: $("poolCls").value,
+    note: $("poolNote").value.trim(),
+    recovered: false,
+    createdAt: today()
+  });
+  saveAll();
+  $("poolTitle").value = ""; $("poolNote").value = "";
+  $("poolType").value = "未完成草稿"; $("poolCls").value = "A";
+  renderAll();
+  toast("已收進回收池");
+});
+
+function renderPool(){
+  $("poolEmpty").style.display = db.pool.length ? "none" : "block";
+  $("poolList").innerHTML = db.pool.map(p => {
+    return '<div class="pool-card' + (p.recovered ? ' recovered' : '') + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(p.title) + '</div><div class="item-meta">' + p.createdAt + ' · ' + esc(p.type) + '</div></div>' +
+      '<span class="tag ' + (p.recovered ? 'done' : p.cls) + '">' + (p.recovered ? '已回收' : clsLabel(p.cls)) + '</span></div>' +
+      (p.note ? '<div class="item-meta" style="margin-top:8px"><b>還能變成：</b>' + esc(p.note) + '</div>' : '') +
+      '<div class="actions">' + (p.recovered ? '' : '<button class="primary" data-prec="' + p.id + '">去再加工</button>') + '<button class="del" data-pdel="' + p.id + '">×</button></div></div>';
+  }).join("");
+}
+$("poolList").addEventListener("click", e => {
+  const del = e.target.closest("[data-pdel]");
+  if (del) {
+    const p = poolById(del.dataset.pdel);
+    if (!p) return;
+    if (p.recovered || confirm('「' + p.title + '」還沒被回收，確定直接丟掉？')) {
+      db.pool = db.pool.filter(x => x.id !== p.id);
+      db.recs = db.recs.filter(r => r.poolId !== p.id);
+      saveAll(); renderAll(); toast("已移出回收池");
+    }
+    return;
+  }
+  const rec = e.target.closest("[data-prec]");
+  if (rec) {
+    switchTab("tab-recover");
+    $("recPool").value = rec.dataset.prec;
+  }
+});
+
+/* ---- recover ---- */
+function fillRecSelect(){
+  const pending = db.pool.filter(p => !p.recovered);
+  $("recPool").innerHTML = pending.length
+    ? pending.map(p => '<option value="' + p.id + '">' + esc(p.title) + '</option>').join("")
+    : '<option value="">（回收池沒有待回收的材料）</option>';
+}
+
+$("addRecBtn").addEventListener("click", () => {
+  const p = poolById($("recPool").value);
+  if (!p) { toast("請先把半成品收進回收池"); return; }
+  const into = $("recInto").value.trim();
+  if (!into) { toast("寫一下回收成了什麼"); return; }
+  p.recovered = true;
+  db.recs.unshift({ id: uid(), poolId: p.id, title: p.title, into, form: $("recForm").value, date: today() });
+  saveAll();
+  $("recInto").value = ""; $("recForm").value = "模板";
+  renderAll();
+  toast("完成一筆回收！");
+});
+
+function renderRecs(){
+  const total = db.pool.length;
+  const rec = db.pool.filter(p => p.recovered).length;
+  $("stPending").textContent = String(total - rec);
+  $("stRecovered").textContent = String(rec);
+  $("stRate").textContent = total ? Math.round(rec / total * 100) + "%" : "－";
+  $("recEmpty").style.display = db.recs.length ? "none" : "block";
+  $("recList").innerHTML = db.recs.map(r => {
+    return '<div class="rec-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(r.title) + '</div><div class="item-meta">' + r.date + '</div></div>' +
+      '<span class="tag done">' + esc(r.form) + '</span></div>' +
+      '<div class="flow-line">' + esc(r.title) + ' → <b>' + esc(r.into) + '</b></div>' +
+      '<div class="actions"><button class="del" data-rdel="' + r.id + '">×</button></div></div>';
+  }).join("");
+}
+$("recList").addEventListener("click", e => {
+  const del = e.target.closest("[data-rdel]");
+  if (!del) return;
+  const r = db.recs.find(x => x.id === del.dataset.rdel);
+  if (r) {
+    const p = poolById(r.poolId);
+    if (p) p.recovered = false;
+  }
+  db.recs = db.recs.filter(x => x.id !== del.dataset.rdel);
+  saveAll(); renderAll(); toast("已刪除回收紀錄，材料退回池中");
+});
+
+/* ---- failures ---- */
+const failTemplates = [
+  { event:"研究設計因樣本不足被退回", asset:"避錯清單", lessons:"樣本數要先做 power 計算\n收案條件要提前和臨床端確認\n先跑 pilot 再全面收案" },
+  { event:"專案時程嚴重延誤", asset:"風險清單", lessons:"需求變動要設凍結點\n跨部門依賴要提前列出\n每週檢查一次里程碑" },
+  { event:"AI 分類結果大量出錯", asset:"診斷框架", lessons:"先驗資料品質再怪模型\n建立評估標準與 negative examples\n記錄 prompt 改寫規則" }
+];
+$("failTemplates").innerHTML = failTemplates.map((t, i) => '<button class="template-btn" data-ftpl="' + i + '">' + esc(t.event) + '</button>').join("");
+$("failTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ftpl]");
+  if (!btn) return;
+  const t = failTemplates[btn.dataset.ftpl];
+  $("failEvent").value = t.event;
+  $("failAsset").value = t.asset;
+  $("failLessons").value = t.lessons;
+});
+
+$("addFailBtn").addEventListener("click", () => {
+  const event = $("failEvent").value.trim();
+  if (!event) { toast("請輸入失敗事件"); return; }
+  const lessons = $("failLessons").value.split("\n").map(s => s.trim()).filter(Boolean);
+  if (!lessons.length) { toast("至少萃取一條教訓"); return; }
+  db.fails.unshift({
+    id: uid(),
+    event,
+    asset: $("failAsset").value,
+    lessons,
+    createdAt: today()
+  });
+  saveAll();
+  $("failEvent").value = ""; $("failLessons").value = "";
+  $("failAsset").value = "避錯清單";
+  renderAll();
+  toast("失敗已變成資產");
+});
+
+function renderFails(){
+  $("failEmpty").style.display = db.fails.length ? "none" : "block";
+  $("failList").innerHTML = db.fails.map(f => {
+    return '<div class="fail-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(f.event) + '</div><div class="item-meta">' + f.createdAt + '</div></div>' +
+      '<span class="tag fail">' + esc(f.asset) + '</span></div>' +
+      '<div style="margin-top:6px">' + f.lessons.map(l => '<div class="lesson-li">' + esc(l) + '</div>').join("") + '</div>' +
+      '<div class="actions"><button class="del" data-fdel="' + f.id + '">×</button></div></div>';
+  }).join("");
+}
+$("failList").addEventListener("click", e => {
+  const del = e.target.closest("[data-fdel]");
+  if (!del) return;
+  db.fails = db.fails.filter(f => f.id !== del.dataset.fdel);
+  saveAll(); renderAll(); toast("已刪除失敗資產");
+});
+
+/* ---- review ---- */
+function renderReview(){
+  const total = db.pool.length;
+  const rec = db.pool.filter(p => p.recovered).length;
+  $("rvPool").textContent = String(total);
+  $("rvRecs").textContent = String(db.recs.length);
+  $("rvRate").textContent = total ? Math.round(rec / total * 100) + "%" : "－";
+  const lessons = db.fails.reduce((a, f) => a + f.lessons.length, 0);
+  $("rvFails").textContent = db.fails.length + (lessons ? "（" + lessons + " 條教訓）" : "");
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "value-recovery-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.pool) && Array.isArray(data.recs) && Array.isArray(data.fails)) {
+        db = { pool:data.pool, recs:data.recs, fails:data.fails };
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空回收池、回收成果與失敗資產嗎？此動作無法復原。")) return;
+  db = { pool:[], recs:[], fails:[] };
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-recover") { fillRecSelect(); renderRecs(); }
+  if (id === "tab-fail") renderFails();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderPool();
+  fillRecSelect();
+  renderRecs();
+  renderFails();
+  renderReview();
+}
+renderAll();
+</script>
+</body>
+</html>
