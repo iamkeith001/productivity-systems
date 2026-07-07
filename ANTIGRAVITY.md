@@ -71,6 +71,7 @@
 - 每個工具骨架一致：`$()`/`toast()`/`uid()`/`esc()` helper、`applyTheme()`、`db` + `saveAll()`、四分頁 `switchTab()`。
 - **id 產生器一律用 `uid() = Date.now().toString(36) + Math.random().toString(36).slice(2,7)`**，不要用純 `Date.now()`（同毫秒連續建立會碰撞，已於 2026-07-04 全面修正）。
 - `.gitignore` 排除本機預覽設定 `.claude/` 與四個「外部獨立 repo」子資料夾（能量管理.../認知卸載法.../探索選擇.../情境預演...，各自有 git）。
+- **入口頁「回訪提醒層」（2026-07-07 加，溫柔版）**：`index.html` 自己在點卡片時記錄進場時間，不讀子工具內部 localStorage、不改任何子工具（32 個站內工具同 origin，含外部 repo 卡片也能記到點擊）。key：`prod_portal_visits`＝`{toolId: epochMs}`、`prod_portal_streak`＝`{last:"YYYY-MM-DD", count}`。行為：hero 下方「憶」木牌顯示進場 streak ＋沉睡工具清單（門檻 `SLEEP_DAYS=3`，只提醒「用過又冷掉」的、不嘮叨沒開過的），沉睡卡片加 `.sleep-badge` 角標；無可提醒內容時整塊 `hidden` 保持乾淨。
 
 ## 🚀 部署與驗證流程（每次新增工具）
 

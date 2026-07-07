@@ -345,6 +345,38 @@
       display: none;
     }
   }
+
+  /* --- 回訪提醒木牌（溫柔版）--- */
+  .revisit-plaque{
+    display:flex; gap:13px; align-items:flex-start;
+    background:var(--paper); border:1px solid var(--hairline-soft);
+    border-left:3px solid var(--amber);
+    border-radius:12px; padding:13px 15px; margin:0 0 16px;
+    box-shadow:var(--shadow);
+  }
+  .revisit-plaque[hidden]{display:none}
+  .rp-seal{
+    width:34px; height:34px; flex:none; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--amber-soft); color:var(--amber);
+    font-size:19px; font-weight:900;
+  }
+  .rp-body{flex:1; min-width:0}
+  .rp-streak{
+    font-size:13.5px; font-weight:700; color:var(--ink);
+    display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+  }
+  .rp-streak .flame{font-size:15px}
+  .rp-sleep{font-size:12.5px; color:var(--pencil); line-height:1.7; margin-top:3px}
+  .rp-sleep:empty{display:none}
+  .rp-sleep a{color:var(--amber); text-decoration:none; font-weight:600; border-bottom:1px dotted}
+  .rp-sleep a:hover{border-bottom-style:solid}
+  .sleep-badge{
+    display:inline-block; margin-top:6px; align-self:flex-start;
+    font-size:10.5px; font-weight:700; letter-spacing:.02em;
+    color:var(--amber); background:var(--amber-soft);
+    padding:2px 8px; border-radius:20px;
+  }
 </style>
 </head>
 <body>
@@ -367,6 +399,15 @@
     <div class="hero-title">把方法變成每天能用的工具。</div>
     <p class="hero-text">這裡整理所有提升生產力系列系統頁面。每個工具都是獨立 HTML App，可以離線使用，資料只存在您本機的瀏覽器中。</p>
   </section>
+
+  <!-- 回訪提醒木牌（溫柔版，由 JS 決定是否顯示） -->
+  <div class="revisit-plaque" id="revisitPlaque" hidden>
+    <div class="rp-seal serif" aria-hidden="true">憶</div>
+    <div class="rp-body">
+      <div class="rp-streak" id="rpStreak"></div>
+      <div class="rp-sleep" id="rpSleep"></div>
+    </div>
+  </div>
 
   <!-- Search & Segmented Filter Bar -->
   <div class="controls-bar">
@@ -995,6 +1036,88 @@ document.querySelectorAll('.pin-btn').forEach(btn => {
 });
 
 updatePinnedUI();
+
+/* --- 回訪提醒層（溫柔版）--- */
+/* 只在入口頁記錄「上次進場」，同 origin 可涵蓋全部工具（含 4 個外部 repo），不改任何子工具 */
+(function(){
+  const VISIT_KEY = "prod_portal_visits";   // {toolId: epochMs}
+  const STREAK_KEY = "prod_portal_streak";  // {last:"YYYY-MM-DD", count:N}
+  const SLEEP_DAYS = 3;                      // 幾天沒回來算「沉睡」
+  const DAY = 86400000;
+
+  const dstr = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const loadJSON = k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } };
+
+  // 1) 點卡片 = 記一次進場（釘選鈕已 stopPropagation，不會誤記）
+  document.querySelectorAll('.card[data-id]').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('.pin-btn')) return;
+      const rec = loadJSON(VISIT_KEY) || {};
+      rec[card.dataset.id] = Date.now();
+      localStorage.setItem(VISIT_KEY, JSON.stringify(rec));
+    });
+  });
+
+  // 2) 進場 streak（以「開啟入口頁」為準，同一天多次開啟不重複計）
+  const today = dstr(new Date());
+  const yesterday = dstr(new Date(Date.now() - DAY));
+  let streak = loadJSON(STREAK_KEY) || { last:null, count:0 };
+  if (streak.last === today) {
+    /* 今天已計過 */
+  } else if (streak.last === yesterday) {
+    streak.count = (streak.count || 0) + 1;
+  } else {
+    streak.count = 1;
+  }
+  streak.last = today;
+  localStorage.setItem(STREAK_KEY, JSON.stringify(streak));
+
+  // 3) 沉睡工具（只提醒「曾用過、現在冷掉」的，不嘮叨從沒開過的）
+  const visits = loadJSON(VISIT_KEY) || {};
+  const now = Date.now();
+  const sleeping = [];
+  document.querySelectorAll('.card[data-id]').forEach(card => {
+    const last = visits[card.dataset.id];
+    if (!last) return;
+    const days = Math.floor((now - last) / DAY);
+    if (days < SLEEP_DAYS) return;
+    const h2 = card.querySelector('h2');
+    sleeping.push({ name: h2 ? h2.textContent.trim() : card.dataset.id, days, href: card.getAttribute('href') });
+    const body = card.querySelector('.card-body');
+    if (body && !body.querySelector('.sleep-badge')) {
+      const b = document.createElement('span');
+      b.className = 'sleep-badge';
+      b.textContent = '沉睡 ' + days + ' 天';
+      body.appendChild(b);
+    }
+  });
+  sleeping.sort((a, b) => b.days - a.days);
+
+  // 4) 渲染木牌（沒東西可提醒就整塊隱藏，維持乾淨）
+  const plaque = document.getElementById('revisitPlaque');
+  const elStreak = document.getElementById('rpStreak');
+  const elSleep = document.getElementById('rpSleep');
+  let show = false;
+
+  if (streak.count >= 2) {
+    elStreak.innerHTML = '<span class="flame">🔥</span> 連續 ' + streak.count + ' 天進場，保持住！';
+    show = true;
+  } else {
+    elStreak.innerHTML = '<span class="flame">👋</span> 歡迎回來 · 今天重新開始累積進場天數';
+  }
+
+  if (sleeping.length) {
+    const top = sleeping.slice(0, 3)
+      .map(s => '<a href="' + s.href + '">' + s.name + '</a>（' + s.days + '天）').join('、');
+    const more = sleeping.length > 3 ? ' 等 ' + sleeping.length + ' 個工具' : '';
+    elSleep.innerHTML = '有一陣子沒回來看看了：' + top + more + '。挑一個回來？';
+    show = true;
+  } else {
+    elSleep.textContent = '';
+  }
+
+  plaque.hidden = !show;
+})();
 </script>
 </body>
 </html>
