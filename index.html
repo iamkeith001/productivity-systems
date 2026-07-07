@@ -377,6 +377,26 @@
     color:var(--amber); background:var(--amber-soft);
     padding:2px 8px; border-radius:20px;
   }
+
+  /* --- 情境導引「從這裡開始」--- */
+  .starter{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:12px;box-shadow:var(--shadow);padding:18px 16px;margin:8px 0 16px}
+  .starter-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:18px;font-weight:900;color:var(--ink);letter-spacing:.04em;margin:0 0 13px}
+  .sit-chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+  .sit-chip{display:flex;align-items:center;min-height:44px;padding:9px 12px;border:1px solid var(--hairline);background:var(--paper);border-radius:10px;color:var(--ink);font-size:12.5px;font-family:inherit;cursor:pointer;text-align:left;line-height:1.4;transition:border-color .2s,background .2s}
+  .sit-chip:hover{border-color:var(--pencil)}
+  .sit-chip.active{border:2px solid var(--amber);background:var(--amber-soft);color:var(--amber);font-weight:700;padding:8px 11px}
+  .sit-path{margin-top:15px;padding-top:15px;border-top:1px solid var(--hairline-soft);display:none}
+  .sit-path.show{display:block}
+  .sit-path-hint{font-size:11.5px;color:var(--pencil);margin:0 0 12px}
+  .path-row{display:flex;align-items:flex-start;justify-content:space-between;gap:2px}
+  .path-step{flex:1;text-align:center;text-decoration:none;min-width:0}
+  .seal-sm{width:46px;height:46px;margin:0 auto;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:22px;font-weight:900}
+  .path-step-name{display:block;font-size:11px;color:var(--ink);margin-top:6px;line-height:1.4}
+  .path-step-note{color:var(--pencil)}
+  .path-arrow{width:18px;height:18px;flex:none;align-self:flex-start;margin-top:14px;color:var(--pencil);stroke-width:2}
+  .next-step{margin-top:15px;background:var(--amber-soft);border:1px solid var(--hairline-soft);border-radius:10px;padding:11px 12px;display:flex;gap:9px;align-items:flex-start;color:var(--amber)}
+  .next-step svg{width:16px;height:16px;flex:none;stroke-width:2;margin-top:2px}
+  .next-step .ns-body{font-size:12.5px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -398,6 +418,14 @@
     <p class="eyebrow">系列入口</p>
     <div class="hero-title">把方法變成每天能用的工具。</div>
     <p class="hero-text">這裡整理所有提升生產力系列系統頁面。每個工具都是獨立 HTML App，可以離線使用，資料只存在您本機的瀏覽器中。</p>
+  </section>
+
+  <!-- 情境導引「從這裡開始」（由 JS 渲染情境與路徑） -->
+  <section class="starter" aria-label="情境導引">
+    <p class="eyebrow">從這裡開始</p>
+    <div class="starter-title">我現在卡在哪？</div>
+    <div class="sit-chips" id="sitChips"></div>
+    <div class="sit-path" id="sitPath"></div>
   </section>
 
   <!-- 回訪提醒木牌（溫柔版，由 JS 決定是否顯示） -->
@@ -1117,6 +1145,96 @@ updatePinnedUI();
   }
 
   plaque.hidden = !show;
+})();
+
+/* --- 情境導引「從這裡開始」（草稿：情境與路徑文字可再改）--- */
+(function(){
+  const SITUATIONS = [
+    { key:'overwhelm', label:'事情堆爆・腦子很滿',
+      steps:[
+        { seal:'空', name:'腦袋清空站', note:'先倒空', href:'./mind-offload/', c:'red' },
+        { seal:'檢', name:'80/20 檢視', note:'挑關鍵', href:'./pareto-review/', c:'cobalt' },
+        { seal:'啟', name:'兩分鐘啟動', note:'馬上做', href:'./two-minute/', c:'rose' }
+      ],
+      next:'挑出今天唯一必做的那件，現在就做兩分鐘。' },
+    { key:'decide', label:'要做一個難決定',
+      steps:[
+        { seal:'預', name:'情境預演', note:'先想最壞', href:'./premortem-thinking/', c:'blue' },
+        { seal:'樹', name:'決策樹思維', note:'理清分岔', href:'./decision-tree/', c:'emerald' },
+        { seal:'誌', name:'決策日誌', note:'記下來', href:'./decision-journal/', c:'purple' }
+      ],
+      next:'寫下你選的方案，並訂一個一週後回頭檢視的日期。' },
+    { key:'restless', label:'坐不住・靜不下來',
+      steps:[
+        { seal:'矩', name:'能量管理矩陣', note:'看適合做啥', href:'./energy-matrix/', c:'coral' },
+        { seal:'塊', name:'時間分塊法', note:'切一區塊', href:'./time-blocking/', c:'pumpkin' },
+        { seal:'流', name:'心流觸發', note:'進入狀態', href:'./flow-triggers/', c:'lagoon' }
+      ],
+      next:'設一個 25 分鐘、只做一件事的區塊，現在開始。' },
+    { key:'forget', label:'學了一直忘',
+      steps:[
+        { seal:'萃', name:'知識蒸餾法', note:'濃縮重點', href:'./knowledge-distill/', c:'indigo' },
+        { seal:'原', name:'知識原子化', note:'拆成小卡', href:'./knowledge-atom/', c:'magenta' },
+        { seal:'圖', name:'視覺筆記法', note:'畫出來', href:'./visual-note-taking/', c:'sepia' }
+      ],
+      next:'把剛學的東西，濃縮成一張你自己看得懂的卡。' },
+    { key:'interrupt', label:'一直被雜事切斷',
+      steps:[
+        { seal:'換', name:'任務切換成本', note:'看見代價', href:'./task-switching-cost/', c:'forest' },
+        { seal:'批', name:'任務批次化', note:'同類合併', href:'./task-batching/', c:'denim' },
+        { seal:'律', name:'能量區塊優化', note:'排進節律', href:'./energy-blocking/', c:'olive' }
+      ],
+      next:'把今天同類的瑣事，全部集中到一個時段處理。' },
+    { key:'procrastinate', label:'光想不做・拖延',
+      steps:[
+        { seal:'進', name:'最小可行進展', note:'縮到最小', href:'./mvp-progress/', c:'violet' },
+        { seal:'觸', name:'行動觸發', note:'設觸發點', href:'./action-trigger/', c:'teal' },
+        { seal:'輪', name:'複利行動飛輪', note:'累積動能', href:'./compound-flywheel/', c:'saffron' }
+      ],
+      next:'把那件事縮到「小到不可能失敗」的第一步，今天做掉。' }
+  ];
+
+  const chipsEl = document.getElementById('sitChips');
+  const pathEl = document.getElementById('sitPath');
+  if (!chipsEl || !pathEl) return;
+  let activeKey = null;
+
+  const chevron = '<svg class="path-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+
+  function recordVisit(id){
+    try { const r = JSON.parse(localStorage.getItem('prod_portal_visits')) || {}; r[id] = Date.now(); localStorage.setItem('prod_portal_visits', JSON.stringify(r)); } catch(e){}
+  }
+
+  SITUATIONS.forEach(s => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'sit-chip';
+    b.dataset.key = s.key;
+    b.textContent = s.label;
+    b.addEventListener('click', () => { activeKey = (activeKey === s.key) ? null : s.key; render(); });
+    chipsEl.appendChild(b);
+  });
+
+  function render(){
+    chipsEl.querySelectorAll('.sit-chip').forEach(c => c.classList.toggle('active', c.dataset.key === activeKey));
+    if (!activeKey){ pathEl.classList.remove('show'); pathEl.innerHTML = ''; return; }
+    const s = SITUATIONS.find(x => x.key === activeKey);
+    let steps = '';
+    s.steps.forEach((st, i) => {
+      if (i) steps += chevron;
+      const id = st.href.replace(/[.\/]/g, '');
+      steps += '<a class="path-step" href="' + st.href + '" data-id="' + id + '">' +
+        '<span class="seal-sm" style="background:var(--' + st.c + '-soft);color:var(--' + st.c + ')">' + st.seal + '</span>' +
+        '<span class="path-step-name">' + st.name + '<br><span class="path-step-note">' + st.note + '</span></span></a>';
+    });
+    pathEl.innerHTML =
+      '<p class="sit-path-hint">這條路徑，照順序走 →</p>' +
+      '<div class="path-row">' + steps + '</div>' +
+      '<div class="next-step"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>' +
+      '<div class="ns-body"><b>具體下一步</b><br>' + s.next + '</div></div>';
+    pathEl.classList.add('show');
+    pathEl.querySelectorAll('.path-step').forEach(a => a.addEventListener('click', () => recordVisit(a.dataset.id)));
+  }
 })();
 </script>
 </body>

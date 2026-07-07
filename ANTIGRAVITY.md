@@ -72,6 +72,7 @@
 - **id 產生器一律用 `uid() = Date.now().toString(36) + Math.random().toString(36).slice(2,7)`**，不要用純 `Date.now()`（同毫秒連續建立會碰撞，已於 2026-07-04 全面修正）。
 - **全部 36 工具皆同一 origin `iamkeith001.github.io`**（GitHub Pages project page origin 只看 host、不看路徑），localStorage 整站共享，各工具靠 key 前綴避免打架。
 - **2026-07-07 合併重構**：原本 4 個工具（energy-first/mind-offload/choice-loop/premortem-thinking）是各自獨立 repo＋各自 Pages 網址，已 vendored 進本 monorepo 成 `<slug>/index.html`＋`README.md`，入口卡片與工具頁尾「同系列」連結全改**相對路徑**（`./slug/`、`../slug/`）。原 Chinese 命名資料夾（能量管理.../認知卸載法.../探索選擇.../情境預演...）仍各帶 `.git` 留在磁碟當 legacy 原始碼、被 `.gitignore` 排除（連同 `.claude/`）。要改那 4 個工具請改 monorepo 內的 `<slug>/`，別再改 Chinese 資料夾。
+- **入口頁「情境導引（從這裡開始）」（2026-07-07 加，草稿版）**：hero 下方面板，回答使用者「先用哪個／怎麼串接／下一步是什麼」。JS 內 `SITUATIONS` 陣列寫死 6 條情境路徑（事情堆爆／難決定／坐不住／學了忘／被切斷／拖延），每條 2–3 步印章路徑（`href` 相對 `./id/`、seal 用工具 accent）＋結尾一句具體行動。點情境展開路徑、點印章開工具並 `recordVisit()`（共用 `prod_portal_visits`）。**情境文字與路徑組合是草稿，待 Keith 調整**。加情境＝改 `SITUATIONS` 陣列即可。
 - **入口頁「回訪提醒層」（2026-07-07 加，溫柔版）**：`index.html` 自己在點卡片時記錄進場時間，不讀子工具內部 localStorage、不改任何子工具（同 origin，含那 4 個工具卡片也能記到點擊）。key：`prod_portal_visits`＝`{toolId: epochMs}`、`prod_portal_streak`＝`{last:"YYYY-MM-DD", count}`。行為：hero 下方「憶」木牌顯示進場 streak ＋沉睡工具清單（門檻 `SLEEP_DAYS=3`，只提醒「用過又冷掉」的、不嘮叨沒開過的），沉睡卡片加 `.sleep-badge` 角標；無可提醒內容時整塊 `hidden` 保持乾淨。
 
 ## 🚀 部署與驗證流程（每次新增工具）
