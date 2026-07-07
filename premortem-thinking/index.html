@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="情境預演">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23C03A2B' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23C03A2B'%3E預%3C/text%3E%3C/svg%3E">
+<title>情境預演 · Premortem Thinking</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --grid:rgba(47,90,168,.07);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --grid:rgba(138,171,232,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--blue)}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card.gridpaper{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;background-position:center}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--red)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .premortem-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;color:var(--red);letter-spacing:.04em}
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  input[type=text],input[type=date],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:84px;resize:vertical;line-height:1.65}
+  input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--blue);color:var(--paper);letter-spacing:.08em;font-family:inherit}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--blue-soft);color:var(--blue)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px}
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.12em}
+  .goal-box{border-left:3px solid var(--blue);padding:3px 0 3px 14px;margin-bottom:16px}
+  .goal-box .t{font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;font-size:18px;letter-spacing:.04em}
+  .goal-box .s{font-size:13px;color:var(--pencil);margin-top:2px}
+  .risk{border-top:1px solid var(--hairline-soft);padding:13px 0}
+  .risk:first-child{border-top:none;padding-top:0}
+  .risk-head{display:flex;align-items:flex-start;gap:10px}
+  .risk-title{flex:1;min-width:0;font-size:15px;font-weight:800;word-break:break-word}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.red{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .tag.amber{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.blue{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .tag.green{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .risk p{margin:6px 0 0;color:var(--pencil);font-size:12.8px;line-height:1.7}
+  .item-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .tiny{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:5px;padding:7px 9px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+  .tiny.red{color:var(--red)}
+  .tiny.blue{color:var(--blue)}
+  .tiny.green{color:var(--green)}
+  .score-row{display:grid;grid-template-columns:58px 1fr 26px;gap:8px;align-items:center;margin:8px 0}
+  .score-row label{font-size:12.5px;color:var(--pencil);font-weight:700}
+  input[type=range]{width:100%;accent-color:var(--red)}
+  .matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .quad{min-height:124px;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px}
+  .quad h3{font-size:13.5px;margin:0 0 3px;letter-spacing:.04em}
+  .quad .qsub{font-size:11.5px;color:var(--pencil);margin-bottom:8px}
+  .qitem{font-size:12.5px;line-height:1.55;border-top:1px solid var(--hairline-soft);padding:7px 0;color:var(--ink)}
+  .qitem:first-of-type{border-top:none}
+  .action{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-top:1px solid var(--hairline-soft)}
+  .action:first-child{border-top:none}
+  .check{width:22px;height:22px;border-radius:4px;border:1.5px solid var(--hairline);background:var(--paper);cursor:pointer;flex:none;display:grid;place-items:center;padding:0;margin-top:1px}
+  .check svg{width:13px;height:13px;stroke:var(--green);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;display:none}
+  .check.on svg{display:block}
+  .action.done .atxt{text-decoration:line-through;color:var(--pencil)}
+  .atxt{flex:1;min-width:0;font-size:13.5px;line-height:1.65;word-break:break-word}
+  .atxt small{display:block;color:var(--pencil);font-size:11.5px}
+  .empty-hint{color:var(--pencil);font-size:13px;padding:18px 2px;text-align:center;line-height:1.7}
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"⌄";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"⌃"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.75}
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.14em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--red)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--blue)}
+  @media (max-width:420px){.matrix{grid-template-columns:1fr}.score-row{grid-template-columns:52px 1fr 24px}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--red)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--red)">預</text></svg>
+      <div>
+        <h1>情境預演</h1>
+        <small>Premortem Thinking</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-goal">
+    <div class="hero">
+      <p class="eyebrow">Premortem Thinking</p>
+      <div class="hero-title">先替未來的失敗，<br>開一場檢討會。</div>
+      <p class="hero-text">在行動前先假設計畫已經失敗，讓盲點、錯誤假設與沒有說出口的擔憂提前浮出來，再把它們轉成預防行動。</p>
+      <div class="premortem-line">假設三個月後，這件事失敗了。最可能的原因是什麼？</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="stRisks">0</div><div class="l">失敗原因</div></div>
+      <div class="stat"><div class="n" id="stCritical">0</div><div class="l">優先處理</div></div>
+      <div class="stat"><div class="n" id="stDone">0</div><div class="l">完成行動</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">目標</p>
+      <h2>先清楚定義成功長什麼樣子</h2>
+      <div class="sub">不要只寫「希望成功」。目標越清楚，預演才越有效。</div>
+      <input type="text" id="projectName" placeholder="計畫名稱，例如：六週內完成研究資料清理">
+      <textarea id="successDef" placeholder="成功條件，例如：完成資料清理、通過品質檢核、交出可分析版本"></textarea>
+      <input type="date" id="targetDate" aria-label="目標日期">
+      <input type="text" id="owner" placeholder="主要負責人或團隊">
+      <textarea id="context" placeholder="背景情境：目前最大的限制、資源、利害關係人"></textarea>
+      <button class="btn" id="saveGoalBtn">儲存目標</button>
+    </div>
+
+    <div class="card gridpaper">
+      <p class="eyebrow">目前計畫</p>
+      <div id="goalView"></div>
+    </div>
+  </section>
+
+  <section class="tab" id="tab-imagine">
+    <div class="card">
+      <p class="eyebrow">預演</p>
+      <h2>假設它已經失敗，列出可能原因</h2>
+      <div class="sub">先不要反駁，也不要急著解決。這一步只負責大量暴露風險。</div>
+      <textarea id="riskText" placeholder="失敗原因，例如：時程太樂觀、資料品質不穩定、關鍵人員沒有真正投入"></textarea>
+      <select id="riskType">
+        <option value="時程">時程</option>
+        <option value="資源">資源</option>
+        <option value="人員">人員</option>
+        <option value="溝通">溝通</option>
+        <option value="需求">需求</option>
+        <option value="技術">技術</option>
+        <option value="使用者">使用者</option>
+        <option value="品質">品質</option>
+      </select>
+      <button class="btn" id="addRiskBtn">加入失敗原因</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">提示</p>
+      <h2>快速暴露常見盲點</h2>
+      <div class="sub">點一下即可加入，之後再到矩陣調整機率與影響。</div>
+      <div id="promptList"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">清單</p>
+      <h2>目前列出的失敗原因</h2>
+      <div id="riskList"></div>
+    </div>
+  </section>
+
+  <section class="tab" id="tab-matrix">
+    <div class="card">
+      <p class="eyebrow">矩陣</p>
+      <h2>找出真正會讓計畫失敗的風險</h2>
+      <div class="sub">高機率、高影響要優先處理；低機率、高影響要準備備援方案。</div>
+      <div id="scoreList"></div>
+    </div>
+    <div class="card gridpaper">
+      <p class="eyebrow">四象限</p>
+      <div class="matrix" id="matrix"></div>
+    </div>
+  </section>
+
+  <section class="tab" id="tab-actions">
+    <div class="card">
+      <p class="eyebrow">行動</p>
+      <h2>把風險改寫成預防行動</h2>
+      <div class="sub">情境預演不是只列風險，而是把風險轉成行動設計。</div>
+      <select id="riskSelect" aria-label="選擇風險"></select>
+      <textarea id="actionText" placeholder="預防行動，例如：上線前建立資料品質檢核表"></textarea>
+      <input type="text" id="actionOwner" placeholder="負責人">
+      <input type="date" id="actionDue" aria-label="追蹤日期">
+      <button class="btn" id="addActionBtn">加入預防行動</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">追蹤</p>
+      <h2>預防行動清單</h2>
+      <div id="actionList"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">帶走</p>
+      <h2>複製到筆記</h2>
+      <div class="sub">把這次 premortem 複製成純文字，貼到 Obsidian、Notion 或專案文件。</div>
+      <button class="btn ghost" id="copySummaryBtn">複製情境預演摘要</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>備份與還原</h2>
+      <div class="sub">資料只存在這台裝置。換手機或清除瀏覽器前，請先下載備份。</div>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <button class="btn danger" id="wipeBtn" style="margin-top:9px">清除全部資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法提醒</p>
+      <details open><summary>這不是悲觀</summary><div class="body">情境預演不是唱衰，而是用想像失敗來提高成功率。越早看見盲點，越便宜。</div></details>
+      <details><summary>讓團隊更敢說真話</summary><div class="body">「我覺得這會失敗」容易讓人防衛；「假設它失敗了，可能原因是什麼」比較容易讓真實擔憂浮出來。</div></details>
+      <details><summary>最後一定要轉成行動</summary><div class="body">只列風險會增加焦慮；把風險變成檢核表、窗口、凍結日、備援方案，才會提高成功機率。</div></details>
+    </div>
+
+    <div class="foot">
+      情境預演法 · Premortem Thinking<br>
+      系列入口：<a href="../">提升生產力系統</a><br>
+      同系列：<a href="../energy-first/">能量儀表板</a> · <a href="../mind-offload/">腦袋清空站</a> · <a href="../choice-loop/">選擇迴圈</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="goal" aria-label="目標"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>目標</button>
+    <button class="tabbtn" data-tab="imagine" aria-label="預演"><svg viewBox="0 0 24 24"><path d="M4 19.5h16M6 17V7l6-3 6 3v10"/><path d="M9 10h6M9 14h6"/></svg>預演</button>
+    <button class="tabbtn" data-tab="matrix" aria-label="矩陣"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>矩陣</button>
+    <button class="tabbtn" data-tab="actions" aria-label="行動"><svg viewBox="0 0 24 24"><path d="M4 12.5 8.5 17 20 5.5"/><path d="M4 6h8M4 19h6"/></svg>行動</button>
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const store={
+  get(k,def){try{const v=JSON.parse(localStorage.getItem("pm_"+k));return v==null?def:v}catch(e){return def}},
+  set(k,v){localStorage.setItem("pm_"+k,JSON.stringify(v))}
+};
+let goal=store.get("goal",{});
+let risks=store.get("risks",[]);
+let actions=store.get("actions",[]);
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const fmt=d=>{if(!d)return "未設定";const x=new Date(d+"T00:00:00");return (x.getMonth()+1)+"/"+x.getDate()};
+const esc=s=>(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const CHECK='<svg viewBox="0 0 16 16"><path d="M2.5 8.5 6 12l7.5-8"/></svg>';
+const prompts=[
+  ["時程太樂觀，沒有緩衝時間","時程"],["資料品質不穩定，後面才發現不能用","品質"],
+  ["關鍵人員沒有真正投入","人員"],["跨部門溝通太慢，回覆卡住","溝通"],
+  ["成功條件沒有被明確定義","需求"],["使用者不願改變原本習慣","使用者"],
+  ["關鍵技術比想像中困難","技術"],["需求一直變動，沒有凍結點","需求"],
+  ["沒有明確負責人，大家都以為別人會做","資源"]
+];
+function save(){store.set("goal",goal);store.set("risks",risks);store.set("actions",actions)}
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2000)}
+function quadrant(r){
+  const p=+r.probability||3, i=+r.impact||3;
+  if(p>=4&&i>=4)return ["優先處理","red","高機率 × 高影響"];
+  if(p>=4&&i<4)return ["標準流程","amber","高機率 × 低影響"];
+  if(p<4&&i>=4)return ["備援方案","blue","低機率 × 高影響"];
+  return ["持續觀察","green","低機率 × 低影響"];
+}
+function renderStats(){
+  $("stRisks").textContent=risks.length;
+  $("stCritical").textContent=risks.filter(r=>quadrant(r)[0]==="優先處理").length;
+  $("stDone").textContent=actions.filter(a=>a.done).length;
+}
+document.querySelectorAll(".tabbtn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".tabbtn").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");$("tab-"+b.dataset.tab).classList.add("active");
+    renderAll();window.scrollTo({top:0});
+  });
+});
+function applyTheme(t){
+  document.documentElement.dataset.theme=t;
+  $("themeIcon").innerHTML=t==="dark"
+    ?'<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    :'<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  store.set("theme",t);
+}
+applyTheme(store.get("theme",matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+$("themeBtn").addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+$("saveGoalBtn").addEventListener("click",()=>{
+  goal={name:$("projectName").value.trim(),success:$("successDef").value.trim(),date:$("targetDate").value,owner:$("owner").value.trim(),context:$("context").value.trim()};
+  save();renderAll();toast("目標已儲存");
+});
+function fillGoalForm(){
+  $("projectName").value=goal.name||"";$("successDef").value=goal.success||"";$("targetDate").value=goal.date||"";$("owner").value=goal.owner||"";$("context").value=goal.context||"";
+}
+function renderGoal(){
+  $("goalView").innerHTML=goal.name?`
+    <div class="goal-box"><div class="t">${esc(goal.name)}</div><div class="s">目標日期：${fmt(goal.date)} · 負責：${esc(goal.owner||"未設定")}</div></div>
+    <p><b>成功條件：</b>${esc(goal.success||"尚未定義")}</p>
+    <p><b>背景情境：</b>${esc(goal.context||"尚未補充")}</p>`:
+    '<div class="empty-hint">先定義目標，才能開始有效預演。</div>';
+}
+function addRisk(text,type){
+  risks.unshift({id:uid(),text:text.trim(),type,probability:3,impact:3,actionDraft:""});
+  save();renderAll();toast("已加入失敗原因");
+}
+$("addRiskBtn").addEventListener("click",()=>{
+  const text=$("riskText").value.trim();if(!text){toast("先寫一個失敗原因");return}
+  addRisk(text,$("riskType").value);$("riskText").value="";
+});
+function renderPrompts(){
+  $("promptList").innerHTML=prompts.map(([t,k])=>`<button class="tiny blue" data-prompt="${esc(t)}" data-type="${k}" style="margin:0 7px 8px 0">${esc(t)}</button>`).join("");
+  $("promptList").querySelectorAll("[data-prompt]").forEach(b=>b.addEventListener("click",()=>addRisk(b.dataset.prompt,b.dataset.type)));
+}
+function renderRisks(){
+  const el=$("riskList");
+  if(!risks.length){el.innerHTML='<div class="empty-hint">還沒有失敗原因。先假設計畫失敗，讓風險浮出來。</div>';return}
+  el.innerHTML=risks.map(r=>{
+    const q=quadrant(r);
+    return `<div class="risk">
+      <div class="risk-head"><div class="risk-title">${esc(r.text)}</div><span class="tag ${q[1]}">${q[0]}</span></div>
+      <p>${esc(r.type)} · ${q[2]}</p>
+      <div class="item-actions"><button class="tiny red" data-del="${r.id}">刪除</button></div>
+    </div>`;
+  }).join("");
+  el.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{
+    risks=risks.filter(r=>r.id!==b.dataset.del);actions=actions.filter(a=>a.riskId!==b.dataset.del);save();renderAll();toast("已刪除");
+  }));
+}
+function renderScores(){
+  const el=$("scoreList");
+  if(!risks.length){el.innerHTML='<div class="empty-hint">先到「預演」列出失敗原因，這裡就能評估機率與影響。</div>';return}
+  el.innerHTML=risks.map(r=>{
+    const q=quadrant(r);
+    return `<div class="risk" data-risk="${r.id}">
+      <div class="risk-head"><div class="risk-title">${esc(r.text)}</div><span class="tag ${q[1]}">${q[0]}</span></div>
+      <div class="score-row"><label>機率</label><input type="range" min="1" max="5" value="${r.probability||3}" data-k="probability"><span>${r.probability||3}</span></div>
+      <div class="score-row"><label>影響</label><input type="range" min="1" max="5" value="${r.impact||3}" data-k="impact"><span>${r.impact||3}</span></div>
+    </div>`;
+  }).join("");
+  el.querySelectorAll("input[type=range]").forEach(i=>i.addEventListener("input",()=>{
+    const r=risks.find(x=>x.id===i.closest("[data-risk]").dataset.risk);
+    r[i.dataset.k]=+i.value;save();renderScores();renderMatrix();renderStats();renderRiskSelect();
+  }));
+}
+function renderMatrix(){
+  const groups=[
+    ["優先處理","red","必須優先處理"],["標準流程","amber","建立標準流程處理"],
+    ["備援方案","blue","準備備援方案"],["持續觀察","green","持續觀察即可"]
+  ];
+  $("matrix").innerHTML=groups.map(([name,color,sub])=>{
+    const list=risks.filter(r=>quadrant(r)[0]===name);
+    return `<div class="quad"><h3><span class="tag ${color}">${name}</span></h3><div class="qsub">${sub}</div>${list.length?list.map(r=>`<div class="qitem">${esc(r.text)}</div>`).join(""):'<div class="empty-hint" style="padding:8px 0;text-align:left">目前沒有</div>'}</div>`;
+  }).join("");
+}
+function renderRiskSelect(){
+  const sorted=[...risks].sort((a,b)=>(b.probability*b.impact)-(a.probability*a.impact));
+  $("riskSelect").innerHTML=sorted.length?sorted.map(r=>`<option value="${r.id}">${quadrant(r)[0]}｜${esc(r.text).slice(0,40)}</option>`).join(""):'<option value="">先新增風險</option>';
+}
+$("addActionBtn").addEventListener("click",()=>{
+  const riskId=$("riskSelect").value,text=$("actionText").value.trim();
+  if(!riskId){toast("先選一個風險");return}
+  if(!text){toast("先寫一個預防行動");return}
+  actions.unshift({id:uid(),riskId,text,owner:$("actionOwner").value.trim(),due:$("actionDue").value,done:false});
+  $("actionText").value="";$("actionOwner").value="";$("actionDue").value="";
+  save();renderAll();toast("已加入預防行動");
+});
+function renderActions(){
+  const el=$("actionList");
+  if(!actions.length){el.innerHTML='<div class="empty-hint">還沒有預防行動。把最高風險先改寫成一個具體動作。</div>';return}
+  el.innerHTML=actions.map(a=>{
+    const r=risks.find(x=>x.id===a.riskId);
+    return `<div class="action ${a.done?"done":""}">
+      <button class="check ${a.done?"on":""}" data-done="${a.id}" aria-label="完成">${CHECK}</button>
+      <div class="atxt">${esc(a.text)}<small>對應風險：${esc(r?r.text:"已刪除")} · 負責：${esc(a.owner||"未設定")} · 追蹤：${fmt(a.due)}</small></div>
+      <button class="tiny red" data-del-action="${a.id}">刪除</button>
+    </div>`;
+  }).join("");
+  el.querySelectorAll("[data-done]").forEach(b=>b.addEventListener("click",()=>{
+    const a=actions.find(x=>x.id===b.dataset.done);a.done=!a.done;save();renderAll();
+  }));
+  el.querySelectorAll("[data-del-action]").forEach(b=>b.addEventListener("click",()=>{
+    actions=actions.filter(a=>a.id!==b.dataset.delAction);save();renderAll();toast("已刪除行動");
+  }));
+}
+$("copySummaryBtn").addEventListener("click",async()=>{
+  const lines=["# 情境預演摘要","",`## 目標：${goal.name||"未命名計畫"}`,`成功條件：${goal.success||"未設定"}`,`目標日期：${fmt(goal.date)}`,`負責：${goal.owner||"未設定"}`,"","## 失敗原因"];
+  risks.forEach(r=>lines.push(`- [${quadrant(r)[0]}] ${r.text}（機率 ${r.probability||3}/5，影響 ${r.impact||3}/5）`));
+  lines.push("","## 預防行動");
+  actions.forEach(a=>{const r=risks.find(x=>x.id===a.riskId);lines.push(`- ${a.done?"[完成]":"[待辦]"} ${a.text}｜對應：${r?r.text:"已刪除"}｜負責：${a.owner||"未設定"}｜追蹤：${fmt(a.due)}`)});
+  await navigator.clipboard.writeText(lines.join("\n"));toast("已複製摘要");
+});
+$("exportBtn").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify({goal,risks,actions,exportedAt:new Date().toISOString()},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="premortem-backup-"+today()+".json";a.click();URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const data=JSON.parse(r.result);goal=data.goal||{};risks=data.risks||[];actions=data.actions||[];save();fillGoalForm();renderAll();toast("已讀取備份")}catch(err){toast("備份檔讀取失敗")}};
+  r.readAsText(f);e.target.value="";
+});
+$("wipeBtn").addEventListener("click",()=>{
+  if(!confirm("確定清除全部資料？"))return;
+  goal={};risks=[];actions=[];save();fillGoalForm();renderAll();toast("已清除");
+});
+function renderAll(){renderStats();renderGoal();renderPrompts();renderRisks();renderScores();renderMatrix();renderRiskSelect();renderActions();}
+fillGoalForm();
+renderAll();
+</script>
+</body>
+</html>

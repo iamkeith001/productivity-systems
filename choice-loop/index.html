@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="選擇迴圈">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%238A6012' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%238A6012'%3E循%3C/text%3E%3C/svg%3E">
+<title>選擇迴圈 · Explore Choose Commit</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --grid:rgba(47,90,168,.07);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --grid:rgba(138,171,232,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--blue)}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:3px}
+
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card.gridpaper{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;background-position:center}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .rule{border:none;border-top:1px solid var(--hairline-soft);margin:14px 0}
+
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--amber)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .loop-rail{display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr;align-items:center;margin-top:18px}
+  .loop-node{min-height:74px;border:1px solid var(--hairline);background:var(--paper);border-radius:5px;padding:11px 8px;text-align:center}
+  .loop-node b{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;color:var(--c);letter-spacing:.08em}
+  .loop-node span{display:block;color:var(--pencil);font-size:10.5px;letter-spacing:.1em;margin-top:2px}
+  .arrow{height:1px;background:var(--hairline);position:relative}
+  .arrow::after{content:"";position:absolute;right:-1px;top:-4px;border-left:7px solid var(--hairline);border-top:4px solid transparent;border-bottom:4px solid transparent}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  input[type=text],input[type=date],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  textarea{min-height:84px;resize:vertical;line-height:1.65}
+  input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--blue);color:var(--paper);letter-spacing:.08em;font-family:inherit}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--blue-soft);color:var(--blue)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px}
+
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.12em}
+
+  .option{border-top:1px solid var(--hairline-soft);padding:13px 0}
+  .option:first-child{border-top:none;padding-top:0}
+  .option-head{display:flex;align-items:flex-start;gap:10px}
+  .option-title{flex:1;min-width:0;font-size:15px;font-weight:800;word-break:break-word}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.live{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.pick{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .tag.done{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+  .option p{margin:6px 0 0;color:var(--pencil);font-size:12.8px;line-height:1.7}
+  .item-actions{display:flex;gap:8px;margin-top:10px}
+  .tiny{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:5px;padding:7px 9px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+  .tiny.red{color:var(--red)}
+  .tiny.blue{color:var(--blue)}
+
+  .score-card{border-top:1px solid var(--hairline-soft);padding:13px 0}
+  .score-card:first-child{border-top:none;padding-top:0}
+  .score-title{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:8px}
+  .score-title b{font-size:14.5px}
+  .score-title span{font-family:"Songti TC","Noto Serif TC",serif;font-size:22px;font-weight:900;color:var(--amber)}
+  .score-row{display:grid;grid-template-columns:82px 1fr 26px;gap:8px;align-items:center;margin:8px 0}
+  .score-row label{font-size:12.5px;color:var(--pencil);font-weight:700}
+  input[type=range]{width:100%;accent-color:var(--amber)}
+  .recommend{border-left:3px solid var(--amber);padding:3px 0 3px 14px;margin-bottom:14px}
+  .recommend .t{font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;font-size:17px;letter-spacing:.05em}
+  .recommend .s{font-size:13px;color:var(--pencil);margin-top:2px}
+
+  .commit-box{border-left:3px solid var(--green);padding:3px 0 3px 14px;margin-bottom:16px}
+  .commit-box .t{font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;font-size:18px;letter-spacing:.04em}
+  .commit-box .s{font-size:13px;color:var(--pencil);margin-top:2px}
+  .progress-line{height:10px;border-radius:99px;background:var(--paper2);border:1px solid var(--hairline-soft);overflow:hidden;margin:10px 0 2px}
+  .progress-line i{display:block;height:100%;background:var(--green);width:0%}
+  .log{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-top:1px solid var(--hairline-soft)}
+  .log:first-child{border-top:none}
+  .log .date{width:48px;flex:none;color:var(--pencil);font-weight:700;font-size:12.5px}
+  .log .txt{flex:1;min-width:0;font-size:13.5px;word-break:break-word}
+  .empty-hint{color:var(--pencil);font-size:13px;padding:18px 2px;text-align:center;line-height:1.7}
+
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"⌄";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"⌃"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);line-height:1.75}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.14em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--amber)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--red)}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--amber)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--amber)">循</text></svg>
+      <div>
+        <h1>選擇迴圈</h1>
+        <small>探索 · 選擇 · 承諾</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-explore">
+    <div class="hero" id="hero">
+      <p class="eyebrow">Explore Choose Commit Loop</p>
+      <div class="hero-title">先打開可能性，<br>再把力量收回來。</div>
+      <p class="hero-text">不確定時，不要急著一次押對。先探索多個方向，接著選一個最值得投入的選項，最後給自己一段承諾期，直到取得足夠結果再回顧。</p>
+      <div class="loop-rail" aria-hidden="true">
+        <div class="loop-node" style="--c:var(--blue)"><b>探索</b><span>打開選項</span></div>
+        <div class="arrow"></div>
+        <div class="loop-node" style="--c:var(--amber)"><b>選擇</b><span>縮小方向</span></div>
+        <div class="arrow"></div>
+        <div class="loop-node" style="--c:var(--green)"><b>承諾</b><span>創造成果</span></div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="stOptions">0</div><div class="l">探索選項</div></div>
+      <div class="stat"><div class="n" id="stActive">0</div><div class="l">承諾中</div></div>
+      <div class="stat"><div class="n" id="stLoops">0</div><div class="l">完成迴圈</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">探索</p>
+      <h2>新增一個可能方向</h2>
+      <div class="sub">探索階段不是立刻決定，而是把值得測試的路徑先放到紙上。</div>
+      <input type="text" id="optTitle" placeholder="可能方向，例如：把研究題目聚焦在 AI 輔助臨床決策" maxlength="80">
+      <textarea id="optGap" placeholder="我還缺哪些資訊？"></textarea>
+      <textarea id="optTest" placeholder="最小成本的嘗試是什麼？"></textarea>
+      <select id="optCost" aria-label="探索成本">
+        <option value="低成本">低成本：1 天內能測</option>
+        <option value="中成本">中成本：1 週內能測</option>
+        <option value="高成本">高成本：需要跨人協作</option>
+      </select>
+      <button class="btn" id="addOptBtn">加入探索清單</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">清單</p>
+      <h2>目前有哪些可能方向？</h2>
+      <div id="optionList"></div>
+    </div>
+  </section>
+
+  <section class="tab" id="tab-choose">
+    <div class="card gridpaper">
+      <p class="eyebrow">選擇</p>
+      <h2>把探索收斂成階段性選擇</h2>
+      <div class="sub">選擇不是永遠正確，而是根據當前目標、資源與資訊，挑出下一階段最值得投入的方向。</div>
+      <div id="recommendBox"></div>
+    </div>
+    <div class="card">
+      <p class="eyebrow">評分</p>
+      <h2>四個問題</h2>
+      <div class="sub">目標符合、風險可控、學習價值、資源符合。每項 1 到 5 分。</div>
+      <div id="scoreList"></div>
+    </div>
+  </section>
+
+  <section class="tab" id="tab-commit">
+    <div class="card">
+      <p class="eyebrow">承諾</p>
+      <h2>停止反覆猶豫，開始集中資源</h2>
+      <div class="sub">承諾不是盲目堅持，而是在設定的時間或里程碑內專注執行。</div>
+      <div id="commitArea"></div>
+    </div>
+    <div class="card">
+      <p class="eyebrow">證據</p>
+      <h2>記錄執行結果</h2>
+      <div class="sub">每次記錄一個行動、結果或學到的事。回顧時用證據調整，而不是靠情緒。</div>
+      <textarea id="evidenceText" placeholder="今天做了什麼？看到了什麼結果？學到什麼？"></textarea>
+      <select id="confidence">
+        <option value="3">信心 3：還不確定</option>
+        <option value="4">信心 4：方向變清楚</option>
+        <option value="5">信心 5：值得加碼</option>
+        <option value="2">信心 2：需要調整</option>
+        <option value="1">信心 1：可能該停</option>
+      </select>
+      <button class="btn" id="addEvidenceBtn">加入承諾紀錄</button>
+    </div>
+    <div class="card">
+      <p class="eyebrow">紀錄</p>
+      <div id="evidenceList"></div>
+    </div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="card">
+      <p class="eyebrow">回顧</p>
+      <h2>這一輪要怎麼迭代？</h2>
+      <div class="sub">到期或證據足夠時，決定繼續、調整或結束，然後進入下一輪探索。</div>
+      <div id="reviewArea"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">摘要</p>
+      <h2>帶去你的筆記</h2>
+      <div class="sub">一鍵複製目前迴圈，貼到 Obsidian、Notion 或任何筆記工具。</div>
+      <button class="btn ghost" id="copySummaryBtn">複製迴圈摘要</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>備份與還原</h2>
+      <div class="sub">資料只存在這台裝置。換手機或清除瀏覽器前，請先下載備份。</div>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <button class="btn danger" id="wipeBtn" style="margin-top:9px">清除全部資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法提醒</p>
+      <details open>
+        <summary>探索 Explore</summary>
+        <div class="body">打開可能性。收集資訊、觀察趨勢、訪談使用者、嘗試小實驗，不急著把自己鎖死在單一路徑。</div>
+      </details>
+      <details>
+        <summary>選擇 Choose</summary>
+        <div class="body">探索不能無限延長。當資訊足夠時，根據目前目標與資源，挑出最值得投入的方向。</div>
+      </details>
+      <details>
+        <summary>承諾 Commit</summary>
+        <div class="body">在設定的時間或里程碑內，停止分心於其他選項，專注執行，直到取得足夠結果再回顧。</div>
+      </details>
+    </div>
+
+    <div class="foot">
+      選擇迴圈 · Explore Choose Commit<br>
+      持續探索，明確選擇，全力承諾，成果才會自然累積。<br>
+      系列入口：<a href="../">提升生產力系統</a><br>
+      同系列：<a href="../energy-first/">能量儀表板</a> · <a href="../mind-offload/">腦袋清空站</a> · <a href="../premortem-thinking/">情境預演</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="explore" aria-label="探索"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4M11 7.5v7M7.5 11h7"/></svg>探索</button>
+    <button class="tabbtn" data-tab="choose" aria-label="選擇"><svg viewBox="0 0 24 24"><path d="M4 12.5 8.5 17 20 5.5"/><path d="M4 5h9M4 19h5"/></svg>選擇</button>
+    <button class="tabbtn" data-tab="commit" aria-label="承諾"><svg viewBox="0 0 24 24"><path d="M12 3v6l4-2 4 2V3z"/><path d="M5 5v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>承諾</button>
+    <button class="tabbtn" data-tab="review" aria-label="回顧"><svg viewBox="0 0 24 24"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M20 9a8 8 0 0 0-13.5-3.5L4 8M4 15a8 8 0 0 0 13.5 3.5L20 16"/></svg>回顧</button>
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const store={
+  get(k,def){try{const v=JSON.parse(localStorage.getItem("ecc_"+k));return v==null?def:v}catch(e){return def}},
+  set(k,v){localStorage.setItem("ecc_"+k,JSON.stringify(v))}
+};
+let options=store.get("options",[]);
+let activeId=store.get("activeId",null);
+let loops=store.get("loops",[]);
+const $=id=>document.getElementById(id);
+const esc=s=>(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const fmt=d=>{if(!d)return "未設定";const x=new Date(d+"T00:00:00");return (x.getMonth()+1)+"/"+x.getDate()};
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2000)}
+function save(){store.set("options",options);store.set("activeId",activeId);store.set("loops",loops)}
+function active(){return options.find(o=>o.id===activeId)||null}
+function score(o){const s=o.score||{};return ((+s.goal||3)+(+s.risk||3)+(+s.learn||3)+(+s.resource||3))/4}
+function daysLeft(o){if(!o.commitEnd)return null;const a=new Date(today()+"T00:00:00");const b=new Date(o.commitEnd+"T00:00:00");return Math.ceil((b-a)/86400000)}
+function progress(o){if(!o.commitStart||!o.commitEnd)return 0;const a=new Date(o.commitStart+"T00:00:00"),b=new Date(o.commitEnd+"T00:00:00"),n=new Date(today()+"T00:00:00");return Math.max(0,Math.min(100,((n-a)/(b-a))*100))}
+
+document.querySelectorAll(".tabbtn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".tabbtn").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    $("tab-"+b.dataset.tab).classList.add("active");
+    renderAll();
+    window.scrollTo({top:0});
+  });
+});
+
+function applyTheme(t){
+  document.documentElement.dataset.theme=t;
+  $("themeIcon").innerHTML=t==="dark"
+    ?'<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    :'<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  store.set("theme",t);
+}
+applyTheme(store.get("theme",matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+$("themeBtn").addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+
+$("addOptBtn").addEventListener("click",()=>{
+  const title=$("optTitle").value.trim();
+  if(!title){toast("先寫一個可能方向");return}
+  options.push({
+    id:uid(),title,gap:$("optGap").value.trim(),test:$("optTest").value.trim(),cost:$("optCost").value,
+    status:"explore",created:Date.now(),score:{goal:3,risk:3,learn:3,resource:3},evidence:[]
+  });
+  $("optTitle").value="";$("optGap").value="";$("optTest").value="";$("optCost").value="低成本";
+  save();renderAll();toast("已加入探索清單");
+});
+
+function statusTag(o){
+  if(o.id===activeId)return '<span class="tag live">承諾中</span>';
+  if(o.status==="done")return '<span class="tag done">完成</span>';
+  if(o.status==="pick")return '<span class="tag pick">已選擇</span>';
+  return `<span class="tag">${esc(o.cost||"探索中")}</span>`;
+}
+function renderOptions(){
+  $("stOptions").textContent=options.length;
+  $("stActive").textContent=active()?1:0;
+  $("stLoops").textContent=loops.length;
+  const el=$("optionList");
+  if(!options.length){el.innerHTML='<div class="empty-hint">還沒有探索選項。先新增一個可能方向，讓決策從紙上開始。</div>';return}
+  el.innerHTML=options.map(o=>`
+    <div class="option">
+      <div class="option-head"><div class="option-title">${esc(o.title)}</div>${statusTag(o)}</div>
+      ${o.gap?`<p><b>資訊缺口：</b>${esc(o.gap)}</p>`:""}
+      ${o.test?`<p><b>最小測試：</b>${esc(o.test)}</p>`:""}
+      <div class="item-actions">
+        <button class="tiny blue" data-pick="${o.id}">放入選擇</button>
+        <button class="tiny red" data-del="${o.id}">刪除</button>
+      </div>
+    </div>`).join("");
+  el.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{
+    if(activeId===b.dataset.del)activeId=null;
+    options=options.filter(o=>o.id!==b.dataset.del);save();renderAll();toast("已刪除");
+  }));
+  el.querySelectorAll("[data-pick]").forEach(b=>b.addEventListener("click",()=>{
+    const o=options.find(x=>x.id===b.dataset.pick);if(o)o.status="pick";
+    save();renderAll();toast("已放入選擇評估");
+  }));
+}
+
+function renderScores(){
+  const pickable=options.filter(o=>o.status!=="done");
+  const best=pickable.length?[...pickable].sort((a,b)=>score(b)-score(a))[0]:null;
+  $("recommendBox").innerHTML=best?`
+    <div class="recommend"><div class="t">${esc(best.title)}</div><div class="s">目前分數最高：${score(best).toFixed(1)}／5。這不是永久答案，只是下一階段最值得投入的方向。</div></div>
+    <button class="btn" data-commit="${best.id}">把它設為承諾方向</button>`:
+    '<div class="empty-hint">先到「探索」新增可能方向，這裡就能開始比較。</div>';
+  const commitBtn=$("recommendBox").querySelector("[data-commit]");
+  if(commitBtn)commitBtn.addEventListener("click",()=>setActive(commitBtn.dataset.commit));
+
+  const el=$("scoreList");
+  if(!pickable.length){el.innerHTML='<div class="empty-hint">還沒有可評估的選項。</div>';return}
+  el.innerHTML=pickable.map(o=>`
+    <div class="score-card" data-card="${o.id}">
+      <div class="score-title"><b>${esc(o.title)}</b><span>${score(o).toFixed(1)}</span></div>
+      ${scoreRow(o,"goal","目標符合")}
+      ${scoreRow(o,"risk","風險可控")}
+      ${scoreRow(o,"learn","學習價值")}
+      ${scoreRow(o,"resource","資源符合")}
+      <button class="tiny blue" data-commit="${o.id}">選為承諾</button>
+    </div>`).join("");
+  el.querySelectorAll("input[type=range]").forEach(r=>r.addEventListener("input",()=>{
+    const o=options.find(x=>x.id===r.closest("[data-card]").dataset.card);
+    o.score[r.dataset.k]=+r.value;save();renderScores();
+  }));
+  el.querySelectorAll("[data-commit]").forEach(b=>b.addEventListener("click",()=>setActive(b.dataset.commit)));
+}
+function scoreRow(o,k,label){
+  const v=(o.score&&o.score[k])||3;
+  return `<div class="score-row"><label>${label}</label><input type="range" min="1" max="5" value="${v}" data-k="${k}" aria-label="${label}"><span>${v}</span></div>`;
+}
+function setActive(id){
+  activeId=id;
+  options.forEach(o=>{if(o.id===id){o.status="commit";o.commitStart=o.commitStart||today();}});
+  save();renderAll();toast("已進入承諾階段");
+}
+
+function renderCommit(){
+  const o=active();
+  const area=$("commitArea");
+  if(!o){
+    area.innerHTML='<div class="empty-hint">還沒有承諾中的方向。到「選擇」挑一個方向，這裡會變成你的執行工作台。</div>';
+    $("addEvidenceBtn").disabled=true;
+    return;
+  }
+  $("addEvidenceBtn").disabled=false;
+  const left=daysLeft(o);
+  area.innerHTML=`
+    <div class="commit-box">
+      <div class="t">${esc(o.title)}</div>
+      <div class="s">${o.commitEnd?`承諾到 ${fmt(o.commitEnd)}，${left>=0?`還有 ${left} 天`:"已到期，可以回顧"}`:"先設定一段承諾期"}</div>
+      <div class="progress-line"><i style="width:${progress(o)}%"></i></div>
+    </div>
+    <input type="date" id="commitEnd" value="${o.commitEnd||""}" min="${today()}" aria-label="承諾到哪一天">
+    <input type="text" id="metric" value="${esc(o.metric||"")}" placeholder="成功指標，例如：完成初步分析、交出草稿、訪談 5 位使用者">
+    <textarea id="stopList" placeholder="承諾期內，我要暫停分心於哪些選項？">${esc(o.stopList||"")}</textarea>
+    <button class="btn" id="saveCommitBtn">儲存承諾設定</button>`;
+  $("saveCommitBtn").addEventListener("click",()=>{
+    o.commitEnd=$("commitEnd").value;o.metric=$("metric").value.trim();o.stopList=$("stopList").value.trim();
+    save();renderAll();toast("承諾設定已儲存");
+  });
+}
+$("addEvidenceBtn").addEventListener("click",()=>{
+  const o=active();
+  if(!o){toast("先選一個承諾方向");return}
+  const text=$("evidenceText").value.trim();
+  if(!text){toast("先寫一點執行證據");return}
+  o.evidence=o.evidence||[];
+  o.evidence.unshift({id:uid(),text,confidence:+$("confidence").value,ts:Date.now()});
+  $("evidenceText").value="";$("confidence").value="3";
+  save();renderAll();toast("已加入承諾紀錄");
+});
+function renderEvidence(){
+  const o=active(), el=$("evidenceList");
+  if(!o){el.innerHTML='<div class="empty-hint">選定承諾方向後，這裡會累積執行證據。</div>';return}
+  const list=o.evidence||[];
+  if(!list.length){el.innerHTML='<div class="empty-hint">還沒有紀錄。每次行動後寫一行，回顧時就不用靠印象。</div>';return}
+  el.innerHTML=list.map(e=>{
+    const d=new Date(e.ts);
+    return `<div class="log"><div class="date">${d.getMonth()+1}/${d.getDate()}</div><div class="txt">${esc(e.text)}<br><span class="tag">信心 ${e.confidence}/5</span></div></div>`;
+  }).join("");
+}
+
+function renderReview(){
+  const o=active(), el=$("reviewArea");
+  if(!o){el.innerHTML='<div class="empty-hint">沒有承諾中的方向。完成一次承諾後，這裡可以幫你決定繼續、調整或結束。</div>';return}
+  el.innerHTML=`
+    <div class="commit-box">
+      <div class="t">${esc(o.title)}</div>
+      <div class="s">成功指標：${esc(o.metric||"尚未設定")} · 已有 ${(o.evidence||[]).length} 筆證據</div>
+    </div>
+    <textarea id="lesson" placeholder="這一輪我學到什麼？哪些假設被驗證或推翻？"></textarea>
+    <select id="reviewDecision">
+      <option value="continue">繼續：方向成立，延長承諾期</option>
+      <option value="pivot">調整：保留學習，回到探索</option>
+      <option value="finish">結束：已完成或不值得繼續</option>
+    </select>
+    <button class="btn" id="closeLoopBtn">完成本輪回顧</button>`;
+  $("closeLoopBtn").addEventListener("click",()=>{
+    const lesson=$("lesson").value.trim();
+    const decision=$("reviewDecision").value;
+    loops.unshift({id:uid(),title:o.title,decision,lesson,closed:Date.now(),evidence:(o.evidence||[]).length,score:score(o).toFixed(1)});
+    if(decision==="continue"){o.commitStart=today();o.commitEnd="";o.evidence=[];o.status="pick";}
+    if(decision==="pivot"){o.status="explore";o.evidence=[];}
+    if(decision==="finish"){o.status="done";activeId=null;}
+    if(decision!=="continue")activeId=null;
+    save();renderAll();toast("本輪已回顧，進入下一次迭代");
+  });
+}
+
+$("copySummaryBtn").addEventListener("click",async()=>{
+  const o=active();
+  const lines=["# 探索—選擇—承諾迴圈摘要",""];
+  lines.push("## 探索選項");
+  options.forEach(x=>lines.push(`- ${x.title}｜分數 ${score(x).toFixed(1)}/5｜${x.status}`));
+  if(o){
+    lines.push("","## 承諾中",`- 方向：${o.title}`,`- 承諾期：${fmt(o.commitStart)} 到 ${fmt(o.commitEnd)}`,`- 成功指標：${o.metric||"未設定"}`,`- 暫停分心：${o.stopList||"未設定"}`,"","## 執行證據");
+    (o.evidence||[]).forEach(e=>lines.push(`- 信心 ${e.confidence}/5：${e.text}`));
+  }
+  lines.push("","## 已完成迴圈");
+  loops.forEach(l=>lines.push(`- ${l.title}｜${l.decision}｜${l.lesson||"未寫心得"}`));
+  await navigator.clipboard.writeText(lines.join("\n"));
+  toast("已複製摘要");
+});
+
+$("exportBtn").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify({options,activeId,loops,exportedAt:new Date().toISOString()},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="choice-loop-backup-"+today()+".json";a.click();URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const data=JSON.parse(r.result);options=data.options||[];activeId=data.activeId||null;loops=data.loops||[];save();renderAll();toast("已讀取備份")}catch(err){toast("備份檔讀取失敗")}};
+  r.readAsText(f);e.target.value="";
+});
+$("wipeBtn").addEventListener("click",()=>{
+  if(!confirm("確定清除全部資料？"))return;
+  options=[];activeId=null;loops=[];save();renderAll();toast("已清除");
+});
+
+function renderAll(){renderOptions();renderScores();renderCommit();renderEvidence();renderReview();}
+renderAll();
+</script>
+</body>
+</html>

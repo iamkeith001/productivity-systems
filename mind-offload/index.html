@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="腦袋清空站">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%23C03A2B' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%23C03A2B'%3E空%3C/text%3E%3C/svg%3E">
+<title>腦袋清空站 · Mind Offload</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --green:#3E7C4F;
+    --grid:rgba(47,90,168,.07);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --green:#7CAE8B;
+    --grid:rgba(138,171,232,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk); color:var(--ink); line-height:1.65; -webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));
+    font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--blue)}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:3px}
+
+  /* ── Header ── */
+  header{background:var(--desk);border-bottom:1px solid var(--hairline)}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .brand .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:44px;height:44px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ── Paper cards ── */
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card.gridpaper{background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;background-position:center}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 2px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .card .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .rule{border:none;border-top:1px solid var(--hairline-soft);margin:14px 0}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ── Buttons ── */
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--blue);color:var(--paper);letter-spacing:.08em;font-family:inherit}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--blue-soft);color:var(--blue)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px}
+
+  /* ── Inputs ── */
+  textarea.dump{
+    width:100%;min-height:118px;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);
+    border-radius:6px;padding:5px 13px 8px;font-size:15.5px;font-family:inherit;resize:vertical;outline:none;margin-bottom:12px;
+    line-height:30px;
+    background-image:repeating-linear-gradient(transparent,transparent 29px,var(--hairline-soft) 29px,var(--hairline-soft) 30px);
+    background-attachment:local;
+  }
+  textarea.dump:focus{border-color:var(--blue)}
+  input[type=text],input[type=date],textarea.note{width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none}
+  input:focus,textarea.note:focus{border-color:var(--blue)}
+  textarea.note{min-height:84px;resize:vertical}
+  .hint-chips{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px}
+  .chip{position:relative;font-size:12.5px;background:none;border:none;padding:0;font-weight:600;color:var(--blue);cursor:pointer;border-bottom:1px dashed var(--blue);font-family:inherit}
+  .chip::before{content:"";position:absolute;inset:-9px -6px}
+
+  /* ── Hero (首次) ── */
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;opacity:.6}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--red)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.85;line-height:1.8;margin-bottom:14px}
+  .hero-steps{border-top:1px solid var(--hairline-soft);padding-top:4px}
+  .hero-steps div{display:flex;gap:12px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--hairline-soft);font-size:13.5px}
+  .hero-steps b{font-family:"Songti TC",serif;color:var(--red);font-size:14px;flex:none;width:1.4em}
+  .hero-steps span{color:var(--pencil);font-size:12px;margin-left:auto;flex:none}
+
+  /* ── 亂線團(負載) ── */
+  .tangle-row{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+  .tangle{flex:none;width:132px}
+  .tangle svg{display:block;width:100%}
+  .tangle path{fill:none;stroke-width:1.7;stroke-linecap:round;transition:stroke .4s}
+  .tangle-msg{flex:1;min-width:0}
+  .tangle-msg .big{font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;font-size:18.5px;letter-spacing:.04em}
+  .tangle-msg .small{color:var(--pencil);font-size:12.5px;margin-top:2px}
+  .count-pill{font-size:11px;font-weight:700;color:var(--red);border:1px solid currentColor;padding:1px 8px;border-radius:999px;vertical-align:2px;margin-left:6px;letter-spacing:.08em}
+
+  /* ── 便條 slips ── */
+  .slip{display:flex;align-items:flex-start;gap:10px;background:var(--paper2);border:1px solid var(--hairline-soft);border-radius:3px;padding:9px 12px;margin:9px 0;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:18px 18px}
+  .slip:nth-child(odd){transform:rotate(-.5deg)}
+  .slip:nth-child(even){transform:rotate(.4deg)}
+  .slip:nth-child(3n){transform:rotate(.9deg)}
+  .slip .ttl{flex:1;font-size:14px;word-break:break-word;line-height:1.55}
+  .slip .del{position:relative;background:none;border:none;color:var(--pencil);cursor:pointer;font-size:15px;padding:2px 3px;flex:none;line-height:1}
+  .slip .del::before{content:"";position:absolute;inset:-11px}
+
+  /* ── 分流 ── */
+  .sortitem{background:var(--paper2);border:1px solid var(--hairline);border-radius:3px;padding:20px 18px;margin-bottom:16px;transform:rotate(-.4deg);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:18px 18px;
+    transition:transform .18s,opacity .18s}
+  .sortitem.out{transform:translateX(64px) rotate(2deg);opacity:0}
+  .sortitem .stext{font-size:17px;font-weight:700;word-break:break-word;line-height:1.5}
+  .sortitem .stime{font-size:11.5px;color:var(--pencil);margin-top:5px;letter-spacing:.06em}
+  .sortbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .sbtn{background:var(--paper);border:1px solid var(--hairline);border-top:3px solid var(--c);border-radius:5px;padding:13px 13px 11px;cursor:pointer;text-align:left;font-family:inherit;transition:transform .12s}
+  .sbtn:active{transform:scale(.97)}
+  .sbtn .n{font-size:14.5px;font-weight:800;color:var(--c);display:block;letter-spacing:.04em}
+  .sbtn .d{font-size:11.5px;color:var(--pencil);display:block;margin-top:1px}
+  .datewrap-hint{color:var(--pencil);font-size:13px;margin:0 0 10px}
+  .datewrap-hint b{color:var(--ink)}
+
+  /* ── 清單 ── */
+  .folder-head{display:flex;align-items:baseline;gap:8px;margin:0 0 4px}
+  .folder-head .tabline{width:22px;height:4px;border-radius:2px;background:var(--c);flex:none;align-self:center}
+  .taskitem{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-top:1px solid var(--hairline-soft)}
+  .taskitem:first-child{border-top:none}
+  .tcheck{position:relative;width:21px;height:21px;border-radius:4px;border:1.5px solid var(--hairline);background:var(--paper);cursor:pointer;flex:none;display:grid;place-items:center;margin-top:2px;padding:0}
+  .tcheck::before{content:"";position:absolute;inset:-12px}
+  .tcheck svg{width:13px;height:13px;stroke:var(--blue);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;display:none}
+  .tcheck.on svg{display:block}
+  .ttitle{flex:1;font-size:14.5px;min-width:0;word-break:break-word}
+  .ttitle .due{display:block;font-size:11.5px;font-weight:700;color:var(--blue);letter-spacing:.06em}
+  .ttitle .due.over{color:var(--red)}
+  .taskitem.done .ttitle{text-decoration:line-through;color:var(--pencil)}
+  .tico{position:relative;background:none;border:none;color:var(--pencil);cursor:pointer;font-size:14px;padding:3px;flex:none;margin-top:1px}
+  .tico::before{content:"";position:absolute;inset:-9px}
+  .tico svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block}
+  .empty-hint{color:var(--pencil);font-size:13px;padding:16px 2px;font-style:normal}
+  .bigcheer{text-align:center;padding:26px 10px}
+  .bigcheer .t{font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;font-size:19px;letter-spacing:.08em}
+  .bigcheer .s{color:var(--pencil);font-size:12.5px;margin-top:4px}
+
+  /* ── 統計列 ── */
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px}
+  .stat{text-align:center;padding:15px 6px 12px;border-left:1px solid var(--hairline-soft)}
+  .stat:first-child{border-left:none}
+  .stat .n{font-family:"Songti TC","Noto Serif TC",serif;font-size:27px;font-weight:900;line-height:1}
+  .stat .l{font-size:10.5px;color:var(--pencil);margin-top:5px;letter-spacing:.12em}
+
+  /* ── 集點卡 ── */
+  .stampcard{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+  .sday{aspect-ratio:1;border-radius:4px;background:var(--paper2);border:1px dashed var(--hairline);display:grid;place-items:center;font-size:11px;font-weight:600;color:var(--pencil);position:relative}
+  .sday.today{border:1.5px solid var(--blue);color:var(--blue)}
+  .sday .stamp{position:absolute;inset:12%;animation:thunk .32s ease}
+  .sday:nth-child(odd) .stamp{transform:rotate(-7deg)}
+  .sday:nth-child(3n) .stamp{transform:rotate(5deg)}
+  .stamp svg{width:100%;height:100%;display:block}
+  @keyframes thunk{0%{transform:scale(1.7);opacity:0}60%{transform:scale(.94);opacity:1}100%{transform:scale(1)}}
+  .stamp-lab{font-size:11.5px;color:var(--pencil);text-align:right;margin-top:10px;letter-spacing:.1em}
+
+  /* ── 蓋章慶祝 ── */
+  .stamp-overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;pointer-events:none}
+  .stamp-overlay .big-stamp{width:150px;height:150px;animation:bigthunk 1.5s ease forwards}
+  @keyframes bigthunk{0%{transform:scale(2.1) rotate(-10deg);opacity:0}18%{transform:scale(.95) rotate(-5deg);opacity:1}26%{transform:scale(1.03) rotate(-5deg)}32%{transform:scale(1) rotate(-5deg)}78%{opacity:1}100%{transform:scale(1) rotate(-5deg);opacity:0}}
+
+  /* ── 檢查表 ── */
+  .check-item{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-top:1px solid var(--hairline-soft);cursor:pointer}
+  .check-item:first-child{border-top:none}
+  .cbox{position:relative;width:21px;height:21px;border-radius:4px;border:1.5px solid var(--hairline);flex:none;display:grid;place-items:center;margin-top:1px;background:var(--paper)}
+  .cbox::before{content:"";position:absolute;inset:-12px}
+  .cbox svg{width:13px;height:13px;stroke:var(--blue);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;display:none}
+  .check-item.on .cbox svg{display:block}
+  .clabel{font-size:14px}
+  .clabel small{display:block;color:var(--pencil);font-size:11.5px}
+
+  details{border:1px solid var(--hairline-soft);border-radius:6px;padding:0 14px;margin-bottom:10px;background:var(--paper)}
+  details summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"⌄";color:var(--pencil);font-size:16px}
+  details[open] summary::after{content:"⌃"}
+  details .body{padding:0 0 14px;font-size:13px;color:var(--pencil);white-space:pre-wrap}
+
+  .margin-note{border-left:3px solid var(--red);padding:4px 0 4px 14px;margin:0 0 16px;font-size:13px;color:var(--pencil);line-height:1.8}
+  .margin-note b{color:var(--ink);font-weight:700}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  /* ── Tabbar ── */
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.14em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--blue)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--red)}
+  .tabbtn .badge{position:absolute;top:2px;right:calc(50% - 25px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--red);color:var(--paper);font-size:10px;font-weight:800;display:grid;place-items:center;letter-spacing:0}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--red)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--red)">空</text></svg>
+      <div>
+        <h1>腦袋清空站</h1>
+        <small>寫下來，就能放下</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ════ 倒出 ════ -->
+  <section class="tab active" id="tab-dump">
+    <div class="hero" id="hero" style="display:none">
+      <p class="eyebrow">認知卸載法</p>
+      <div class="hero-title serif">寫下來，<br>就能放下。</div>
+      <p class="hero-text">腦中那些「別忘了⋯」最耗神。把它們倒在紙上、分進資料夾、交給日曆，大腦就能安靜下來，專心想真正重要的事。</p>
+      <div class="hero-steps">
+        <div><b>一</b>想到什麼，全部倒出來<span>每次 10 秒</span></div>
+        <div><b>二</b>一張一張，分進該去的地方<span>每天 5 分鐘</span></div>
+        <div><b>三</b>有日期的，交給日曆提醒<span>一個按鈕</span></div>
+        <div><b>四</b>每週保養一次，系統才可信<span>每週 30 分</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">倒出</p>
+      <h2>把腦中的事寫下來</h2>
+      <div class="sub">待辦、煩惱、靈感都行。一行一件，不用分類、不用想清楚。</div>
+      <textarea class="dump" id="dumpInput" placeholder="回覆主任的信&#10;下週三前交報告&#10;那個研究點子⋯" enterkeyhint="done"></textarea>
+      <button class="btn" id="dumpBtn">存進收件匣</button>
+      <div class="hint-chips">
+        <button class="chip" data-fill="等 ○○ 回覆我：">等人回覆</button>
+        <button class="chip" data-fill="靈感：">記個靈感</button>
+        <button class="chip" data-fill="煩惱：">卸個煩惱</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">收件匣<span class="count-pill" id="inboxCount" style="display:none"></span></p>
+      <div class="tangle-row">
+        <div class="tangle"><svg viewBox="0 0 140 88" aria-hidden="true"><path id="tanglePath" d=""/></svg></div>
+        <div class="tangle-msg">
+          <div class="big serif" id="loadBig"></div>
+          <div class="small" id="loadSmall"></div>
+        </div>
+      </div>
+      <div id="inboxList"></div>
+    </div>
+  </section>
+
+  <!-- ════ 整理 ════ -->
+  <section class="tab" id="tab-sort">
+    <div class="card">
+      <p class="eyebrow">整理</p>
+      <h2>一次一張，分進該去的地方</h2>
+      <div class="sub">每天 5 分鐘。每一張只問一個問題：它是什麼？</div>
+      <div id="sortArea"></div>
+    </div>
+  </section>
+
+  <!-- ════ 清單 ════ -->
+  <section class="tab" id="tab-lists">
+    <div class="card">
+      <div class="folder-head"><span class="tabline" style="--c:var(--blue)"></span><h2>行動</h2></div>
+      <div class="sub">有日期的排前面，過期的變紅。做完就打勾。</div>
+      <div id="actionList"></div>
+    </div>
+    <div class="card">
+      <div class="folder-head"><span class="tabline" style="--c:var(--amber)"></span><h2>等待</h2></div>
+      <div class="sub">等別人回覆的事放這裡，不用一直惦記。</div>
+      <div id="waitList"></div>
+    </div>
+    <div class="card">
+      <div class="folder-head"><span class="tabline" style="--c:var(--green)"></span><h2>靈感</h2></div>
+      <div class="sub">先停在這裡。每週回顧時，把值得留的搬進你自己的筆記。</div>
+      <div id="ideaList"></div>
+    </div>
+    <div class="card">
+      <p class="eyebrow">帶走</p>
+      <h2>把清單帶去你的筆記</h2>
+      <div class="sub">這裡是中繼站，不是保險箱。長期保存請放進你慣用的筆記工具。</div>
+      <button class="btn ghost" id="copyAllBtn">複製全部清單</button>
+    </div>
+  </section>
+
+  <!-- ════ 回顧 ════ -->
+  <section class="tab" id="tab-review">
+    <div class="stats">
+      <div class="stat"><div class="n serif" id="stTotal">0</div><div class="l">累計卸載</div></div>
+      <div class="stat"><div class="n serif" id="stClear">0</div><div class="l">蓋章天數</div></div>
+      <div class="stat"><div class="n serif" id="stStreak">0</div><div class="l">連續天數</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">集點卡</p>
+      <h2>每天清空一次，蓋一個章</h2>
+      <div class="sub">認知卸載是習慣，不是功能。蓋滿 21 個章，這套流程就長在你身上了。</div>
+      <div class="stampcard" id="habitGrid"></div>
+      <div class="stamp-lab" id="habitLab"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">每週保養</p>
+      <h2>週回顧 · 30 分鐘</h2>
+      <div class="sub">一週不保養，大腦就會收回信任、重新自己記。</div>
+      <div id="weeklyChecks"></div>
+      <textarea class="note" id="reviewNote" placeholder="本週反思：哪些事其實不用記在腦中？系統哪裡卡卡的？" style="margin-top:12px"></textarea>
+      <div class="mini-row">
+        <button class="btn" id="saveReviewBtn">存下本週回顧</button>
+        <button class="btn ghost" id="copyReviewBtn">複製成文字</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">紀錄</p>
+      <h2>過去的回顧</h2>
+      <div id="pastReviews"><div class="empty-hint">還沒有回顧紀錄。存下第一週，這裡就會開始累積。</div></div>
+    </div>
+
+    <div class="margin-note">
+      <b>這個工具是漏斗，不是保險箱。</b><br>
+      有日期的事，加進手機日曆，讓它自己來提醒你。值得留的靈感，複製進你自己的筆記。蓋滿 21 天，流程長在身上——工具就可以畢業了。
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>備份與還原</h2>
+      <div class="sub">資料只存在這台裝置。建議偶爾下載備份，換手機或清除瀏覽器時才不會不見。</div>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">讀取備份</button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+      <button class="btn danger" id="wipeBtn" style="margin-top:9px">清除全部資料</button>
+    </div>
+
+    <div class="foot">
+      腦袋清空站 · Mind Offload<br>
+      理論來源：《認知卸載法 Cognitive Offloading》提升生產力系列 Day 159<br>
+      系列入口：<a href="../">提升生產力系統</a><br>
+      同系列：<a href="../energy-first/">能量儀表板</a> · <a href="../choice-loop/">選擇迴圈</a> · <a href="../premortem-thinking/">情境預演</a>
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="dump" aria-label="倒出">
+      <svg viewBox="0 0 24 24"><path d="M12 3v9M8.5 8.5 12 12l3.5-3.5M4 13v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>倒出</button>
+    <button class="tabbtn" data-tab="sort" aria-label="整理">
+      <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>整理<span class="badge" id="sortBadge" style="display:none"></span></button>
+    <button class="tabbtn" data-tab="lists" aria-label="清單">
+      <svg viewBox="0 0 24 24"><path d="M4 6.5 5.5 8 8 5M4 12.5l1.5 1.5L8 11M4 18.5 5.5 20 8 17M11 6.5h9M11 12.5h9M11 18.5h9"/></svg>清單</button>
+    <button class="tabbtn" data-tab="review" aria-label="回顧">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="6"/><path d="M12 7.5V10l1.8 1.8M5 21h14"/></svg>回顧</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ---------- 儲存 ---------- */
+const store={
+  get(k,def){ try{ const v=JSON.parse(localStorage.getItem('co_'+k)); return v==null?def:v; }catch(e){ return def; } },
+  set(k,v){ localStorage.setItem('co_'+k, JSON.stringify(v)); },
+};
+let inbox   = store.get('inbox',[]);
+let actions = store.get('actions',[]);
+let waiting = store.get('waiting',[]);
+let ideas   = store.get('ideas',[]);
+let clearDays = store.get('clearDays',[]);
+let reviews = store.get('reviews',[]);
+let habitStart = store.get('habitStart',null);
+let totalOffloaded = store.get('totalOffloaded',0);
+
+const $=id=>document.getElementById(id);
+const todayStr=()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CHECK='<svg viewBox="0 0 16 16"><path d="M2.5 8.5 6 12l7.5-8"/></svg>';
+const STAMP_SVG=t=>`<svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="var(--red)" stroke-width="2.4"/><text x="22" y="30" text-anchor="middle" font-family="Songti TC,serif" font-size="20" font-weight="900" fill="var(--red)">${t}</text></svg>`;
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+function saveAll(){
+  store.set('inbox',inbox); store.set('actions',actions); store.set('waiting',waiting);
+  store.set('ideas',ideas); store.set('clearDays',clearDays); store.set('reviews',reviews);
+  store.set('habitStart',habitStart); store.set('totalOffloaded',totalOffloaded);
+}
+
+/* ---------- 分頁 ---------- */
+document.querySelectorAll('.tabbtn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('section.tab').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    $('tab-'+b.dataset.tab).classList.add('active');
+    renderAll();
+    window.scrollTo({top:0});
+  });
+});
+
+/* ---------- 深淺色 ---------- */
+const themeBtn=$('themeBtn');
+function applyTheme(t){
+  document.documentElement.dataset.theme=t;
+  $('themeIcon').innerHTML=t==='dark'
+    ?'<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>'
+    :'<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+  store.set('theme',t);
+}
+applyTheme(store.get('theme', matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+themeBtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+
+/* ---------- 倒出 ---------- */
+$('dumpBtn').addEventListener('click',doDump);
+$('dumpInput').addEventListener('keydown',e=>{ if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)) doDump(); });
+document.querySelectorAll('.chip[data-fill]').forEach(c=>{
+  c.addEventListener('click',()=>{ const i=$('dumpInput'); i.value=(i.value?i.value.replace(/\s*$/,'\n'):'')+c.dataset.fill; i.focus(); });
+});
+function doDump(){
+  const lines=$('dumpInput').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!lines.length){ toast('先寫點什麼吧'); return; }
+  if(!habitStart) habitStart=todayStr();
+  lines.forEach(text=>inbox.push({id:uid(),text,ts:Date.now()}));
+  totalOffloaded+=lines.length;
+  $('dumpInput').value='';
+  saveAll(); renderAll();
+  toast(`收下 ${lines.length} 件，交給系統記`);
+}
+
+/* ---------- 亂線團 ---------- */
+function mulberry(seed){ return ()=>{ seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function tangleD(k){
+  if(k===0) return 'M8,48 C42,43 96,46 132,44';
+  const r=mulberry(7);
+  let d=`M${(24+r()*12).toFixed(0)},${(40+r()*10).toFixed(0)}`;
+  const loops=5+Math.min(k,10)*3;
+  for(let i=0;i<loops;i++){
+    d+=` C${(16+r()*108).toFixed(0)},${(12+r()*62).toFixed(0)} ${(16+r()*108).toFixed(0)},${(12+r()*62).toFixed(0)} ${(16+r()*108).toFixed(0)},${(12+r()*62).toFixed(0)}`;
+  }
+  return d;
+}
+function renderLoad(){
+  const n=inbox.length;
+  const lv=n===0?['var(--green)','腦袋很清爽','紙上無事，心上無事。']
+    :n<=3?['var(--ink)','有幾件事掛著','找個空檔，去「整理」分一分。']
+    :n<=7?['var(--amber)','腦內開始打結','今天記得把收件匣清空。']
+    :['var(--red)','快要打成死結了','現在就去「整理」，一張一張放下。'];
+  const p=$('tanglePath');
+  p.setAttribute('d',tangleD(n));
+  p.style.stroke=lv[0];
+  p.style.opacity=n===0?'.9':'.75';
+  $('loadBig').textContent=lv[1];
+  $('loadSmall').textContent=lv[2];
+}
+
+function renderInbox(){
+  renderLoad();
+  const pill=$('inboxCount');
+  pill.style.display=inbox.length?'inline-block':'none';
+  pill.textContent=`${inbox.length} 件待整理`;
+  const el=$('inboxList');
+  if(!inbox.length){ el.innerHTML=''; return; }
+  el.innerHTML=inbox.map(it=>`
+    <div class="slip">
+      <div class="ttl">${esc(it.text)}</div>
+      <button class="del" data-del="${it.id}" title="刪除" aria-label="刪除">✕</button>
+    </div>`).join('');
+  el.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
+    inbox=inbox.filter(x=>x.id!==b.dataset.del); checkCleared(); saveAll(); renderAll();
+  }));
+}
+
+/* ---------- 整理 ---------- */
+let pendingAction=null;
+function renderSort(){
+  const area=$('sortArea');
+  const badge=$('sortBadge');
+  badge.style.display=inbox.length?'grid':'none';
+  badge.textContent=inbox.length;
+  if(pendingAction){
+    area.innerHTML=`
+      <div class="sortitem"><div class="stext">${esc(pendingAction.text)}</div></div>
+      <p class="datewrap-hint">要不要給它一個日期？<b>有日期的事讓日曆來提醒你</b>，大腦才敢真的放手。</p>
+      <input type="date" id="dueInput" min="${todayStr()}" aria-label="截止日期">
+      <div class="mini-row">
+        <button class="btn" id="dueSaveBtn">存入，並加進手機日曆</button>
+        <button class="btn ghost" id="noDueBtn">不用日期，直接存</button>
+      </div>`;
+    $('dueSaveBtn').addEventListener('click',()=>{
+      const d=$('dueInput').value;
+      if(!d){ toast('先選個日期，或按「不用日期」'); return; }
+      actions.push({id:uid(),text:pendingAction.text,due:d,done:false,ts:Date.now()});
+      downloadICS(pendingAction.text,d);
+      finishSort('已存入行動，日曆檔已下載');
+    });
+    $('noDueBtn').addEventListener('click',()=>{
+      actions.push({id:uid(),text:pendingAction.text,due:null,done:false,ts:Date.now()});
+      finishSort('已存入行動');
+    });
+    return;
+  }
+  if(!inbox.length){
+    area.innerHTML='<div class="bigcheer"><div class="t serif">收件匣清空了。</div><div class="s">今天的章蓋上了，到「回顧」看看你的集點卡。</div></div>';
+    return;
+  }
+  const it=inbox[0];
+  const when=new Date(it.ts);
+  area.innerHTML=`
+    <div class="sortitem">
+      <div class="stext">${esc(it.text)}</div>
+      <div class="stime">寫於 ${when.getMonth()+1}/${when.getDate()} ${String(when.getHours()).padStart(2,'0')}:${String(when.getMinutes()).padStart(2,'0')}　·　還剩 ${inbox.length} 張</div>
+    </div>
+    <div class="sortbtns">
+      <button class="sbtn" style="--c:var(--blue)" data-s="act"><span class="n">要做的事</span><span class="d">放進行動</span></button>
+      <button class="sbtn" style="--c:var(--amber)" data-s="wait"><span class="n">在等別人</span><span class="d">放進等待</span></button>
+      <button class="sbtn" style="--c:var(--green)" data-s="idea"><span class="n">靈感筆記</span><span class="d">放進靈感</span></button>
+      <button class="sbtn" style="--c:var(--pencil)" data-s="trash"><span class="n">不重要</span><span class="d">直接丟掉</span></button>
+    </div>`;
+  area.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{
+    const btns=area.querySelector('.sortbtns');
+    if(btns) btns.style.pointerEvents='none';
+    const cardEl=area.querySelector('.sortitem');
+    if(cardEl) cardEl.classList.add('out');
+    setTimeout(()=>{
+      const item=inbox.shift();
+      if(b.dataset.s==='act'){ pendingAction=item; renderSort(); return; }
+      if(b.dataset.s==='wait') waiting.push({id:item.id,text:item.text,done:false,ts:item.ts});
+      if(b.dataset.s==='idea') ideas.push({id:item.id,text:item.text,ts:item.ts});
+      finishSort(b.dataset.s==='trash'?'丟掉了，很好':'分好了');
+    },180);
+  }));
+}
+function finishSort(msg){
+  pendingAction=null;
+  checkCleared();
+  saveAll(); renderAll();
+  toast(msg);
+}
+function checkCleared(){
+  if(inbox.length===0 && totalOffloaded>0){
+    const t=todayStr();
+    if(!clearDays.includes(t)){ clearDays.push(t); stampCelebrate(); }
+  }
+}
+/* 蓋章慶祝(每天第一次清空) */
+function stampCelebrate(){
+  const o=document.createElement('div');
+  o.className='stamp-overlay';
+  o.innerHTML=`<div class="big-stamp">${STAMP_SVG('空')}</div>`;
+  document.body.appendChild(o);
+  setTimeout(()=>o.remove(),1600);
+}
+
+/* ---------- 日曆檔 ---------- */
+function downloadICS(text,dateStr){
+  const d=dateStr.replace(/-/g,'');
+  const next=new Date(dateStr); next.setDate(next.getDate()+1);
+  const d2=next.getFullYear()+String(next.getMonth()+1).padStart(2,'0')+String(next.getDate()).padStart(2,'0');
+  const summary=text.replace(/[\\;,]/g,' ').replace(/\n/g,' ');
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//MindOffload//ZH-TW','BEGIN:VEVENT',
+    'UID:'+uid()+'@mindoffload','DTSTAMP:'+d+'T000000Z',
+    'DTSTART;VALUE=DATE:'+d,'DTEND;VALUE=DATE:'+d2,
+    'SUMMARY:'+summary,
+    'BEGIN:VALARM','TRIGGER:PT9H','ACTION:DISPLAY','DESCRIPTION:'+summary,'END:VALARM',
+    'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='提醒-'+summary.slice(0,12)+'.ics';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ---------- 清單 ---------- */
+const ICON_CAL='<svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M8 3.5V7M16 3.5V7M4 10.5h16"/></svg>';
+function renderLists(){
+  const fmtDue=due=>{
+    if(!due) return '';
+    const over=due<todayStr();
+    const [,m,d]=due.split('-');
+    return `<span class="due${over?' over':''}">${+m}/${+d} 前${over?'（已過期）':''}</span>`;
+  };
+  const sortedActs=[...actions].sort((a,b)=>{
+    if(a.done!==b.done) return a.done?1:-1;
+    if(a.due&&b.due) return a.due<b.due?-1:1;
+    if(a.due) return -1; if(b.due) return 1;
+    return a.ts-b.ts;
+  });
+  const row=(it,kind)=>`
+    <div class="taskitem${it.done?' done':''}">
+      ${kind!=='idea'?`<button class="tcheck${it.done?' on':''}" data-tgl="${kind}:${it.id}" aria-label="完成">${CHECK}</button>`:''}
+      <div class="ttitle">${esc(it.text)}${kind==='act'?fmtDue(it.due):''}</div>
+      ${kind==='act'&&it.due?`<button class="tico" data-ics="${it.id}" title="再下載日曆檔" aria-label="下載日曆檔">${ICON_CAL}</button>`:''}
+      <button class="tico" data-rm="${kind}:${it.id}" title="刪除" aria-label="刪除">✕</button>
+    </div>`;
+  $('actionList').innerHTML=sortedActs.length?sortedActs.map(it=>row(it,'act')).join(''):'<div class="empty-hint">還沒有行動。去「整理」分流收件匣吧。</div>';
+  $('waitList').innerHTML=waiting.length?waiting.map(it=>row(it,'wait')).join(''):'<div class="empty-hint">沒有在等的事。</div>';
+  $('ideaList').innerHTML=ideas.length?ideas.map(it=>row(it,'idea')).join(''):'<div class="empty-hint">靈感庫是空的。</div>';
+  document.querySelectorAll('[data-tgl]').forEach(b=>b.addEventListener('click',()=>{
+    const [kind,id]=b.dataset.tgl.split(':');
+    const list=kind==='act'?actions:waiting;
+    const it=list.find(x=>x.id===id); if(it){ it.done=!it.done; saveAll(); renderLists(); }
+  }));
+  document.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{
+    const [kind,id]=b.dataset.rm.split(':');
+    if(kind==='act') actions=actions.filter(x=>x.id!==id);
+    if(kind==='wait') waiting=waiting.filter(x=>x.id!==id);
+    if(kind==='idea') ideas=ideas.filter(x=>x.id!==id);
+    saveAll(); renderLists();
+  }));
+  document.querySelectorAll('[data-ics]').forEach(b=>b.addEventListener('click',()=>{
+    const it=actions.find(x=>x.id===b.dataset.ics);
+    if(it&&it.due){ downloadICS(it.text,it.due); toast('日曆檔已下載'); }
+  }));
+}
+$('copyAllBtn').addEventListener('click',()=>{
+  const box=it=>it.done?'✔':'◻';
+  const fmtD=due=>due?`（${+due.slice(5,7)}/${+due.slice(8)} 前）`:'';
+  const lines=['【✅ 要做的事】'];
+  actions.length?actions.forEach(a=>lines.push(`${box(a)} ${a.text}${fmtD(a.due)}`)):lines.push('（目前沒有）');
+  lines.push('','【⏳ 在等別人】');
+  waiting.length?waiting.forEach(w=>lines.push(`${box(w)} ${w.text}`)):lines.push('（目前沒有）');
+  lines.push('','【💡 靈感】');
+  ideas.length?ideas.forEach(i=>lines.push(`・${i.text}`)):lines.push('（目前沒有）');
+  copyText(lines.join('\n'),'清單已複製，貼進你的筆記吧');
+});
+function copyText(text,msg){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>toast(msg)).catch(()=>fallbackCopy(text,msg));
+  } else fallbackCopy(text,msg);
+}
+function fallbackCopy(text,msg){
+  const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast(msg); }catch(e){ toast('複製失敗，請手動選取'); }
+  document.body.removeChild(ta);
+}
+
+/* ---------- 回顧 ---------- */
+const WEEKLY_CHECKS=[
+  {t:'收件匣歸零了',d:'把這週累積的項目全部分流完'},
+  {t:'等待清單過了一遍',d:'該催的催、收到的刪掉'},
+  {t:'做完的行動清掉了',d:'打勾的項目刪除，清單保持乾淨'},
+  {t:'靈感搬進自己的筆記了',d:'值得留的複製走，其餘放手'},
+  {t:'過期的行動重新排了',d:'改日期或承認不做，不要讓紅字堆著'},
+];
+let weeklyState=store.get('weeklyState',WEEKLY_CHECKS.map(()=>false));
+function renderWeekly(){
+  $('weeklyChecks').innerHTML=WEEKLY_CHECKS.map((c,i)=>`
+    <div class="check-item${weeklyState[i]?' on':''}" data-ck="${i}" role="checkbox" aria-checked="${weeklyState[i]}" tabindex="0">
+      <div class="cbox">${CHECK}</div>
+      <div class="clabel">${c.t}<small>${c.d}</small></div>
+    </div>`).join('');
+  document.querySelectorAll('[data-ck]').forEach(el=>{
+    const tgl=()=>{ const i=+el.dataset.ck; weeklyState[i]=!weeklyState[i]; store.set('weeklyState',weeklyState); renderWeekly(); };
+    el.addEventListener('click',tgl);
+    el.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); tgl(); } });
+  });
+}
+$('saveReviewBtn').addEventListener('click',()=>{
+  const note=$('reviewNote').value.trim();
+  const done=weeklyState.filter(Boolean).length;
+  reviews.unshift({date:todayStr(),done,total:WEEKLY_CHECKS.length,checks:[...weeklyState],note,ts:Date.now()});
+  weeklyState=WEEKLY_CHECKS.map(()=>false);
+  store.set('weeklyState',weeklyState);
+  $('reviewNote').value='';
+  saveAll(); renderAll();
+  toast('本週回顧已存下，保養完成');
+});
+$('copyReviewBtn').addEventListener('click',()=>{
+  const done=weeklyState.filter(Boolean).length;
+  const lines=[`【每週回顧】${todayStr().replace(/-/g,'/')}`,`保養完成度：${done}/${WEEKLY_CHECKS.length}`];
+  WEEKLY_CHECKS.forEach((c,i)=>lines.push(`${weeklyState[i]?'✔':'◻'} ${c.t}`));
+  const note=$('reviewNote').value.trim();
+  if(note) lines.push('','反思：',note);
+  copyText(lines.join('\n'),'回顧已複製');
+});
+function renderPastReviews(){
+  const el=$('pastReviews');
+  if(!reviews.length){ el.innerHTML='<div class="empty-hint">還沒有回顧紀錄。存下第一週，這裡就會開始累積。</div>'; return; }
+  el.innerHTML=reviews.slice(0,12).map(r=>`
+    <details><summary>${r.date.replace(/-/g,'/')} · 保養 ${r.done}/${r.total}</summary>
+    <div class="body">${WEEKLY_CHECKS.map((c,i)=>(r.checks&&r.checks[i]?'✔ ':'◻ ')+c.t).join('\n')}${r.note?'\n\n'+esc(r.note):''}</div></details>`).join('');
+}
+function renderHabit(){
+  const grid=$('habitGrid');
+  const t=todayStr();
+  let lit=0;
+  if(!habitStart){
+    grid.innerHTML=Array.from({length:21},(_,i)=>`<div class="sday">${i+1}</div>`).join('');
+  }else{
+    const start=new Date(habitStart);
+    grid.innerHTML=Array.from({length:21},(_,i)=>{
+      const d=new Date(start); d.setDate(d.getDate()+i);
+      const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      const on=clearDays.includes(ds);
+      if(on) lit++;
+      const isToday=ds===t;
+      return `<div class="sday${isToday?' today':''}">${on?`<span class="stamp">${STAMP_SVG('空')}</span>`:i+1}</div>`;
+    }).join('');
+  }
+  $('habitLab').textContent=`已蓋 ${lit} / 21 個章`;
+}
+function renderStats(){
+  $('stTotal').textContent=totalOffloaded;
+  $('stClear').textContent=clearDays.length;
+  let streak=0;
+  const d=new Date();
+  if(!clearDays.includes(todayStr())) d.setDate(d.getDate()-1);
+  for(;;){
+    const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    if(clearDays.includes(ds)){ streak++; d.setDate(d.getDate()-1); } else break;
+  }
+  $('stStreak').textContent=streak;
+}
+
+/* ---------- 備份 ---------- */
+$('exportBtn').addEventListener('click',()=>{
+  const data={app:'mind-offload',ver:1,inbox,actions,waiting,ideas,clearDays,reviews,habitStart,totalOffloaded};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='腦袋清空站備份-'+todayStr()+'.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('備份已下載');
+});
+$('importBtn').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const d=JSON.parse(reader.result);
+      if(d.app!=='mind-offload') throw 0;
+      inbox=d.inbox||[]; actions=d.actions||[]; waiting=d.waiting||[]; ideas=d.ideas||[];
+      clearDays=d.clearDays||[]; reviews=d.reviews||[]; habitStart=d.habitStart||null;
+      totalOffloaded=d.totalOffloaded||0;
+      saveAll(); renderAll(); toast('備份已還原');
+    }catch(err){ toast('這不是腦袋清空站的備份檔'); }
+  };
+  reader.readAsText(f);
+  e.target.value='';
+});
+$('wipeBtn').addEventListener('click',()=>{
+  if(confirm('確定要清除全部資料嗎？此動作無法復原。建議先下載備份。')){
+    ['inbox','actions','waiting','ideas','clearDays','reviews','habitStart','totalOffloaded','weeklyState'].forEach(k=>localStorage.removeItem('co_'+k));
+    location.reload();
+  }
+});
+
+/* ---------- 總渲染 ---------- */
+function renderAll(){
+  $('hero').style.display=totalOffloaded>0?'none':'block';
+  renderInbox(); renderSort(); renderLists();
+  renderWeekly(); renderPastReviews(); renderHabit(); renderStats();
+}
+renderAll();
+</script>
+</body>
+</html>
