@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="學習金字塔">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%239C6D1E' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%239C6D1E'%3E塔%3C/text%3E%3C/svg%3E">
+<title>學習金字塔重構 · Learning Pyramid Reimagined</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#9C6D1E; --acc-soft:#F4ECDB;
+    --grid:rgba(156,109,30,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#D8AC5C; --acc-soft:#38301D;
+    --grid:rgba(216,172,92,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  textarea{resize:vertical;min-height:64px}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .template-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+  .hint-box.warn{background:var(--red-soft)}
+  .hint-box.warn b{color:var(--red)}
+  .hint-box.good{background:var(--green-soft)}
+  .hint-box.good b{color:var(--green)}
+
+  .topic-card{background:var(--paper);border:1px solid var(--hairline-soft);border-left:4px solid var(--acc);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .topic-card.donecard{border-left-color:var(--green)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em}
+  .tag.done{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+
+  .step-item{border:1px solid var(--hairline-soft);border-radius:6px;background:var(--paper);padding:13px 14px;margin-bottom:10px}
+  .step-item.stepdone{background:var(--green-soft);border-color:transparent}
+  .step-head{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+  .step-head input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--acc);flex:none;cursor:pointer}
+  .step-head .no{font-family:"Songti TC","Noto Serif TC",serif;font-weight:900;color:var(--acc);flex:none;font-size:15px;width:20px;text-align:center}
+  .step-head .t{font-weight:800;font-size:14px;line-height:1.5}
+  .step-head .h{font-size:12px;color:var(--pencil);margin-top:2px;line-height:1.65}
+  .step-note{margin-top:10px}
+  .step-note input,.step-note textarea{margin-bottom:0;font-size:13px}
+
+  .layer-toggle{display:flex;gap:8px;margin-bottom:12px}
+  .layer-btn{flex:1;border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);padding:11px 6px;border-radius:6px;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.04em}
+  .layer-btn.active{background:var(--acc);color:var(--paper);border-color:transparent}
+
+  .rbar{margin-bottom:10px}
+  .rbar .rb-top{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px}
+  .rbar .rb-top .v{color:var(--acc);font-family:"Songti TC","Noto Serif TC",serif;font-weight:900}
+  .rbar .track{height:8px;background:var(--paper2);border-radius:4px;overflow:hidden}
+  .rbar .fill{height:100%;background:var(--acc);border-radius:4px;transition:width .3s ease}
+  .rbar.lyr-in .fill{background:var(--amber)}
+  .rbar.lyr-proc .fill{background:var(--blue)}
+  .rbar.lyr-out .fill{background:var(--green)}
+
+  .act-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:10px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">塔</text></svg>
+      <div>
+        <h1>學習金字塔重構</h1>
+        <small>LEARNING PYRAMID REIMAGINED</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-topics">
+    <div class="hero">
+      <p class="eyebrow">學習金字塔重構</p>
+      <div class="hero-title serif">「看懂了」，<br>不等於「會用了」。</div>
+      <p class="hero-text">學習效果不取決於你接收了多少資訊，而取決於你是否主動處理、輸出、回饋與應用。被動輸入只能建立熟悉感，而熟悉感常常偽裝成理解——把每次學習從輸入層推進到處理層、再推上輸出層，知識才會真正內化。</p>
+      <div class="quote-line serif">讓知識從「學過」進化到「用得出來」。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">新學習主題</p>
+      <h2>先定一個「輸出型」目標</h2>
+      <p class="sub">不要只說「我要學 AI」。學習目標越接近輸出，效果越好——選一種你學完後要做到的事。</p>
+      <label class="form-label" for="topicTitle">我要學的主題 *</label>
+      <input type="text" id="topicTitle" placeholder="例如：Transformer 注意力機制、ROC 曲線判讀">
+      <label class="form-label">學完後，我要能……</label>
+      <div class="templates-list" id="goalTypes">
+        <button class="template-btn active" data-goal="explain">解釋這個概念</button>
+        <button class="template-btn" data-goal="solve">用它解決一個問題</button>
+        <button class="template-btn" data-goal="teach">教給別人聽</button>
+      </div>
+      <label class="form-label" for="topicGoal">具體目標句</label>
+      <input type="text" id="topicGoal" placeholder="我學完後，要能向同事解釋……">
+      <button class="btn" id="addTopicBtn">建立學習主題</button>
+    </div>
+
+    <div id="topicEmpty" class="empty"><span class="zh">還沒有學習主題</span>從一個想真正學會的東西開始。</div>
+    <div id="topicList"></div>
+  </section>
+
+  <section class="tab" id="tab-steps">
+    <div class="card">
+      <p class="eyebrow">七步驟學習法</p>
+      <h2 id="stepsTitle">選擇學習主題</h2>
+      <select id="stepTopicSel" aria-label="選擇學習主題"></select>
+      <div class="rbar" id="stepsBar" style="display:none">
+        <div class="rb-top"><span>七步進度</span><span class="v" id="stepsProg">0/7</span></div>
+        <div class="track"><div class="fill" id="stepsFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div id="stepsEmpty" class="empty"><span class="zh">還沒有主題可走七步</span>先到「主題」分頁建立一個學習主題。</div>
+    <div id="stepsArea"></div>
+  </section>
+
+  <section class="tab" id="tab-layers">
+    <div class="card">
+      <p class="eyebrow">三層行動記錄</p>
+      <h2>這次學習行動，屬於哪一層？</h2>
+      <p class="sub">輸入建立初步理解、處理轉成自己的理解、輸出才真正內化。記下每個行動，讓比例說話。</p>
+      <select id="actTopicSel" aria-label="選擇學習主題"></select>
+      <div class="layer-toggle">
+        <button class="layer-btn active" data-layer="in">📥 輸入</button>
+        <button class="layer-btn" data-layer="proc">⚙️ 處理</button>
+        <button class="layer-btn" data-layer="out">📤 輸出</button>
+      </div>
+      <div class="templates-list" id="actTemplates"></div>
+      <label class="form-label" for="actWhat">我做了什麼 *</label>
+      <input type="text" id="actWhat" placeholder="例如：讀完第三章、寫了 100 字摘要">
+      <button class="btn" id="addActBtn">記錄這個行動</button>
+    </div>
+
+    <div class="card" id="balanceCard" style="display:none">
+      <p class="eyebrow">層次平衡</p>
+      <h2 id="balanceTitle">這個主題的三層比例</h2>
+      <p class="sub">高效學習不是「多看幾遍」，而是更早開始輸出、更快取得回饋。</p>
+      <div id="balanceBars"></div>
+      <div id="balanceHint"></div>
+    </div>
+
+    <div id="actEmpty" class="empty"><span class="zh">還沒有行動紀錄</span>從記下這次的閱讀或練習開始。</div>
+    <div id="actList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>學習主題</h3><div class="cnt" id="rvTopics">0</div><div class="desc">進行中與完成的主題總數。</div></div>
+      <div class="mini-card"><h3>完成七步</h3><div class="cnt" id="rvDone">0</div><div class="desc">走完七步驟的主題數。</div></div>
+      <div class="mini-card"><h3>輸出行動</h3><div class="cnt" id="rvOut">0</div><div class="desc">練習、實作、教人、應用的次數。</div></div>
+      <div class="mini-card"><h3>輸出佔比</h3><div class="cnt" id="rvRatio">－</div><div class="desc">輸出行動 ÷ 全部行動。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>知識留下來，要經過三次轉換</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>第一次：從資訊變成理解（輸入 → 處理）。</li>
+          <li>第二次：從理解變成輸出（摘要、解題、教別人）。</li>
+          <li>第三次：從輸出變成應用（放進真實工作與生活）。</li>
+          <li>經典「留存率百分比」並無嚴謹實證，別照背數字——重點是主動處理與輸出。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../knowledge-distill/">知識蒸餾法</a> · <a href="../knowledge-atom/">知識原子化</a> · <a href="../knowledge-compression/">知識壓縮力</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-topics"><svg viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h13v13H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h13"/></svg><span>主題</span></button>
+    <button class="tabbtn" data-tab="tab-steps"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><span>七步</span></button>
+    <button class="tabbtn" data-tab="tab-layers"><svg viewBox="0 0 24 24"><path d="M12 3l4 6H8l4-6zM6.5 11h11l2 4h-15l2-4zM4 17h16l1.5 4h-19L4 17z"/></svg><span>三層</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "learning_pyramid_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"topics":[],"acts":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+/* ---- constants ---- */
+const GOAL_PREFIX = {
+  explain: "我學完後，要能向別人解釋：",
+  solve: "我學完後，要能用它解決：",
+  teach: "我學完後，要能教會別人："
+};
+const STEPS = [
+  { t:"明確學習目標", h:"目標越接近輸出越好——能解釋、能解決問題、能教人。", ph:"我學完後，要能……" },
+  { t:"主動預習", h:"先掃標題、摘要、圖表與結論。目的不是先學會，而是建立「問題感」。", ph:"這主題在解決什麼問題？我目前哪裡不懂？" },
+  { t:"深度理解", h:"問：核心假設是什麼？和我已知的有何關聯？什麼情境有效、什麼情境失效？", ph:"它的核心假設是……；在……情境可能失效" },
+  { t:"練習與輸出", h:"學完立刻做一個小輸出：100 字摘要、一張流程圖、一道題。輸出會暴露理解漏洞。", ph:"我做的小輸出是……" },
+  { t:"教導他人", h:"用三分鐘向同事說明、一張圖解釋、或整理成 FAQ——教人會迫使知識變成清楚結構。", ph:"我教了誰、用什麼形式……" },
+  { t:"應用到真實情境", h:"放進真實工作：改善一個流程、套用在一次會議、變成一個研究假說。", ph:"我把它用在……" },
+  { t:"反思與優化", h:"三問：我真正學會了什麼？哪裡還不清楚？下一次要如何學得更快？", ph:"學會了……；還不清楚……；下次要……" }
+];
+const LAYER_NAME = { "in":"輸入", "proc":"處理", "out":"輸出" };
+const ACT_TPLS = {
+  "in": ["聽課", "閱讀", "看影片", "參加講座"],
+  "proc": ["提問", "整理筆記", "畫流程圖", "比較概念", "做摘要", "與人討論"],
+  "out": ["做練習題", "實作", "教別人", "寫文章", "做簡報", "應用到工作"]
+};
+
+/* ---- topics ---- */
+let goalType = "explain";
+$("goalTypes").addEventListener("click", e => {
+  const btn = e.target.closest("[data-goal]");
+  if (!btn) return;
+  goalType = btn.dataset.goal;
+  document.querySelectorAll("#goalTypes .template-btn").forEach(b => b.classList.toggle("active", b === btn));
+  const cur = $("topicGoal").value.trim();
+  const isPrefixOnly = !cur || Object.values(GOAL_PREFIX).some(p => cur === p);
+  if (isPrefixOnly) $("topicGoal").value = GOAL_PREFIX[goalType];
+});
+
+$("addTopicBtn").addEventListener("click", () => {
+  const title = $("topicTitle").value.trim();
+  if (!title) { toast("請輸入學習主題"); return; }
+  const goal = $("topicGoal").value.trim() || GOAL_PREFIX[goalType] + title;
+  const t = {
+    id: uid(),
+    title,
+    goalType,
+    goal,
+    steps: [false,false,false,false,false,false,false],
+    notes: ["","","","","","",""],
+    createdAt: today()
+  };
+  t.notes[0] = goal;
+  t.steps[0] = true;
+  db.topics.unshift(t);
+  curTopic = t.id;
+  saveAll();
+  $("topicTitle").value = "";
+  $("topicGoal").value = "";
+  renderAll();
+  toast("已建立主題，第一步「明確目標」完成！");
+});
+
+function stepCount(t){ return t.steps.filter(Boolean).length; }
+function topicActs(tid){ return db.acts.filter(a => a.tid === tid); }
+
+function renderTopics(){
+  $("topicEmpty").style.display = db.topics.length ? "none" : "block";
+  $("topicList").innerHTML = db.topics.map(t => {
+    const sc = stepCount(t);
+    const acts = topicActs(t.id);
+    const outN = acts.filter(a => a.layer === "out").length;
+    const done = sc === 7;
+    return '<div class="topic-card' + (done ? ' donecard' : '') + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(t.title) + '</div>' +
+      '<div class="item-meta">' + esc(t.goal) + '</div>' +
+      '<div class="item-meta">' + t.createdAt + ' · 行動 ' + acts.length + ' 次（輸出 ' + outN + '）</div></div>' +
+      '<span class="tag ' + (done ? 'done' : 'acc') + '">' + (done ? '七步完成' : '七步 ' + sc + '/7') + '</span></div>' +
+      '<div class="actions"><button data-topen="' + t.id + '">走七步</button><button data-tact="' + t.id + '">記行動</button><button class="del" data-tdel="' + t.id + '">×</button></div></div>';
+  }).join("");
+}
+$("topicList").addEventListener("click", e => {
+  const open = e.target.closest("[data-topen]");
+  if (open) { curTopic = open.dataset.topen; renderAll(); switchTab("tab-steps"); return; }
+  const act = e.target.closest("[data-tact]");
+  if (act) { curTopic = act.dataset.tact; renderAll(); switchTab("tab-layers"); return; }
+  const del = e.target.closest("[data-tdel]");
+  if (!del) return;
+  if (!confirm("刪除這個主題與它的行動紀錄？")) return;
+  db.topics = db.topics.filter(t => t.id !== del.dataset.tdel);
+  db.acts = db.acts.filter(a => a.tid !== del.dataset.tdel);
+  if (curTopic === del.dataset.tdel) curTopic = db.topics.length ? db.topics[0].id : null;
+  saveAll(); renderAll(); toast("已刪除主題");
+});
+
+/* ---- steps ---- */
+let curTopic = db.topics.length ? db.topics[0].id : null;
+
+function getTopic(){ return db.topics.find(t => t.id === curTopic) || null; }
+
+function renderTopicSel(sel){
+  $(sel).innerHTML = db.topics.map(t =>
+    '<option value="' + t.id + '"' + (t.id === curTopic ? ' selected' : '') + '>' + esc(t.title) + '</option>'
+  ).join("");
+  $(sel).style.display = db.topics.length ? "block" : "none";
+}
+
+function renderSteps(){
+  renderTopicSel("stepTopicSel");
+  const t = getTopic();
+  $("stepsEmpty").style.display = t ? "none" : "block";
+  $("stepsBar").style.display = t ? "block" : "none";
+  $("stepsTitle").textContent = t ? "主題：" + t.title : "選擇學習主題";
+  if (!t) { $("stepsArea").innerHTML = ""; return; }
+  const sc = stepCount(t);
+  $("stepsProg").textContent = sc + "/7";
+  $("stepsFill").style.width = Math.round(sc / 7 * 100) + "%";
+  $("stepsArea").innerHTML = STEPS.map((s, i) => {
+    const isLong = i === 6;
+    const noteEl = isLong
+      ? '<textarea data-snote="' + i + '" placeholder="' + esc(s.ph) + '">' + esc(t.notes[i]) + '</textarea>'
+      : '<input type="text" data-snote="' + i + '" placeholder="' + esc(s.ph) + '" value="' + esc(t.notes[i]) + '">';
+    return '<div class="step-item' + (t.steps[i] ? ' stepdone' : '') + '">' +
+      '<label class="step-head"><input type="checkbox" data-schk="' + i + '"' + (t.steps[i] ? ' checked' : '') + '>' +
+      '<span class="no">' + "一二三四五六七"[i] + '</span>' +
+      '<span><span class="t">' + s.t + '</span><div class="h">' + s.h + '</div></span></label>' +
+      '<div class="step-note">' + noteEl + '</div></div>';
+  }).join("");
+}
+$("stepTopicSel").addEventListener("change", () => { curTopic = $("stepTopicSel").value; renderSteps(); });
+$("stepsArea").addEventListener("change", e => {
+  const t = getTopic();
+  if (!t) return;
+  const chk = e.target.closest("[data-schk]");
+  if (chk) {
+    const i = parseInt(chk.dataset.schk, 10);
+    t.steps[i] = chk.checked;
+    saveAll(); renderSteps(); renderTopics(); renderReview();
+    if (chk.checked && stepCount(t) === 7) toast("七步走完！這個主題真正內化了 🎉");
+    else if (chk.checked) toast("完成：" + STEPS[i].t);
+    return;
+  }
+  const note = e.target.closest("[data-snote]");
+  if (note) {
+    t.notes[parseInt(note.dataset.snote, 10)] = note.value.trim();
+    saveAll();
+  }
+});
+
+/* ---- layers ---- */
+let curLayer = "in";
+document.querySelectorAll(".layer-btn").forEach(b => b.addEventListener("click", () => {
+  curLayer = b.dataset.layer;
+  document.querySelectorAll(".layer-btn").forEach(x => x.classList.toggle("active", x === b));
+  renderActTpls();
+}));
+
+function renderActTpls(){
+  $("actTemplates").innerHTML = ACT_TPLS[curLayer].map(x =>
+    '<button class="template-btn" data-atpl="' + esc(x) + '">' + esc(x) + '</button>'
+  ).join("");
+}
+$("actTemplates").addEventListener("click", e => {
+  const btn = e.target.closest("[data-atpl]");
+  if (!btn) return;
+  const cur = $("actWhat").value.trim();
+  $("actWhat").value = cur ? cur : btn.dataset.atpl + "：";
+  $("actWhat").focus();
+});
+
+$("addActBtn").addEventListener("click", () => {
+  const t = getTopic();
+  if (!t) { toast("請先建立學習主題"); return; }
+  const what = $("actWhat").value.trim();
+  if (!what) { toast("請輸入做了什麼"); return; }
+  db.acts.unshift({ id: uid(), tid: t.id, layer: curLayer, what, date: today() });
+  saveAll();
+  $("actWhat").value = "";
+  renderAll();
+  toast("已記錄" + LAYER_NAME[curLayer] + "層行動");
+});
+
+function renderLayers(){
+  renderTopicSel("actTopicSel");
+  const t = getTopic();
+  const acts = t ? topicActs(t.id) : [];
+  $("balanceCard").style.display = t && acts.length ? "block" : "none";
+  $("actEmpty").style.display = acts.length ? "none" : "block";
+  if (t && acts.length) {
+    $("balanceTitle").textContent = "「" + t.title + "」的三層比例";
+    const n = { "in":0, "proc":0, "out":0 };
+    acts.forEach(a => { n[a.layer]++; });
+    const total = acts.length;
+    $("balanceBars").innerHTML = ["in","proc","out"].map(k => {
+      const pct = Math.round(n[k] / total * 100);
+      return '<div class="rbar lyr-' + k + '"><div class="rb-top"><span>' + LAYER_NAME[k] + '層</span><span class="v">' + n[k] + ' 次（' + pct + '%）</span></div>' +
+        '<div class="track"><div class="fill" style="width:' + pct + '%"></div></div></div>';
+    }).join("");
+    let hint;
+    if (n.out === 0) {
+      hint = '<div class="hint-box warn"><b>還沒有任何輸出。</b>全部停在輸入與處理層——安排一個最小輸出吧，寫 100 字摘要就算。輸出會暴露理解漏洞，那是學習真正開始的地方。</div>';
+    } else if (n["in"] / total >= 0.6) {
+      hint = '<div class="hint-box warn"><b>輸入佔了 ' + Math.round(n["in"] / total * 100) + '%。</b>小心「我看懂了」的錯覺——看懂不等於會用，熟悉不等於掌握。下一個行動排在處理層或輸出層。</div>';
+    } else if (n.out / total >= 0.4) {
+      hint = '<div class="hint-box good"><b>輸出佔比很健康。</b>知識正在從「記得」變成「可用」——繼續把它放進真實情境。</div>';
+    } else {
+      hint = '<div class="hint-box"><b>比例還不錯。</b>繼續往輸出層推進：練習、教別人、應用到真實問題。</div>';
+    }
+    $("balanceHint").innerHTML = hint;
+  }
+  $("actList").innerHTML = acts.slice(0, 20).map(a => {
+    return '<div class="act-card"><div class="item-top"><div><div class="item-title">' + esc(a.what) + '</div>' +
+      '<div class="item-meta"><span class="tag">' + LAYER_NAME[a.layer] + '層</span> ' + a.date + '</div></div>' +
+      '<button data-adel="' + a.id + '" style="border:1px solid var(--hairline);background:var(--paper2);border-radius:6px;width:38px;min-height:36px;color:var(--red);font-weight:800;cursor:pointer">×</button></div></div>';
+  }).join("");
+}
+$("actTopicSel").addEventListener("change", () => { curTopic = $("actTopicSel").value; renderAll(); });
+$("actList").addEventListener("click", e => {
+  const del = e.target.closest("[data-adel]");
+  if (!del) return;
+  db.acts = db.acts.filter(a => a.id !== del.dataset.adel);
+  saveAll(); renderAll(); toast("已刪除紀錄");
+});
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvTopics").textContent = String(db.topics.length);
+  $("rvDone").textContent = String(db.topics.filter(t => stepCount(t) === 7).length);
+  const outN = db.acts.filter(a => a.layer === "out").length;
+  $("rvOut").textContent = String(outN);
+  $("rvRatio").textContent = db.acts.length ? Math.round(outN / db.acts.length * 100) + "%" : "－";
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "learning-pyramid-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.topics) && Array.isArray(data.acts)) {
+        db = { topics:data.topics, acts:data.acts };
+        curTopic = db.topics.length ? db.topics[0].id : null;
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有主題與行動紀錄嗎？此動作無法復原。")) return;
+  db = { topics:[], acts:[] };
+  curTopic = null;
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-steps") renderSteps();
+  if (id === "tab-layers") renderLayers();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderTopics();
+  renderSteps();
+  renderLayers();
+  renderReview();
+}
+renderActTpls();
+renderAll();
+</script>
+</body>
+</html>

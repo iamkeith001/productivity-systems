@@ -42,3 +42,4 @@
 - 知識壓縮力：https://iamkeith001.github.io/productivity-systems/knowledge-compression/
 - 低依賴高彈性：https://iamkeith001.github.io/productivity-systems/low-dependency/
 - 能量管理矩陣：https://iamkeith001.github.io/productivity-systems/energy-matrix/
+- 學習金字塔重構：https://iamkeith001.github.io/productivity-systems/learning-pyramid/
