@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="創新組合">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%2396851C' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%2396851C'%3E組%3C/text%3E%3C/svg%3E">
+<title>創新組合思維 · Innovation by Combination</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#96851C; --acc-soft:#F3F0DA;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --grid:rgba(150,133,28,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#CDBE55; --acc-soft:#35311C;
+    --grid:rgba(205,190,85,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  textarea{resize:vertical;min-height:64px}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px}
+  .template-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+  .hint-box.good{background:var(--green-soft)}
+  .hint-box.good b{color:var(--green)}
+
+  .prob-card,.combo-card{background:var(--paper);border:1px solid var(--hairline-soft);border-left:4px solid var(--acc);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .combo-card.hivalue{border-left-color:var(--green)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em;white-space:nowrap}
+  .tag.done{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+
+  .el-cloud{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px}
+  .el-pill{display:inline-flex;align-items:center;gap:6px;background:var(--paper2);border:1px solid var(--hairline-soft);border-radius:99px;padding:6px 6px 6px 12px;font-size:12.5px;font-weight:700}
+  .el-pill .k{font-size:10.5px;color:var(--acc);font-weight:800;letter-spacing:.04em}
+  .el-pill.cross .k{color:var(--blue)}
+  .el-pill button{border:none;background:var(--paper);color:var(--red);width:22px;height:22px;border-radius:50%;cursor:pointer;font-weight:800;line-height:1;font-size:13px}
+  .none-line{font-size:12.5px;color:var(--pencil);padding:4px 0 10px}
+
+  .dice-line{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:13.5px;font-weight:700;line-height:1.7;margin-bottom:12px}
+  .dice-line b{color:var(--acc)}
+
+  .facets{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .facet-btn{border:1px solid var(--hairline);background:var(--paper2);color:var(--pencil);padding:6px 10px;border-radius:4px;font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:32px;letter-spacing:.04em}
+  .facet-btn.on{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .proto-box{margin-top:10px;background:var(--green-soft);border-radius:6px;padding:10px 12px}
+  .proto-box .form-label{margin-top:0;color:var(--green)}
+  .proto-box input[type=text]{margin-bottom:8px;font-size:13px}
+  .proto-box label.chk{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;cursor:pointer}
+  .proto-box label.chk input{width:18px;height:18px;accent-color:var(--green);cursor:pointer}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">組</text></svg>
+      <div>
+        <h1>創新組合思維</h1>
+        <small>INNOVATION BY COMBINATION</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-probs">
+    <div class="hero">
+      <p class="eyebrow">創新組合思維</p>
+      <div class="hero-title serif">創新不是發明新東西，<br>而是新的連結方式。</div>
+      <p class="hero-text">智慧型手機＝電話＋相機＋網路＋定位＋應用平台。創新的起點不必問「我能發明什麼全新的東西」，而是問「哪些已存在的元素，還沒被這樣組合過」——拆解元素、跨域借用、強迫組合、快速驗證。</p>
+      <div class="quote-line serif">把既有元素，用前所未有的方式連結起來。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">新課題</p>
+      <h2>先把問題定義清楚</h2>
+      <p class="sub">不要說「我們需要一個新系統」。問題越清楚，組合越不容易流於堆砌功能。</p>
+      <div class="templates-list" id="probTpls"></div>
+      <label class="form-label" for="probTitle">想改善的問題 *</label>
+      <input type="text" id="probTitle" placeholder="例如：如何降低新人學習時間？">
+      <button class="btn" id="addProbBtn">建立課題</button>
+    </div>
+
+    <div id="probEmpty" class="empty"><span class="zh">還沒有課題</span>從一個「如何……？」的問題開始。</div>
+    <div id="probList"></div>
+  </section>
+
+  <section class="tab" id="tab-els">
+    <div class="card">
+      <p class="eyebrow">拆解元素</p>
+      <h2 id="elTitle">選擇課題</h2>
+      <select id="elProbSel" aria-label="選擇課題"></select>
+      <p class="sub" style="margin-bottom:0">先拆現有的，再向其他領域借。創新通常不是增加功能，而是改變元素之間的關係。</p>
+    </div>
+
+    <div class="card" id="ownCard" style="display:none">
+      <p class="eyebrow">現有元素</p>
+      <h2>把目前的做法拆開</h2>
+      <p class="sub">選一個面向，寫下一個元素。例如「技術：LIS 檢驗數據」「場景：夜班人力少」。</p>
+      <div class="templates-list" id="dimChips"></div>
+      <input type="text" id="ownTxt" placeholder="例如：qPCR 數據、晨會報告、白板排班表">
+      <button class="btn ghost" id="addOwnBtn">加入現有元素</button>
+      <div style="height:12px"></div>
+      <div class="el-cloud" id="ownCloud"></div>
+      <div class="none-line" id="ownNone">（還沒拆出現有元素）</div>
+    </div>
+
+    <div class="card" id="crossCard" style="display:none">
+      <p class="eyebrow">跨域元素庫</p>
+      <h2>向其他領域借原理</h2>
+      <p class="sub">航空管安全、製造降變異、電商做推薦、遊戲給即時回饋——借的是運作原理，不是表面形式。</p>
+      <div class="templates-list" id="crossChips"></div>
+      <input type="text" id="crossTxt" placeholder="例如：AI 判讀、遊戲化即時回饋、航空業雙重檢查">
+      <button class="btn ghost" id="addCrossBtn">加入跨域元素</button>
+      <div style="height:12px"></div>
+      <div class="el-cloud" id="crossCloud"></div>
+      <div class="none-line" id="crossNone">（還沒收集跨域元素）</div>
+    </div>
+
+    <div id="elEmpty" class="empty"><span class="zh">還沒有課題可拆解</span>先到「課題」分頁建立一個。</div>
+  </section>
+
+  <section class="tab" id="tab-combine">
+    <div class="card">
+      <p class="eyebrow">強迫組合</p>
+      <h2 id="cbTitle">如果……會怎樣？</h2>
+      <p class="sub">這個階段先追求數量，不要過早批判。擲骰讓元素隨機相遇，或自己挑兩個。</p>
+      <select id="cbProbSel" aria-label="選擇課題"></select>
+      <button class="btn ghost" id="diceBtn" style="margin-bottom:12px">🎲 擲組合骰</button>
+      <div class="row2" style="display:flex;gap:9px">
+        <div style="flex:1">
+          <label class="form-label" for="selA">現有元素</label>
+          <select id="selA"></select>
+        </div>
+        <div style="flex:1">
+          <label class="form-label" for="selB">跨域元素</label>
+          <select id="selB"></select>
+        </div>
+      </div>
+      <div class="dice-line" id="diceLine" style="display:none"></div>
+      <label class="form-label" for="cbIdea">這個組合可以變成什麼？</label>
+      <textarea id="cbIdea" placeholder="例如：qPCR 數據＋AI 風險分層 → 報告不只給陰陽性，直接給臨床決策提示"></textarea>
+      <button class="btn" id="addCbBtn">記下這個組合</button>
+    </div>
+
+    <div id="cbEmpty" class="empty"><span class="zh">還沒有組合點子</span>先在「拆解」分頁各放進至少一個現有與跨域元素。</div>
+    <div id="cbList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>課題</h3><div class="cnt" id="rvProbs">0</div><div class="desc">定義清楚的問題。</div></div>
+      <div class="mini-card"><h3>元素（現有／跨域）</h3><div class="cnt" id="rvEls">0/0</div><div class="desc">可供組合的原料。</div></div>
+      <div class="mini-card"><h3>組合點子</h3><div class="cnt" id="rvCbs">0</div><div class="desc">先求數量，再談品質。</div></div>
+      <div class="mini-card"><h3>值得做原型</h3><div class="cnt" id="rvHi">0</div><div class="desc">四面向 ≥3 的高價值組合。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>組合創新的三種基礎能力</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>拆解能力：看見完整系統背後由哪些元素構成。</li>
+          <li>類比能力：理解其他領域的方法，移植背後的運作原理。</li>
+          <li>驗證能力：把創意快速轉成可測試的假設，用最小原型低成本確認。</li>
+          <li>組合越多不一定越好——低品質組合只是功能堆疊，高品質組合讓元素彼此增強。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../mental-models/">心智模型</a> · <a href="../constraint-reframing/">限制條件重構</a> · <a href="../knowledge-atom/">知識原子化</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-probs"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/></svg><span>課題</span></button>
+    <button class="tabbtn" data-tab="tab-els"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1"/></svg><span>拆解</span></button>
+    <button class="tabbtn" data-tab="tab-combine"><svg viewBox="0 0 24 24"><path d="M9 15l-3.5 3.5a3.2 3.2 0 0 1-4.5-4.5L4.5 10.5a3.2 3.2 0 0 1 4.5 0M15 9l3.5-3.5a3.2 3.2 0 0 1 4.5 4.5L19.5 13.5a3.2 3.2 0 0 1-4.5 0M9.5 14.5l5-5"/></svg><span>組合</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "innovation_combo_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"probs":[],"els":[],"combos":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+/* ---- constants ---- */
+const PROB_TPLS = ["如何降低新人學習時間？", "如何減少人工判讀錯誤？", "如何縮短病人等待時間？", "如何讓研究資料更快變成決策？"];
+const DIMS = ["功能", "技術", "對象", "場景", "通路", "體驗", "商業模式", "資料"];
+const CROSS_TPLS = ["AI", "自動化", "遊戲化", "視覺化", "即時回饋", "訂閱制", "遠距協作"];
+const FACETS = [
+  { k:"need", t:"需求性" },
+  { k:"feas", t:"可行性" },
+  { k:"diff", t:"差異性" },
+  { k:"sust", t:"持續性" }
+];
+
+let curProb = db.probs.length ? db.probs[0].id : null;
+let curDim = DIMS[0];
+
+function getProb(){ return db.probs.find(p => p.id === curProb) || null; }
+function probEls(pid, kind){ return db.els.filter(e => e.pid === pid && (!kind || e.kind === kind)); }
+function probCombos(pid){ return db.combos.filter(c => c.pid === pid); }
+function comboScore(c){ return FACETS.filter(f => c.score[f.k]).length; }
+
+/* ---- probs ---- */
+$("probTpls").innerHTML = PROB_TPLS.map((t, i) => '<button class="template-btn" data-ptpl="' + i + '">' + esc(t) + '</button>').join("");
+$("probTpls").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ptpl]");
+  if (!btn) return;
+  $("probTitle").value = PROB_TPLS[btn.dataset.ptpl];
+});
+
+$("addProbBtn").addEventListener("click", () => {
+  const title = $("probTitle").value.trim();
+  if (!title) { toast("請輸入想改善的問題"); return; }
+  db.probs.unshift({ id: uid(), title, createdAt: today() });
+  curProb = db.probs[0].id;
+  saveAll();
+  $("probTitle").value = "";
+  renderAll();
+  toast("已建立課題，去「拆解」放元素");
+});
+
+function renderProbs(){
+  $("probEmpty").style.display = db.probs.length ? "none" : "block";
+  $("probList").innerHTML = db.probs.map(p => {
+    const own = probEls(p.id, "own").length;
+    const cross = probEls(p.id, "cross").length;
+    const cbs = probCombos(p.id);
+    const hi = cbs.filter(c => comboScore(c) >= 3).length;
+    return '<div class="prob-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(p.title) + '</div>' +
+      '<div class="item-meta">' + p.createdAt + ' · 元素 ' + own + '＋' + cross + ' · 組合 ' + cbs.length + '</div></div>' +
+      (hi ? '<span class="tag done">值得原型 ' + hi + '</span>' : '<span class="tag acc">探索中</span>') + '</div>' +
+      '<div class="actions"><button data-pels="' + p.id + '">拆解</button><button data-pcb="' + p.id + '">組合</button><button class="del" data-pdel="' + p.id + '">×</button></div></div>';
+  }).join("");
+}
+$("probList").addEventListener("click", e => {
+  const els = e.target.closest("[data-pels]");
+  if (els) { curProb = els.dataset.pels; renderAll(); switchTab("tab-els"); return; }
+  const cb = e.target.closest("[data-pcb]");
+  if (cb) { curProb = cb.dataset.pcb; renderAll(); switchTab("tab-combine"); return; }
+  const del = e.target.closest("[data-pdel]");
+  if (!del) return;
+  if (!confirm("刪除這個課題與它的元素、組合？")) return;
+  db.probs = db.probs.filter(p => p.id !== del.dataset.pdel);
+  db.els = db.els.filter(el => el.pid !== del.dataset.pdel);
+  db.combos = db.combos.filter(c => c.pid !== del.dataset.pdel);
+  if (curProb === del.dataset.pdel) curProb = db.probs.length ? db.probs[0].id : null;
+  saveAll(); renderAll(); toast("已刪除課題");
+});
+
+/* ---- elements ---- */
+function renderProbSel(sel){
+  $(sel).innerHTML = db.probs.map(p =>
+    '<option value="' + p.id + '"' + (p.id === curProb ? ' selected' : '') + '>' + esc(p.title) + '</option>'
+  ).join("");
+  $(sel).style.display = db.probs.length ? "block" : "none";
+}
+
+$("dimChips").innerHTML = DIMS.map(d => '<button class="template-btn' + (d === curDim ? ' active' : '') + '" data-dim="' + d + '">' + d + '</button>').join("");
+$("dimChips").addEventListener("click", e => {
+  const btn = e.target.closest("[data-dim]");
+  if (!btn) return;
+  curDim = btn.dataset.dim;
+  document.querySelectorAll("#dimChips .template-btn").forEach(b => b.classList.toggle("active", b === btn));
+});
+
+$("crossChips").innerHTML = CROSS_TPLS.map(t => '<button class="template-btn" data-ctpl="' + esc(t) + '">' + esc(t) + '</button>').join("");
+$("crossChips").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ctpl]");
+  if (!btn) return;
+  $("crossTxt").value = btn.dataset.ctpl;
+  $("crossTxt").focus();
+});
+
+$("addOwnBtn").addEventListener("click", () => {
+  const p = getProb();
+  if (!p) { toast("請先建立課題"); return; }
+  const text = $("ownTxt").value.trim();
+  if (!text) { toast("請輸入元素內容"); return; }
+  db.els.unshift({ id: uid(), pid: p.id, kind: "own", label: curDim, text });
+  saveAll(); $("ownTxt").value = "";
+  renderEls(); renderProbs(); renderCombine(); renderReview();
+  toast("已加入現有元素");
+});
+$("addCrossBtn").addEventListener("click", () => {
+  const p = getProb();
+  if (!p) { toast("請先建立課題"); return; }
+  const text = $("crossTxt").value.trim();
+  if (!text) { toast("請輸入元素內容"); return; }
+  db.els.unshift({ id: uid(), pid: p.id, kind: "cross", label: "跨域", text });
+  saveAll(); $("crossTxt").value = "";
+  renderEls(); renderProbs(); renderCombine(); renderReview();
+  toast("已加入跨域元素");
+});
+
+function cloud(list){
+  return list.map(el =>
+    '<span class="el-pill' + (el.kind === "cross" ? ' cross' : '') + '"><span class="k">' + esc(el.label) + '</span>' + esc(el.text) +
+    '<button data-edel="' + el.id + '" aria-label="刪除元素">×</button></span>'
+  ).join("");
+}
+function renderEls(){
+  renderProbSel("elProbSel");
+  const p = getProb();
+  $("elEmpty").style.display = p ? "none" : "block";
+  $("ownCard").style.display = p ? "block" : "none";
+  $("crossCard").style.display = p ? "block" : "none";
+  $("elTitle").textContent = p ? "課題：" + p.title : "選擇課題";
+  if (!p) return;
+  const own = probEls(p.id, "own"), cross = probEls(p.id, "cross");
+  $("ownCloud").innerHTML = cloud(own);
+  $("ownNone").style.display = own.length ? "none" : "block";
+  $("crossCloud").innerHTML = cloud(cross);
+  $("crossNone").style.display = cross.length ? "none" : "block";
+}
+$("elProbSel").addEventListener("change", () => { curProb = $("elProbSel").value; renderAll(); });
+document.querySelector("#tab-els").addEventListener("click", e => {
+  const del = e.target.closest("[data-edel]");
+  if (!del) return;
+  db.els = db.els.filter(el => el.id !== del.dataset.edel);
+  saveAll(); renderEls(); renderProbs(); renderCombine(); renderReview();
+  toast("已刪除元素");
+});
+
+/* ---- combine ---- */
+function renderElSel(sel, list){
+  $(sel).innerHTML = list.map(el =>
+    '<option value="' + el.id + '">' + esc(el.text) + '</option>'
+  ).join("");
+}
+function renderCombine(){
+  renderProbSel("cbProbSel");
+  const p = getProb();
+  $("cbTitle").textContent = p ? "課題：" + p.title : "如果……會怎樣？";
+  const own = p ? probEls(p.id, "own") : [];
+  const cross = p ? probEls(p.id, "cross") : [];
+  renderElSel("selA", own);
+  renderElSel("selB", cross);
+  const ready = own.length && cross.length;
+  $("diceBtn").disabled = !ready;
+  const combos = p ? probCombos(p.id) : [];
+  $("cbEmpty").style.display = (ready || combos.length) ? "none" : "block";
+  $("cbList").innerHTML = combos.map(c => {
+    const sc = comboScore(c);
+    const hi = sc >= 3;
+    return '<div class="combo-card' + (hi ? ' hivalue' : '') + '">' +
+      '<div class="item-top"><div><div class="item-title">「' + esc(c.aText) + '」＋「' + esc(c.bText) + '」</div>' +
+      '<div class="item-meta">' + c.date + '</div></div>' +
+      '<span class="tag ' + (hi ? 'done' : 'acc') + '">' + (hi ? '值得原型 ' : '') + sc + '/4</span></div>' +
+      '<div style="font-size:13px;margin-top:8px;line-height:1.7">' + esc(c.idea) + '</div>' +
+      '<div class="facets">' + FACETS.map(f =>
+        '<button class="facet-btn' + (c.score[f.k] ? ' on' : '') + '" data-fct="' + c.id + ':' + f.k + '">' + f.t + '</button>'
+      ).join("") + '</div>' +
+      (hi
+        ? '<div class="proto-box"><label class="form-label">最小原型：先測哪個關鍵假設？</label>' +
+          '<input type="text" data-proto="' + c.id + '" placeholder="例如：用試算表模擬、先讓一個小組試用" value="' + esc(c.proto) + '">' +
+          '<label class="chk"><input type="checkbox" data-pdone="' + c.id + '"' + (c.protoDone ? ' checked' : '') + '>原型已測試，組合有效</label></div>'
+        : '') +
+      '<div class="actions"><button class="del" data-cdel="' + c.id + '" style="flex:none;width:44px">×</button></div></div>';
+  }).join("");
+}
+$("cbProbSel").addEventListener("change", () => { curProb = $("cbProbSel").value; renderAll(); });
+
+$("diceBtn").addEventListener("click", () => {
+  const p = getProb();
+  if (!p) { toast("請先建立課題"); return; }
+  const own = probEls(p.id, "own"), cross = probEls(p.id, "cross");
+  if (!own.length || !cross.length) { toast("現有與跨域元素都要至少一個"); return; }
+  const a = own[Math.floor(Math.random() * own.length)];
+  const b = cross[Math.floor(Math.random() * cross.length)];
+  $("selA").value = a.id;
+  $("selB").value = b.id;
+  $("diceLine").style.display = "block";
+  $("diceLine").innerHTML = '如果「<b>' + esc(a.text) + '</b>」＋「<b>' + esc(b.text) + '</b>」，會怎樣？';
+  $("cbIdea").focus();
+});
+
+$("addCbBtn").addEventListener("click", () => {
+  const p = getProb();
+  if (!p) { toast("請先建立課題"); return; }
+  const a = db.els.find(el => el.id === $("selA").value);
+  const b = db.els.find(el => el.id === $("selB").value);
+  if (!a || !b) { toast("先在「拆解」放進現有與跨域元素"); return; }
+  const idea = $("cbIdea").value.trim();
+  if (!idea) { toast("寫下這個組合可以變成什麼"); return; }
+  db.combos.unshift({
+    id: uid(), pid: p.id,
+    aText: a.text, bText: b.text, idea,
+    score: { need:false, feas:false, diff:false, sust:false },
+    proto: "", protoDone: false,
+    date: today()
+  });
+  saveAll();
+  $("cbIdea").value = "";
+  $("diceLine").style.display = "none";
+  renderAll();
+  toast("已記下組合——先衝數量，再評分");
+});
+
+$("cbList").addEventListener("click", e => {
+  const fct = e.target.closest("[data-fct]");
+  if (fct) {
+    const parts = fct.dataset.fct.split(":");
+    const c = db.combos.find(x => x.id === parts[0]);
+    if (!c) return;
+    const before = comboScore(c);
+    c.score[parts[1]] = !c.score[parts[1]];
+    saveAll();
+    const after = comboScore(c);
+    renderCombine(); renderProbs(); renderReview();
+    if (after >= 3 && before < 3) toast("四面向達標！設計最小原型吧");
+    return;
+  }
+  const del = e.target.closest("[data-cdel]");
+  if (!del) return;
+  db.combos = db.combos.filter(c => c.id !== del.dataset.cdel);
+  saveAll(); renderAll(); toast("已刪除組合");
+});
+$("cbList").addEventListener("change", e => {
+  const proto = e.target.closest("[data-proto]");
+  if (proto) {
+    const c = db.combos.find(x => x.id === proto.dataset.proto);
+    if (c) { c.proto = proto.value.trim(); saveAll(); }
+    return;
+  }
+  const pd = e.target.closest("[data-pdone]");
+  if (pd) {
+    const c = db.combos.find(x => x.id === pd.dataset.pdone);
+    if (!c) return;
+    c.protoDone = pd.checked;
+    saveAll(); renderReview();
+    if (pd.checked) toast("組合驗證有效 🎉 新價值成形");
+  }
+});
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvProbs").textContent = String(db.probs.length);
+  $("rvEls").textContent = db.els.filter(e => e.kind === "own").length + "/" + db.els.filter(e => e.kind === "cross").length;
+  $("rvCbs").textContent = String(db.combos.length);
+  $("rvHi").textContent = String(db.combos.filter(c => comboScore(c) >= 3).length);
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "innovation-combo-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.probs) && Array.isArray(data.els) && Array.isArray(data.combos)) {
+        db = { probs:data.probs, els:data.els, combos:data.combos };
+        curProb = db.probs.length ? db.probs[0].id : null;
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有課題、元素與組合嗎？此動作無法復原。")) return;
+  db = { probs:[], els:[], combos:[] };
+  curProb = null;
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-els") renderEls();
+  if (id === "tab-combine") renderCombine();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderProbs();
+  renderEls();
+  renderCombine();
+  renderReview();
+}
+renderAll();
+</script>
+</body>
+</html>
