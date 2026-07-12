@@ -1344,13 +1344,15 @@ updatePinnedUI();
   }
 })();
 
-/* --- 最近使用列（讀 prod_portal_visits，取最近 4 個） --- */
+/* --- 最近使用列（讀 prod_portal_visits，取 3 天內最近 4 個；超過 SLEEP_DAYS 的交給「憶」木牌提醒，兩層不重疊） --- */
 (function(){
   const row = document.getElementById('recentRow');
   if (!row) return;
+  const FRESH_MS = 3 * 86400000; // 與回訪提醒層 SLEEP_DAYS 同門檻
   let visits = {};
   try { visits = JSON.parse(localStorage.getItem('prod_portal_visits')) || {}; } catch(e){}
   const recent = Object.entries(visits)
+    .filter(([, ts]) => Date.now() - ts < FRESH_MS)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 4)
     .map(([id]) => document.querySelector('.card[data-id="' + id + '"]'))
