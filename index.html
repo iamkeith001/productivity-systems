@@ -131,6 +131,8 @@
   .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
   .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
   .icon-btn:active{transform:scale(.94)}
+  #backupBtn{position:relative}
+  .bk-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--red);pointer-events:none}
 
   .hero{
     background:var(--paper);border:1px solid var(--hairline-soft);border-radius:12px;box-shadow:var(--shadow);
@@ -442,6 +444,7 @@
     <div style="display:flex;gap:8px">
       <button class="icon-btn" id="backupBtn" title="全站備份 / 還原" aria-label="全站備份 / 還原" aria-expanded="false">
         <svg viewBox="0 0 24 24"><path d="M12 3v11M8 10l4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <span class="bk-dot" id="bkDot" hidden></span>
       </button>
       <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
         <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
@@ -1413,6 +1416,28 @@ updatePinnedUI();
     meta.textContent = '目前本機有 ' + n + ' 筆系列資料 · ' +
       (last ? '上次備份：' + last.slice(0, 10) : '尚未備份過');
   }
+
+  /* 備份提醒紅點：有工具資料、且從沒備份過或距上次備份超過 NUDGE_DAYS 天才亮（入口自己的 key 不算資料） */
+  const NUDGE_DAYS = 14;
+  const dot = document.getElementById('bkDot');
+  function hasToolData(){
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (included(k) && !k.startsWith('prod_portal_') && k !== 'theme') return true;
+    }
+    return false;
+  }
+  function refreshNudge(){
+    if (!dot) return;
+    const t = Date.parse(localStorage.getItem(LAST_KEY) || '');
+    const days = isNaN(t) ? null : Math.floor((Date.now() - t) / 864e5);
+    const stale = hasToolData() && (days === null || days >= NUDGE_DAYS);
+    dot.hidden = !stale;
+    toggleBtn.title = stale
+      ? '全站備份 / 還原 — ' + (days === null ? '尚未備份過' : '距上次備份已 ' + days + ' 天')
+      : '全站備份 / 還原';
+  }
+  refreshNudge();
   toggleBtn.addEventListener('click', () => {
     panel.hidden = !panel.hidden;
     toggleBtn.setAttribute('aria-expanded', String(!panel.hidden));
@@ -1434,6 +1459,7 @@ updatePinnedUI();
     URL.revokeObjectURL(a.href);
     localStorage.setItem(LAST_KEY, payload.exportedAt);
     renderMeta();
+    refreshNudge();
   });
 
   document.getElementById('bkImportBtn').addEventListener('click', () => document.getElementById('bkImportFile').click());
@@ -1463,8 +1489,35 @@ updatePinnedUI();
   });
 })();
 
-/* --- PWA：離線快取（precache＋stale-while-revalidate，見 sw.js） --- */
-if ("serviceWorker" in navigator) { navigator.serviceWorker.register("./sw.js").catch(function(){}); }
+/* --- PWA：離線快取（precache＋stale-while-revalidate，見 sw.js）；背景更新完成時顯示「重新整理」提示 --- */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch(function(){});
+  navigator.serviceWorker.addEventListener("message", function(e){
+    var d = e.data || {};
+    if (d.type !== "sw-updated") return;
+    var norm = function(p){ return p.replace(/index\.html$/, ""); };
+    try { if (norm(new URL(d.url).pathname) !== norm(location.pathname)) return; } catch (err) { return; }
+    if (document.getElementById("swUpdateBar")) return;
+    var bar = document.createElement("div");
+    bar.id = "swUpdateBar";
+    bar.setAttribute("role", "status");
+    bar.style.cssText = "position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:max-content;z-index:9999;display:flex;align-items:center;gap:10px;background:#2B2823;color:#FBFAF6;padding:10px 14px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:92vw;white-space:nowrap";
+    var txt = document.createElement("span");
+    txt.textContent = "此頁有新版本";
+    var btn = document.createElement("button");
+    btn.textContent = "重新整理";
+    btn.style.cssText = "border:1px solid rgba(251,250,246,.5);background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px 10px;border-radius:8px;cursor:pointer";
+    btn.addEventListener("click", function(){ location.reload(); });
+    var close = document.createElement("button");
+    close.textContent = "✕";
+    close.setAttribute("aria-label", "關閉更新提示");
+    close.style.cssText = "border:0;background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px;cursor:pointer;opacity:.7";
+    close.addEventListener("click", function(){ bar.remove(); });
+    bar.appendChild(txt); bar.appendChild(btn); bar.appendChild(close);
+    document.body.appendChild(bar);
+  });
+  if (navigator.serviceWorker.startMessages) navigator.serviceWorker.startMessages();
+}
 </script>
 </body>
 </html>

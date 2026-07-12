@@ -72,11 +72,30 @@ self.addEventListener("fetch", e => {
     caches.open(CACHE).then(cache =>
       cache.match(req, { ignoreSearch: true }).then(cached => {
         const fresh = fetch(req).then(res => {
-          if (res && res.ok) cache.put(req, res.clone());
+          if (res && res.ok) {
+            /* 背景更新拿到新版頁面時，通知該頁顯示「重新整理」提示（etag 變了才算真的有新版） */
+            if (cached && req.mode === "navigate") {
+              const a = cached.headers.get("etag"), b = res.headers.get("etag");
+              if (a && b && a !== b) notifyUpdated(req.url);
+            }
+            cache.put(req, res.clone());
+          }
           return res;
-        }).catch(() => cached);
+        }).catch(() => cached || offlineFallback(req, cache));
         return cached || fresh;
       })
     )
   );
 });
+
+function notifyUpdated(url) {
+  self.clients.matchAll({ type: "window" }).then(list =>
+    list.forEach(c => c.postMessage({ type: "sw-updated", url }))
+  );
+}
+
+/* 離線且該頁沒進快取：導航請求退回入口頁，其餘照常回網路錯誤 */
+function offlineFallback(req, cache) {
+  if (req.mode === "navigate") return cache.match("./", { ignoreSearch: true });
+  return Response.error();
+}

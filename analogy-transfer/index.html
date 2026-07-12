@@ -621,7 +621,35 @@ function renderAll(){
   renderReview();
 }
 renderAll();
-if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(function(){}); }
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("../sw.js").catch(function(){});
+  /* 背景更新拿到新版時顯示「重新整理」提示（訊息來自 sw.js，比對 etag 才發） */
+  navigator.serviceWorker.addEventListener("message", function(e){
+    var d = e.data || {};
+    if (d.type !== "sw-updated") return;
+    var norm = function(p){ return p.replace(/index\.html$/, ""); };
+    try { if (norm(new URL(d.url).pathname) !== norm(location.pathname)) return; } catch (err) { return; }
+    if (document.getElementById("swUpdateBar")) return;
+    var bar = document.createElement("div");
+    bar.id = "swUpdateBar";
+    bar.setAttribute("role", "status");
+    bar.style.cssText = "position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:max-content;z-index:9999;display:flex;align-items:center;gap:10px;background:#2B2823;color:#FBFAF6;padding:10px 14px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:92vw;white-space:nowrap";
+    var txt = document.createElement("span");
+    txt.textContent = "此頁有新版本";
+    var btn = document.createElement("button");
+    btn.textContent = "重新整理";
+    btn.style.cssText = "border:1px solid rgba(251,250,246,.5);background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px 10px;border-radius:8px;cursor:pointer";
+    btn.addEventListener("click", function(){ location.reload(); });
+    var close = document.createElement("button");
+    close.textContent = "\u2715";
+    close.setAttribute("aria-label", "\u95dc\u9589\u66f4\u65b0\u63d0\u793a");
+    close.style.cssText = "border:0;background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px;cursor:pointer;opacity:.7";
+    close.addEventListener("click", function(){ bar.remove(); });
+    bar.appendChild(txt); bar.appendChild(btn); bar.appendChild(close);
+    document.body.appendChild(bar);
+  });
+  if (navigator.serviceWorker.startMessages) navigator.serviceWorker.startMessages();
+}
 </script>
 </body>
 </html>
