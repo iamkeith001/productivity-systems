@@ -846,6 +846,7 @@ document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", ()
 /* ---------- Init ---------- */
 renderQuestions();
 renderTrack();
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(function(){}); }
 </script>
 </body>
 </html>

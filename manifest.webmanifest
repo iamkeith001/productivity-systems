@@ -1,0 +1,13 @@
+{
+  "name": "提升生產力系統",
+  "short_name": "生產力",
+  "description": "提升生產力系列工具入口——40 個離線可用的單檔工具，資料只存本機。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ECE9E2",
+  "theme_color": "#ECE9E2",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

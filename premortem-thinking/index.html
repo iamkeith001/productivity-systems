@@ -473,6 +473,7 @@ $("wipeBtn").addEventListener("click",()=>{
 function renderAll(){renderStats();renderGoal();renderPrompts();renderRisks();renderScores();renderMatrix();renderRiskSelect();renderActions();}
 fillGoalForm();
 renderAll();
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(function(){}); }
 </script>
 </body>
 </html>

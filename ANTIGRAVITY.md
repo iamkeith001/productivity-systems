@@ -78,13 +78,17 @@
 - **2026-07-07 合併重構**：原本 4 個工具（energy-first/mind-offload/choice-loop/premortem-thinking）是各自獨立 repo＋各自 Pages 網址，已 vendored 進本 monorepo 成 `<slug>/index.html`＋`README.md`，入口卡片與工具頁尾「同系列」連結全改**相對路徑**（`./slug/`、`../slug/`）。原 Chinese 命名資料夾（能量管理.../認知卸載法.../探索選擇.../情境預演...）仍各帶 `.git` 留在磁碟當 legacy 原始碼、被 `.gitignore` 排除（連同 `.claude/`）。要改那 4 個工具請改 monorepo 內的 `<slug>/`，別再改 Chinese 資料夾。
 - **入口頁「情境導引（從這裡開始）」（2026-07-07 加，草稿版）**：hero 下方面板，回答使用者「先用哪個／怎麼串接／下一步是什麼」。JS 內 `SITUATIONS` 陣列寫死 6 條情境路徑（事情堆爆／難決定／坐不住／學了忘／被切斷／拖延），每條 2–3 步印章路徑（`href` 相對 `./id/`、seal 用工具 accent）＋結尾一句具體行動。點情境展開路徑、點印章開工具並 `recordVisit()`（共用 `prod_portal_visits`）。**情境文字與路徑組合是草稿，待 Keith 調整**。加情境＝改 `SITUATIONS` 陣列即可。
 - **入口頁「回訪提醒層」（2026-07-07 加，溫柔版）**：`index.html` 自己在點卡片時記錄進場時間，不讀子工具內部 localStorage、不改任何子工具（同 origin，含那 4 個工具卡片也能記到點擊）。key：`prod_portal_visits`＝`{toolId: epochMs}`、`prod_portal_streak`＝`{last:"YYYY-MM-DD", count}`。行為：hero 下方「憶」木牌顯示進場 streak ＋沉睡工具清單（門檻 `SLEEP_DAYS=3`，只提醒「用過又冷掉」的、不嘮叨沒開過的），沉睡卡片加 `.sleep-badge` 角標；無可提醒內容時整塊 `hidden` 保持乾淨。
+- **全站一鍵備份（2026-07-12 加）**：入口 header 下載圖示鈕開合 `#backupPanel`，打包／還原全系列 localStorage 成單一 JSON（格式 `{app:"productivity-systems",exportedAt,keys:{}}`）。白名單制：`BK_EXACT`（新式 `STORE` key＋中期 `storeKey/themeKey` 成對＋共用 `theme`＋入口 `prod_portal_*`）＋`BK_PREFIX`（早期前綴動態 key：`at_/ecc_/dj_/em_/mm_/co_/pm_`），還原時非白名單 key 一律丟棄。**新工具上架必須把 STORE key 加進 `BK_EXACT`**（check.mjs 會擋）。`prod_portal_last_backup` 記上次備份時間顯示於面板。
+- **入口頁「最近使用」列（2026-07-12 加）**：讀 `prod_portal_visits` 取最近 4 個，從卡片 DOM 取印章／標題／accent 渲染 `.recent-chip`，無紀錄整列 `hidden`。
+- **搜尋同義關鍵字（2026-07-12 加）**：每張卡片有 `data-keywords`（如「番茄鐘」→時間分塊、「拖延」→兩分鐘啟動），搜尋比對標題／英文／描述／keywords 四欄。新卡片必附 keywords（check.mjs 會擋）。
+- **PWA 離線（2026-07-12 加）**：根目錄 `manifest.webmanifest`＋`icon.svg`＋`sw.js`。SW precache 入口＋全部工具頁，之後 stale-while-revalidate（先回快取、背景更新，**改版後第二次進場才拿到新版**，屬預期行為）。入口與全部 40 工具檔尾都有註冊行（工具用 `../sw.js`）。**新工具要把 `"./slug/"` 加進 `PRECACHE`**（check.mjs 會擋）；sw.js 位元組一變瀏覽器就會重裝並重抓 precache，通常不必手動 bump `CACHE` 版本，要強制全部重抓時才改 `prod-sys-v1` 版號。
 
 ## 🚀 部署與驗證流程（每次新增工具）
 
-1. 建工具 `<tool>/index.html` ＋ `<tool>/README.md`；在 `index.html` 登錄卡片與 accent 變數；更新根 `README.md`。
-2. **先跑 `node --check`** 驗證 inline script 語法（2026-07-05 曾因漏跑導致決策樹整頁 JS 失效）：
+1. 建工具 `<tool>/index.html`（含檔尾 SW 註冊行）＋ `<tool>/README.md`；在入口 `index.html` 登錄卡片（含 `data-keywords`）與 accent 變數（light＋dark）；STORE key 加進 `BK_EXACT`；`"./slug/"` 加進 `sw.js` 的 `PRECACHE`；更新根 `README.md`。
+2. **跑全站檢查（必過才准 commit）**，涵蓋 JS 語法、key 唯一性、備份清單、卡片對應、accent、keywords、文件收錄、敏感字、SW precache 共 8 類：
    ```bash
-   awk '/<script>/{f=1;next} /<\/script>/{f=0} f' <tool>/index.html > /tmp/x.js && node --check /tmp/x.js
+   node scripts/check.mjs
    ```
 3. 本機預覽用 node 靜態伺服器（`python3 -m http.server` 在此 iCloud 目錄會因沙盒 `PermissionError` 起不來），用瀏覽器工具端到端測（iPhone 尺寸），確認 console 零錯誤後清掉測試 localStorage。
 4. 敏感字掃描 → `git add -A` → commit（`feat: ...`）→ `git push`。

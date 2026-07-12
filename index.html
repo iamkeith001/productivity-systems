@@ -8,6 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="生產力系統">
 <meta name="theme-color" content="#ECE9E2">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%232F5AA8' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%232F5AA8'%3E生%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -405,6 +407,26 @@
   .next-step{margin-top:15px;background:var(--amber-soft);border:1px solid var(--hairline-soft);border-radius:10px;padding:11px 12px;display:flex;gap:9px;align-items:flex-start;color:var(--amber)}
   .next-step svg{width:16px;height:16px;flex:none;stroke-width:2;margin-top:2px}
   .next-step .ns-body{font-size:12.5px;line-height:1.6}
+
+  /* --- 全站備份面板 --- */
+  .backup-panel{background:var(--paper);border:1px solid var(--hairline-soft);border-left:3px solid var(--blue);border-radius:12px;box-shadow:var(--shadow);padding:16px;margin:0 0 16px}
+  .backup-panel[hidden]{display:none}
+  .backup-panel h2{font-size:15px;margin:0 0 4px;font-weight:700;letter-spacing:.04em}
+  .backup-panel .bp-sub{color:var(--pencil);font-size:12.5px;line-height:1.7;margin:0 0 12px}
+  .backup-panel .bp-sub b{color:var(--blue)}
+  .bp-actions{display:flex;gap:9px;flex-wrap:wrap}
+  .bp-btn{flex:1;min-width:130px;min-height:44px;border:none;border-radius:8px;padding:11px 14px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.06em;background:var(--blue);color:var(--paper)}
+  .bp-btn.ghost{background:var(--blue-soft);color:var(--blue)}
+  .bp-btn:active{transform:translateY(1px)}
+  .bp-meta{font-size:11.5px;color:var(--pencil);margin-top:10px;letter-spacing:.03em}
+
+  /* --- 最近使用 --- */
+  .recent-row{display:flex;align-items:center;gap:10px;margin:0 0 14px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+  .recent-row[hidden]{display:none}
+  .recent-label{flex:none;font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--pencil);writing-mode:horizontal-tb}
+  .recent-chip{flex:none;display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:var(--paper);border:1px solid var(--hairline-soft);border-radius:10px;padding:6px 12px 6px 6px;box-shadow:var(--shadow);min-height:44px}
+  .recent-chip .seal-xs{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:16px;font-weight:900}
+  .recent-chip .rc-name{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -417,9 +439,14 @@
         <small>PRODUCTIVITY SYSTEMS</small>
       </div>
     </div>
-    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
-      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
-    </button>
+    <div style="display:flex;gap:8px">
+      <button class="icon-btn" id="backupBtn" title="全站備份 / 還原" aria-label="全站備份 / 還原" aria-expanded="false">
+        <svg viewBox="0 0 24 24"><path d="M12 3v11M8 10l4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      </button>
+      <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+        <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+      </button>
+    </div>
   </header>
 
   <section class="hero">
@@ -443,6 +470,24 @@
       <div class="rp-streak" id="rpStreak"></div>
       <div class="rp-sleep" id="rpSleep"></div>
     </div>
+  </div>
+
+  <!-- 全站備份面板（header 備份鈕開合） -->
+  <section class="backup-panel" id="backupPanel" hidden aria-label="全站備份">
+    <p class="eyebrow">全站備份</p>
+    <h2>一鍵備份所有工具的資料</h2>
+    <p class="bp-sub">打包全部 40 個工具＋入口頁的本機資料成一個 JSON 檔。<b>資料只存在這台裝置的瀏覽器</b>，換裝置、清快取、或 iOS 太久沒開都可能遺失——請定期備份。還原會覆蓋現有同名資料。</p>
+    <div class="bp-actions">
+      <button class="bp-btn" id="bkExportBtn">下載全站備份</button>
+      <button class="bp-btn ghost" id="bkImportBtn">還原全站備份</button>
+    </div>
+    <input type="file" id="bkImportFile" accept="application/json" hidden>
+    <div class="bp-meta" id="bkMeta"></div>
+  </section>
+
+  <!-- 最近使用（由 JS 依 prod_portal_visits 渲染） -->
+  <div class="recent-row" id="recentRow" hidden>
+    <span class="recent-label">最近使用</span>
   </div>
 
   <!-- Search & Segmented Filter Bar -->
@@ -470,7 +515,7 @@
     <div class="cat-head" style="order:19"><span>知識與學習</span></div>
     <div class="cat-head" style="order:29"><span>專注與能量</span></div>
     <div class="cat-head" style="order:39"><span>習慣與行動</span></div>
-    <a class="card" style="--c:var(--green); --c-soft:var(--green-soft)" href="./energy-first/" data-category="focus" data-id="energy-first">
+    <a class="card" style="--c:var(--green); --c-soft:var(--green-soft)" href="./energy-first/" data-category="focus" data-id="energy-first" data-keywords="精力 體力 狀態 黃金時段 生理節律 疲累">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">能</div>
       <div class="card-body">
@@ -483,7 +528,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--red); --c-soft:var(--red-soft)" href="./mind-offload/" data-category="focus" data-id="mind-offload">
+    <a class="card" style="--c:var(--red); --c-soft:var(--red-soft)" href="./mind-offload/" data-category="focus" data-id="mind-offload" data-keywords="清空 大腦 倒出來 收集箱 GTD 煩惱 待辦 焦慮">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">空</div>
       <div class="card-body">
@@ -496,7 +541,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--amber); --c-soft:var(--amber-soft)" href="./choice-loop/" data-category="decide" data-id="choice-loop">
+    <a class="card" style="--c:var(--amber); --c-soft:var(--amber-soft)" href="./choice-loop/" data-category="decide" data-id="choice-loop" data-keywords="選擇 探索 承諾 不確定 猶豫">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">循</div>
       <div class="card-body">
@@ -509,7 +554,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--blue); --c-soft:var(--blue-soft)" href="./premortem-thinking/" data-category="decide" data-id="premortem-thinking">
+    <a class="card" style="--c:var(--blue); --c-soft:var(--blue-soft)" href="./premortem-thinking/" data-category="decide" data-id="premortem-thinking" data-keywords="風險 失敗 預防 事前驗屍 悲觀演練">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">預</div>
       <div class="card-body">
@@ -522,7 +567,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--purple); --c-soft:var(--purple-soft)" href="./decision-journal/" data-category="decide" data-id="decision-journal">
+    <a class="card" style="--c:var(--purple); --c-soft:var(--purple-soft)" href="./decision-journal/" data-category="decide" data-id="decision-journal" data-keywords="決策 記錄 覆盤 回顧 判斷">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">誌</div>
       <div class="card-body">
@@ -535,7 +580,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--teal); --c-soft:var(--teal-soft)" href="./action-trigger/" data-category="action" data-id="action-trigger">
+    <a class="card" style="--c:var(--teal); --c-soft:var(--teal-soft)" href="./action-trigger/" data-category="action" data-id="action-trigger" data-keywords="觸發 執行意圖 if-then 開始 啟動">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">觸</div>
       <div class="card-body">
@@ -548,7 +593,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--slate); --c-soft:var(--slate-soft)" href="./mental-models/" data-category="decide" data-id="mental-models">
+    <a class="card" style="--c:var(--slate); --c-soft:var(--slate-soft)" href="./mental-models/" data-category="decide" data-id="mental-models" data-keywords="思考框架 透鏡 模型 第一性原理 反演">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">模</div>
       <div class="card-body">
@@ -561,7 +606,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--rust); --c-soft:var(--rust-soft)" href="./cognitive-load/" data-category="focus" data-id="cognitive-load">
+    <a class="card" style="--c:var(--rust); --c-soft:var(--rust-soft)" href="./cognitive-load/" data-category="focus" data-id="cognitive-load" data-keywords="認知 負荷 過載 心智 腦力 太多事">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">荷</div>
       <div class="card-body">
@@ -574,7 +619,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--indigo); --c-soft:var(--indigo-soft)" href="./knowledge-distill/" data-category="knowledge" data-id="knowledge-distill">
+    <a class="card" style="--c:var(--indigo); --c-soft:var(--indigo-soft)" href="./knowledge-distill/" data-category="knowledge" data-id="knowledge-distill" data-keywords="蒸餾 濃縮 重點 費曼 摘要">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">萃</div>
       <div class="card-body">
@@ -587,7 +632,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--plum); --c-soft:var(--plum-soft)" href="./info-diet/" data-category="knowledge" data-id="info-diet">
+    <a class="card" style="--c:var(--plum); --c-soft:var(--plum-soft)" href="./info-diet/" data-category="knowledge" data-id="info-diet" data-keywords="資訊過載 訂閱 斷捨離 注意力 滑手機 雜訊">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">食</div>
       <div class="card-body">
@@ -600,7 +645,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--olive); --c-soft:var(--olive-soft)" href="./energy-blocking/" data-category="focus" data-id="energy-blocking">
+    <a class="card" style="--c:var(--olive); --c-soft:var(--olive-soft)" href="./energy-blocking/" data-category="focus" data-id="energy-blocking" data-keywords="節律 作息 排程 精力 早晨 夜貓">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">律</div>
       <div class="card-body">
@@ -613,7 +658,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--rose); --c-soft:var(--rose-soft)" href="./two-minute/" data-category="action" data-id="two-minute">
+    <a class="card" style="--c:var(--rose); --c-soft:var(--rose-soft)" href="./two-minute/" data-category="action" data-id="two-minute" data-keywords="拖延 啟動 立刻 馬上做 兩分鐘 行動">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">啟</div>
       <div class="card-body">
@@ -626,7 +671,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--coffee); --c-soft:var(--coffee-soft)" href="./habit-stacking/" data-category="action" data-id="habit-stacking">
+    <a class="card" style="--c:var(--coffee); --c-soft:var(--coffee-soft)" href="./habit-stacking/" data-category="action" data-id="habit-stacking" data-keywords="習慣 堆疊 微習慣 原子習慣 錨點">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">疊</div>
       <div class="card-body">
@@ -639,7 +684,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--cerulean); --c-soft:var(--cerulean-soft)" href="./pre-decision/" data-category="decide" data-id="pre-decision">
+    <a class="card" style="--c:var(--cerulean); --c-soft:var(--cerulean-soft)" href="./pre-decision/" data-category="decide" data-id="pre-decision" data-keywords="預先決定 意志力 規則 自動化 誘惑">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">策</div>
       <div class="card-body">
@@ -652,7 +697,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--violet); --c-soft:var(--violet-soft)" href="./mvp-progress/" data-category="action" data-id="mvp-progress">
+    <a class="card" style="--c:var(--violet); --c-soft:var(--violet-soft)" href="./mvp-progress/" data-category="action" data-id="mvp-progress" data-keywords="最小進展 小步 不完美 開始 卡住">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">進</div>
       <div class="card-body">
@@ -665,7 +710,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--pumpkin); --c-soft:var(--pumpkin-soft)" href="./time-blocking/" data-category="focus" data-id="time-blocking">
+    <a class="card" style="--c:var(--pumpkin); --c-soft:var(--pumpkin-soft)" href="./time-blocking/" data-category="focus" data-id="time-blocking" data-keywords="時間分塊 番茄鐘 排程 行事曆 專注時段 deep work">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">塊</div>
       <div class="card-body">
@@ -678,7 +723,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--emerald); --c-soft:var(--emerald-soft)" href="./decision-tree/" data-category="decide" data-id="decision-tree">
+    <a class="card" style="--c:var(--emerald); --c-soft:var(--emerald-soft)" href="./decision-tree/" data-category="decide" data-id="decision-tree" data-keywords="決策樹 分岔 期望值 選項 機率">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">樹</div>
       <div class="card-body">
@@ -691,7 +736,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--magenta); --c-soft:var(--magenta-soft)" href="./knowledge-atom/" data-category="knowledge" data-id="knowledge-atom">
+    <a class="card" style="--c:var(--magenta); --c-soft:var(--magenta-soft)" href="./knowledge-atom/" data-category="knowledge" data-id="knowledge-atom" data-keywords="原子筆記 卡片盒 zettelkasten 連結 筆記法">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">原</div>
       <div class="card-body">
@@ -704,7 +749,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--cobalt); --c-soft:var(--cobalt-soft)" href="./pareto-review/" data-category="action" data-id="pareto-review">
+    <a class="card" style="--c:var(--cobalt); --c-soft:var(--cobalt-soft)" href="./pareto-review/" data-category="action" data-id="pareto-review" data-keywords="8020 帕累托 關鍵少數 檢視 效益">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">檢</div>
       <div class="card-body">
@@ -717,7 +762,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--saffron); --c-soft:var(--saffron-soft)" href="./compound-flywheel/" data-category="action" data-id="compound-flywheel">
+    <a class="card" style="--c:var(--saffron); --c-soft:var(--saffron-soft)" href="./compound-flywheel/" data-category="action" data-id="compound-flywheel" data-keywords="複利 飛輪 動能 累積 持續">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">輪</div>
       <div class="card-body">
@@ -730,7 +775,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--inkstone); --c-soft:var(--inkstone-soft)" href="./decision-fatigue/" data-category="decide" data-id="decision-fatigue">
+    <a class="card" style="--c:var(--inkstone); --c-soft:var(--inkstone-soft)" href="./decision-fatigue/" data-category="decide" data-id="decision-fatigue" data-keywords="決策疲勞 意志力耗竭 選擇太多 簡化">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">疲</div>
       <div class="card-body">
@@ -743,7 +788,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--forest); --c-soft:var(--forest-soft)" href="./task-switching-cost/" data-category="focus" data-id="task-switching-cost">
+    <a class="card" style="--c:var(--forest); --c-soft:var(--forest-soft)" href="./task-switching-cost/" data-category="focus" data-id="task-switching-cost" data-keywords="切換 中斷 分心 多工 context switching 專注">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">換</div>
       <div class="card-body">
@@ -756,7 +801,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--lagoon); --c-soft:var(--lagoon-soft)" href="./flow-triggers/" data-category="focus" data-id="flow-triggers">
+    <a class="card" style="--c:var(--lagoon); --c-soft:var(--lagoon-soft)" href="./flow-triggers/" data-category="focus" data-id="flow-triggers" data-keywords="心流 專注 沉浸 flow 進入狀態">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">流</div>
       <div class="card-body">
@@ -769,7 +814,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--sepia); --c-soft:var(--sepia-soft)" href="./visual-note-taking/" data-category="knowledge" data-id="visual-note-taking">
+    <a class="card" style="--c:var(--sepia); --c-soft:var(--sepia-soft)" href="./visual-note-taking/" data-category="knowledge" data-id="visual-note-taking" data-keywords="視覺筆記 塗鴉 sketchnote 畫圖 圖解">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">圖</div>
       <div class="card-body">
@@ -782,7 +827,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--denim); --c-soft:var(--denim-soft)" href="./task-batching/" data-category="focus" data-id="task-batching">
+    <a class="card" style="--c:var(--denim); --c-soft:var(--denim-soft)" href="./task-batching/" data-category="focus" data-id="task-batching" data-keywords="批次 合併 瑣事 集中處理 郵件">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">批</div>
       <div class="card-body">
@@ -795,7 +840,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--wine); --c-soft:var(--wine-soft)" href="./mvo/" data-category="action" data-id="mvo">
+    <a class="card" style="--c:var(--wine); --c-soft:var(--wine-soft)" href="./mvo/" data-category="action" data-id="mvo" data-keywords="最小輸出 發表 分享 寫作 公開 完美主義">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">出</div>
       <div class="card-body">
@@ -808,7 +853,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--midnight); --c-soft:var(--midnight-soft)" href="./constraint-reframing/" data-category="decide" data-id="constraint-reframing">
+    <a class="card" style="--c:var(--midnight); --c-soft:var(--midnight-soft)" href="./constraint-reframing/" data-category="decide" data-id="constraint-reframing" data-keywords="限制 重構 翻轉 資源不足 沒時間 沒錢">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">限</div>
       <div class="card-body">
@@ -821,7 +866,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--verdigris); --c-soft:var(--verdigris-soft)" href="./strategic-optionality/" data-category="decide" data-id="strategic-optionality">
+    <a class="card" style="--c:var(--verdigris); --c-soft:var(--verdigris-soft)" href="./strategic-optionality/" data-category="decide" data-id="strategic-optionality" data-keywords="選擇權 optionality 彈性 佈局 退路">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">選</div>
       <div class="card-body">
@@ -834,7 +879,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--mauve); --c-soft:var(--mauve-soft)" href="./identity-driven/" data-category="action" data-id="identity-driven">
+    <a class="card" style="--c:var(--mauve); --c-soft:var(--mauve-soft)" href="./identity-driven/" data-category="action" data-id="identity-driven" data-keywords="身份 認同 自我形象 成為 習慣養成">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">身</div>
       <div class="card-body">
@@ -847,7 +892,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--aubergine); --c-soft:var(--aubergine-soft)" href="./system-boundary/" data-category="decide" data-id="system-boundary">
+    <a class="card" style="--c:var(--aubergine); --c-soft:var(--aubergine-soft)" href="./system-boundary/" data-category="decide" data-id="system-boundary" data-keywords="邊界 界線 拒絕 說不 範圍 責任">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">界</div>
       <div class="card-body">
@@ -860,7 +905,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--iris); --c-soft:var(--iris-soft)" href="./life-leverage/" data-category="decide" data-id="life-leverage">
+    <a class="card" style="--c:var(--iris); --c-soft:var(--iris-soft)" href="./life-leverage/" data-category="decide" data-id="life-leverage" data-keywords="槓桿 放大 外包 自動化 借力">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">槓</div>
       <div class="card-body">
@@ -873,7 +918,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--copper); --c-soft:var(--copper-soft)" href="./compounding-life/" data-category="action" data-id="compounding-life">
+    <a class="card" style="--c:var(--copper); --c-soft:var(--copper-soft)" href="./compounding-life/" data-category="action" data-id="compounding-life" data-keywords="複利人生 長期主義 累積 時間資產">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">複</div>
       <div class="card-body">
@@ -886,7 +931,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--sage); --c-soft:var(--sage-soft)" href="./value-recovery/" data-category="knowledge" data-id="value-recovery">
+    <a class="card" style="--c:var(--sage); --c-soft:var(--sage-soft)" href="./value-recovery/" data-category="knowledge" data-id="value-recovery" data-keywords="價值回收 重用 沉沒成本 舊作 資產化">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">收</div>
       <div class="card-body">
@@ -899,7 +944,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--graphite); --c-soft:var(--graphite-soft)" href="./knowledge-compression/" data-category="knowledge" data-id="knowledge-compression">
+    <a class="card" style="--c:var(--graphite); --c-soft:var(--graphite-soft)" href="./knowledge-compression/" data-category="knowledge" data-id="knowledge-compression" data-keywords="知識壓縮 摘要 一句話 精煉 本質">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">縮</div>
       <div class="card-body">
@@ -912,7 +957,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--bamboo); --c-soft:var(--bamboo-soft)" href="./low-dependency/" data-category="decide" data-id="low-dependency">
+    <a class="card" style="--c:var(--bamboo); --c-soft:var(--bamboo-soft)" href="./low-dependency/" data-category="decide" data-id="low-dependency" data-keywords="低依賴 韌性 備援 抗脆弱 彈性">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">彈</div>
       <div class="card-body">
@@ -925,7 +970,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--coral); --c-soft:var(--coral-soft)" href="./energy-matrix/" data-category="focus" data-id="energy-matrix">
+    <a class="card" style="--c:var(--coral); --c-soft:var(--coral-soft)" href="./energy-matrix/" data-category="focus" data-id="energy-matrix" data-keywords="能量矩陣 精力管理 任務匹配 四象限">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">矩</div>
       <div class="card-body">
@@ -938,7 +983,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--ochre); --c-soft:var(--ochre-soft)" href="./learning-pyramid/" data-category="knowledge" data-id="learning-pyramid">
+    <a class="card" style="--c:var(--ochre); --c-soft:var(--ochre-soft)" href="./learning-pyramid/" data-category="knowledge" data-id="learning-pyramid" data-keywords="學習金字塔 教學相長 輸出 主動學習 記憶">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">塔</div>
       <div class="card-body">
@@ -951,7 +996,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--steel); --c-soft:var(--steel-soft)" href="./knowledge-sop/" data-category="knowledge" data-id="knowledge-sop">
+    <a class="card" style="--c:var(--steel); --c-soft:var(--steel-soft)" href="./knowledge-sop/" data-category="knowledge" data-id="knowledge-sop" data-keywords="SOP 標準作業 流程 交接 文件化 複製">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">範</div>
       <div class="card-body">
@@ -964,7 +1009,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--citrine); --c-soft:var(--citrine-soft)" href="./innovation-combo/" data-category="decide" data-id="innovation-combo">
+    <a class="card" style="--c:var(--citrine); --c-soft:var(--citrine-soft)" href="./innovation-combo/" data-category="decide" data-id="innovation-combo" data-keywords="創新 組合 連結 點子 腦力激盪 brainstorm">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">組</div>
       <div class="card-body">
@@ -977,7 +1022,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--harbor); --c-soft:var(--harbor-soft)" href="./analogy-transfer/" data-category="decide" data-id="analogy-transfer">
+    <a class="card" style="--c:var(--harbor); --c-soft:var(--harbor-soft)" href="./analogy-transfer/" data-category="decide" data-id="analogy-transfer" data-keywords="類比 遷移 借鏡 跨領域 跨產業 仿生 移植">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">遷</div>
       <div class="card-body">
@@ -1036,7 +1081,9 @@ function filterTools() {
     const desc = card.querySelector('p') ? card.querySelector('p').textContent.toLowerCase() : '';
     const category = card.dataset.category;
 
-    const matchesSearch = title.includes(query) || enTitle.includes(query) || desc.includes(query);
+    const keywords = (card.dataset.keywords || '').toLowerCase();
+
+    const matchesSearch = title.includes(query) || enTitle.includes(query) || desc.includes(query) || keywords.includes(query);
     const matchesFilter = activeFilter === 'all' || category === activeFilter;
 
     if (matchesSearch && matchesFilter) {
@@ -1296,6 +1343,126 @@ updatePinnedUI();
     pathEl.querySelectorAll('.path-step').forEach(a => a.addEventListener('click', () => recordVisit(a.dataset.id)));
   }
 })();
+
+/* --- 最近使用列（讀 prod_portal_visits，取最近 4 個） --- */
+(function(){
+  const row = document.getElementById('recentRow');
+  if (!row) return;
+  let visits = {};
+  try { visits = JSON.parse(localStorage.getItem('prod_portal_visits')) || {}; } catch(e){}
+  const recent = Object.entries(visits)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([id]) => document.querySelector('.card[data-id="' + id + '"]'))
+    .filter(Boolean);
+  if (!recent.length) return;
+  recent.forEach(card => {
+    const a = document.createElement('a');
+    a.className = 'recent-chip';
+    a.href = card.getAttribute('href');
+    const c = card.style.getPropertyValue('--c') || 'var(--ink)';
+    const cs = card.style.getPropertyValue('--c-soft') || 'var(--paper2)';
+    a.innerHTML = '<span class="seal-xs" style="background:' + cs + ';color:' + c + '">' +
+      card.querySelector('.mark').textContent + '</span>' +
+      '<span class="rc-name">' + card.querySelector('h2').textContent + '</span>';
+    a.addEventListener('click', () => {
+      try { const r = JSON.parse(localStorage.getItem('prod_portal_visits')) || {}; r[card.dataset.id] = Date.now(); localStorage.setItem('prod_portal_visits', JSON.stringify(r)); } catch(e){}
+    });
+    row.appendChild(a);
+  });
+  row.hidden = false;
+})();
+
+/* --- 全站備份 / 還原 --- */
+/* 同 origin 共享 localStorage，這裡列舉全系列已知 key 打包；新工具上架時要把 STORE key 加進 BK_EXACT（scripts/check.mjs 會驗證） */
+(function(){
+  const BK_EXACT = [
+    /* 新式骨架（STORE = "..."，主題共用 "theme"） */
+    "analogy_transfer_v1","compound_action_flywheel_v1","compounding_life_v1","constraint_reframing_v1",
+    "decision_fatigue_management_v1","energy_matrix_v1","flow_triggers_v1","identity_driven_v1",
+    "innovation_combo_v1","knowledge_compression_v1","knowledge_sop_v1","learning_pyramid_v1",
+    "life_leverage_v1","low_dependency_v1","mvo_output_v1","strategic_optionality_v1",
+    "system_boundary_v1","task_batching_v1","task_switching_cost_v1","value_recovery_v1",
+    "visual_note_taking_v1","theme",
+    /* 中期骨架（storeKey / themeKey 成對） */
+    "cogload_v1","cogload_theme","dectree_v1","dectree_theme","energyblock_v1","energyblock_theme",
+    "habitstack_v1","habitstack_theme","infodiet_v1","infodiet_theme","katom_v1","katom_theme",
+    "distill_v1","distill_theme","mvp_v1","mvp_theme","pareto_v1","pareto_theme",
+    "predecision_v1","predecision_theme","timeblock_v1","timeblock_theme","twomin_v1","twomin_theme",
+    /* 入口頁 */
+    "prod_portal_pinned","prod_portal_streak","prod_portal_theme","prod_portal_view","prod_portal_visits","prod_portal_last_backup"
+  ];
+  /* 早期骨架（動態 key 固定前綴）：action-trigger / choice-loop / decision-journal / energy-first / mental-models / mind-offload / premortem-thinking */
+  const BK_PREFIX = ["at_","ecc_","dj_","em_","mm_","co_","pm_"];
+  const LAST_KEY = "prod_portal_last_backup";
+
+  const panel = document.getElementById('backupPanel');
+  const toggleBtn = document.getElementById('backupBtn');
+  const meta = document.getElementById('bkMeta');
+  if (!panel || !toggleBtn) return;
+
+  function included(k){
+    return BK_EXACT.includes(k) || BK_PREFIX.some(p => k.startsWith(p));
+  }
+  function renderMeta(){
+    const last = localStorage.getItem(LAST_KEY);
+    let n = 0;
+    for (let i = 0; i < localStorage.length; i++) if (included(localStorage.key(i))) n++;
+    meta.textContent = '目前本機有 ' + n + ' 筆系列資料 · ' +
+      (last ? '上次備份：' + last.slice(0, 10) : '尚未備份過');
+  }
+  toggleBtn.addEventListener('click', () => {
+    panel.hidden = !panel.hidden;
+    toggleBtn.setAttribute('aria-expanded', String(!panel.hidden));
+    if (!panel.hidden) { renderMeta(); panel.scrollIntoView({ block:'nearest' }); }
+  });
+
+  document.getElementById('bkExportBtn').addEventListener('click', () => {
+    const keys = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (included(k)) keys[k] = localStorage.getItem(k);
+    }
+    const payload = { app:"productivity-systems", exportedAt:new Date().toISOString(), keys };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = "prod-systems-backup-" + payload.exportedAt.slice(0, 10) + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    localStorage.setItem(LAST_KEY, payload.exportedAt);
+    renderMeta();
+  });
+
+  document.getElementById('bkImportBtn').addEventListener('click', () => document.getElementById('bkImportFile').click());
+  document.getElementById('bkImportFile').addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const data = JSON.parse(r.result);
+        if (data.app !== "productivity-systems" || typeof data.keys !== "object" || !data.keys) {
+          alert("備份檔格式不符（不是全站備份檔）。"); return;
+        }
+        const n = Object.keys(data.keys).length;
+        if (!confirm("將還原 " + n + " 筆資料（" + (data.exportedAt || "").slice(0, 10) + " 的備份），同名資料會被覆蓋。繼續？")) return;
+        Object.entries(data.keys).forEach(([k, v]) => {
+          if (included(k) && typeof v === "string") localStorage.setItem(k, v);
+        });
+        alert("還原完成，將重新載入頁面。");
+        location.reload();
+      } catch (err) {
+        alert("讀取備份檔失敗。");
+      }
+    };
+    r.readAsText(f);
+    e.target.value = "";
+  });
+})();
+
+/* --- PWA：離線快取（precache＋stale-while-revalidate，見 sw.js） --- */
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("./sw.js").catch(function(){}); }
 </script>
 </body>
 </html>

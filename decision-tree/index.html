@@ -859,6 +859,7 @@ document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", ()
 /* ---------- Init ---------- */
 renderCrits(); renderOpts(); renderCps();
 renderLibrary(); renderAllCps();
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(function(){}); }
 </script>
 </body>
 </html>

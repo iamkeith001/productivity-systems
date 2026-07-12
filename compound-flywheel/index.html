@@ -643,6 +643,7 @@ document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", ()
 function renderAll(){ renderFlies(); renderLog(); renderProgress(); renderReview(); }
 updateFormula();
 renderAll();
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(function(){}); }
 </script>
 </body>
 </html>

@@ -4,6 +4,10 @@
 
 **立即使用：https://iamkeith001.github.io/productivity-systems/**
 
+- 支援 PWA 離線使用（加到手機主畫面後，沒網路也能開）。
+- 入口頁 header 的下載鈕可**一鍵備份／還原全部工具的本機資料**（單一 JSON 檔）。
+- 開發：`node scripts/check.mjs` 跑全站一致性檢查（新增工具前後必跑）。
+
 ## 系列工具
 
 - 能量儀表板：https://iamkeith001.github.io/energy-first/

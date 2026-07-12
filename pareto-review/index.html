@@ -677,6 +677,7 @@ function renderAll(){
   renderHistory();
 }
 renderAll();
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(function(){}); }
 </script>
 </body>
 </html>
