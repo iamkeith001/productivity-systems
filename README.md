@@ -45,3 +45,4 @@
 - 學習金字塔重構：https://iamkeith001.github.io/productivity-systems/learning-pyramid/
 - 知識複製 SOP：https://iamkeith001.github.io/productivity-systems/knowledge-sop/
 - 創新組合思維：https://iamkeith001.github.io/productivity-systems/innovation-combo/
+- 跨域類比遷移：https://iamkeith001.github.io/productivity-systems/analogy-transfer/
