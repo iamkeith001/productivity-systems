@@ -60,6 +60,7 @@
     --steel:#3E5A6E; --steel-soft:rgba(62,90,110,0.08);
     --citrine:#96851C; --citrine-soft:rgba(150,133,28,0.08);
     --harbor:#2E6C80; --harbor-soft:rgba(46,108,128,0.08);
+    --blueprint:#1D3A5F; --blueprint-soft:rgba(29,58,95,0.08);
     --moss:#4F7D2A; --moss-soft:rgba(79,125,42,0.08);
     --flint:#3B6064; --flint-soft:rgba(59,96,100,0.08);
   }
@@ -111,6 +112,7 @@
     --steel:#9FB9CC; --steel-soft:rgba(159,185,204,0.16);
     --citrine:#CDBE55; --citrine-soft:rgba(205,190,85,0.16);
     --harbor:#7FB7C9; --harbor-soft:rgba(127,183,201,0.16);
+    --blueprint:#5C8FD1; --blueprint-soft:rgba(92,143,209,0.16);
     --moss:#93C25E; --moss-soft:rgba(147,194,94,0.16);
     --flint:#86B8BE; --flint-soft:rgba(134,184,190,0.16);
   }
@@ -1065,6 +1067,19 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
+    <a class="card" style="--c:var(--blueprint); --c-soft:var(--blueprint-soft)" href="./first-principles/" data-category="decide" data-id="first-principles" data-keywords="第一性 本質 拆解 假設 事實 從零 根本 追問 為什麼 藍圖 重新設計">
+      <button class="pin-btn" title="釘選常用">★</button>
+      <div class="mark">本</div>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>第一性原理思維</h2>
+          <span class="en">FIRST PRINCIPLES THINKING</span>
+        </div>
+        <p>不接受「一直都是這樣做」：重新定義問題、拆解成基本元素、逐項區分事實與假設、連續追問為什麼，從零重建方案並以最小可行版本驗證，回到事實重新推導。</p>
+      </div>
+      <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </a>
+
     <div class="empty-hint" id="emptyHint">沒有找到符合搜尋條件的工具。</div>
   </main>
 
@@ -1411,7 +1426,7 @@ updatePinnedUI();
   const BK_EXACT = [
     /* 新式骨架（STORE = "..."，主題共用 "theme"） */
     "analogy_transfer_v1","compound_action_flywheel_v1","compounding_life_v1","constraint_driven_v1","constraint_reframing_v1",
-    "decision_fatigue_management_v1","energy_matrix_v1","flow_triggers_v1","identity_driven_v1",
+    "decision_fatigue_management_v1","energy_matrix_v1","first_principles_v1","flow_triggers_v1","identity_driven_v1",
     "innovation_combo_v1","knowledge_compression_v1","knowledge_sop_v1","learning_pyramid_v1",
     "life_leverage_v1","low_dependency_v1","mvo_output_v1","reverse_thinking_v1","strategic_optionality_v1",
     "system_boundary_v1","task_batching_v1","task_switching_cost_v1","value_recovery_v1",

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="第一性原理">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%231D3A5F' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%231D3A5F'%3E本%3C/text%3E%3C/svg%3E">
+<title>第一性原理思維 · First Principles Thinking</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#1D3A5F; --acc-soft:#E5EAF1;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --grid:rgba(29,58,95,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#5C8FD1; --acc-soft:#20293A;
+    --grid:rgba(92,143,209,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  textarea{resize:vertical;min-height:64px}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px;text-align:left}
+  .template-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+  .hint-box .vs{display:block;margin-top:2px}
+  .hint-box .vs s{opacity:.62}
+
+  .goal-card,.el-card,.rb-card{background:var(--paper);border:1px solid var(--hairline-soft);border-left:4px solid var(--acc);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .el-card.fact{border-left-color:var(--green)}
+  .el-card.assump{border-left-color:var(--amber)}
+  .rb-card.valid{border-left-color:var(--green)}
+  .rb-card.invalid{border-left-color:var(--red)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .oldq-line{font-size:12.5px;color:var(--pencil);margin-top:5px;line-height:1.55}
+  .oldq-line s{opacity:.72}
+  .why-line{font-size:12.5px;color:var(--acc);font-weight:700;margin-top:5px;line-height:1.55}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em;white-space:nowrap}
+  .tag.done{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.bad{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .tag.warn{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+
+  .seg{display:flex;gap:6px}
+  .seg button{flex:1;border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);border-radius:6px;padding:8px 4px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .seg button.on-fact{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .seg button.on-assump{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .seg button.on-testing{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .seg button.on-valid{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .seg button.on-invalid{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .seg.mini{margin-top:10px}
+
+  .why-box{margin-top:10px;background:var(--amber-soft);border-radius:6px;padding:10px 12px}
+  .why-box .form-label{margin-top:0;color:var(--amber)}
+  .why-box input[type=text]{margin-bottom:0;font-size:13px}
+  .exp-box{margin-top:10px;background:var(--acc-soft);border-radius:6px;padding:10px 12px}
+  .exp-box .form-label{margin-top:0;color:var(--acc)}
+  .exp-box input[type=text]{margin-bottom:8px;font-size:13px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">本</text></svg>
+      <div>
+        <h1>第一性原理思維</h1>
+        <small>FIRST PRINCIPLES THINKING</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-goals">
+    <div class="hero">
+      <p class="eyebrow">第一性原理思維</p>
+      <div class="hero-title serif">拆到不能再拆，<br>再重新開始。</div>
+      <p class="hero-text">亞里斯多德認為，要真正理解一件事，就必須找到那些不能再被拆解的基本事實。類比思考——別人怎麼做我就怎麼做——速度快，但容易複製既有缺陷；第一性原理不接受「一直以來都是這樣做」作為理由，回到三個問題：真正要達成的結果是什麼？哪些事實一定是真的？如果不受既有做法限制，可以如何重新設計？流程：拆解問題 → 找出基本事實 → 移除假設 → 重建方案。</p>
+      <div class="quote-line serif">不要只問別人怎麼做，回到事實，重新推導。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">新課題</p>
+      <h2>定義真正的問題</h2>
+      <p class="sub">不要把現有做法當成問題本身。「如何增加更多抽血櫃檯？」預設了解法；「如何將等待時間降到十分鐘內？」才聚焦真正目標。</p>
+      <label class="form-label" for="oldqText">原本的問法（預設了解法的那種，可留白）</label>
+      <input type="text" id="oldqText" placeholder="例如：如何增加更多抽血櫃檯？">
+      <label class="form-label" for="goalTitle">重新定義的問題（聚焦真正目標）*</label>
+      <div class="templates-list" id="goalTpls"></div>
+      <input type="text" id="goalTitle" placeholder="例如：如何將病人等待時間降到十分鐘內？">
+      <button class="btn" id="addGoalBtn">建立課題</button>
+    </div>
+
+    <div id="goalEmpty" class="empty"><span class="zh">還沒有課題</span>挑一個「一直以來都這樣做」的流程開始。</div>
+    <div id="goalList"></div>
+  </section>
+
+  <section class="tab" id="tab-elems">
+    <div class="card">
+      <p class="eyebrow">拆解</p>
+      <h2 id="elTitle">選擇課題</h2>
+      <select id="elGoalSel" aria-label="選擇課題"></select>
+      <div class="hint-box">把問題拆成<b>不能再簡化的基本元素</b>，逐項標記：<b>事實</b>＝有資料或規則支持；<b>假設</b>＝只是習慣、推測或過去經驗。對假設連續追問：為什麼需要這一步？為什麼一定由這個人做？為什麼不能提前？為什麼不能自動化？為什麼不能刪除？——通常追問三到五次，才看見真正原因。</div>
+      <label class="form-label">常見元素（點一下帶入）</label>
+      <div class="templates-list" id="elemChips"></div>
+      <label class="form-label" for="elText">基本元素 *</label>
+      <input type="text" id="elText" placeholder="例如：每個時段都開相同數量的櫃檯（Enter 快速新增）">
+      <button class="btn" id="addElemBtn">加入元素</button>
+    </div>
+
+    <div id="elEmpty" class="empty"><span class="zh">還沒有課題</span>先到「課題」分頁建立一個。</div>
+    <div id="elList"></div>
+  </section>
+
+  <section class="tab" id="tab-rebuild">
+    <div class="card">
+      <p class="eyebrow">從零重建</p>
+      <h2 id="rbTitle">如果今天重新建立，我會怎麼設計？</h2>
+      <select id="rbGoalSel" aria-label="選擇課題"></select>
+      <div class="hint-box">暫時忘記現有流程：哪些資料可以<b>自動取得</b>？哪些步驟<b>只需異常時才執行</b>？哪些決策可以<b>規則化</b>？哪些工作<b>不需要人員介入</b>？先驗證核心假設——試算表模擬、先測一個流程、先用十個案例、先在單一單位試行——避免「重新設計」變成高成本冒險。</div>
+      <label class="form-label" for="rbDesc">重建方案 *</label>
+      <input type="text" id="rbDesc" placeholder="例如：報到時自動分流，人員只覆核異常案例">
+      <button class="btn" id="addPlanBtn">加入重建方案</button>
+    </div>
+
+    <div id="rbEmpty" class="empty"><span class="zh">還沒有重建方案</span>先在「拆解」把假設攤開，再回來從零設計。</div>
+    <div id="rbList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>課題</h3><div class="cnt" id="rvGoals">0</div><div class="desc">重新定義過的問題。</div></div>
+      <div class="mini-card"><h3>基本元素</h3><div class="cnt" id="rvElems">0</div><div class="desc">拆到不能再拆的部分。</div></div>
+      <div class="mini-card"><h3>待驗假設</h3><div class="cnt" id="rvAssump">0</div><div class="desc">習慣不是事實。</div></div>
+      <div class="mini-card"><h3>驗證有效</h3><div class="cnt" id="rvValid">0</div><div class="desc">重建方案小規模證實。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>七步驟第一性原理法</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>七步驟：定義真正的問題 → 拆解成基本元素 → 區分事實與假設 → 連續追問為什麼 → 從零重建方案 → 最小可行版本 → 用結果持續修正。</li>
+          <li>最常見的障礙不是資訊不足，而是錯誤假設太多：「一定要增加人力」「一定要買新系統」「一定要開會」——這些可能只是習慣，不是事實。</li>
+          <li>第一性原理比類比思考更耗時間，不是每件小事都要重新發明。適用時機：成本長期過高、問題反覆發生、現有方法已失效、需要重大創新、核心流程有根本性瓶頸。日常問題用經驗快速處理，重大問題回到第一性原理。</li>
+          <li>它的價值在於區分「必要條件」與「歷史習慣」：很多低效率流程存在，不是因為最合理，而是因為過去一直這樣做。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../reverse-thinking/">逆向思維</a> · <a href="../constraint-driven/">約束驅動創新</a> · <a href="../mental-models/">心智模型</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/></svg><span>課題</span></button>
+    <button class="tabbtn" data-tab="tab-elems"><svg viewBox="0 0 24 24"><path d="M12 3v6M12 9l-6 4M12 9l6 4M6 13v5M18 13v5M6 21h.01M18 21h.01M12 21h.01M12 15v6"/></svg><span>拆解</span></button>
+    <button class="tabbtn" data-tab="tab-rebuild"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6M4 20h16"/></svg><span>重建</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "first_principles_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"goals":[],"elems":[],"plans":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+/* ---- constants ---- */
+const GOAL_TPLS = ["如何將病人等待時間降到十分鐘內？", "如何讓報告在兩小時內發出？", "如何讓新人兩週內獨立值班？", "如何每天空出兩小時深度工作？"];
+const ELEM_TPLS = ["到院人數與時間分布", "平均服務時間", "有效櫃檯數", "工作中斷次數", "每個時段都開相同櫃檯", "每位人員都做完整流程"];
+const TYPES = [
+  { k:"fact",   t:"事實", cls:"on-fact" },
+  { k:"assump", t:"假設", cls:"on-assump" }
+];
+const RESULTS = [
+  { k:"testing", t:"試行中", cls:"on-testing" },
+  { k:"valid",   t:"有效",   cls:"on-valid" },
+  { k:"invalid", t:"無效",   cls:"on-invalid" }
+];
+
+let curGoal = db.goals.length ? db.goals[0].id : null;
+
+function getGoal(){ return db.goals.find(g => g.id === curGoal) || null; }
+function goalElems(gid){ return db.elems.filter(x => x.gid === gid); }
+function goalPlans(gid){ return db.plans.filter(x => x.gid === gid); }
+
+/* ---- goals ---- */
+$("goalTpls").innerHTML = GOAL_TPLS.map((t, i) => '<button class="template-btn" data-gtpl="' + i + '">' + esc(t) + '</button>').join("");
+$("goalTpls").addEventListener("click", e => {
+  const btn = e.target.closest("[data-gtpl]");
+  if (!btn) return;
+  $("goalTitle").value = GOAL_TPLS[btn.dataset.gtpl];
+});
+
+$("addGoalBtn").addEventListener("click", () => {
+  const title = $("goalTitle").value.trim();
+  const oldq = $("oldqText").value.trim();
+  if (!title) { toast("先重新定義問題——聚焦真正目標，別預設解法"); return; }
+  db.goals.unshift({ id: uid(), title, oldq, createdAt: today() });
+  curGoal = db.goals[0].id;
+  saveAll();
+  $("goalTitle").value = "";
+  $("oldqText").value = "";
+  renderAll();
+  toast("已建立課題——去「拆解」找基本元素");
+});
+
+function renderGoals(){
+  $("goalEmpty").style.display = db.goals.length ? "none" : "block";
+  $("goalList").innerHTML = db.goals.map(g => {
+    const elems = goalElems(g.id);
+    const assump = elems.filter(x => x.type === "assump").length;
+    const valid = goalPlans(g.id).filter(p => p.result === "valid").length;
+    return '<div class="goal-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(g.title) + '</div>' +
+      (g.oldq ? '<div class="oldq-line"><s>' + esc(g.oldq) + '</s></div>' : '') +
+      '<div class="item-meta">' + g.createdAt + ' · 元素 ' + elems.length + ' · 假設 ' + assump + '</div></div>' +
+      (valid ? '<span class="tag done">驗證有效 ' + valid + '</span>' : '<span class="tag acc">推導中</span>') + '</div>' +
+      '<div class="actions"><button data-gel="' + g.id + '">拆解</button><button data-grb="' + g.id + '">重建</button><button class="del" data-gdel="' + g.id + '">×</button></div></div>';
+  }).join("");
+}
+$("goalList").addEventListener("click", e => {
+  const el = e.target.closest("[data-gel]");
+  if (el) { curGoal = el.dataset.gel; renderAll(); switchTab("tab-elems"); return; }
+  const rb = e.target.closest("[data-grb]");
+  if (rb) { curGoal = rb.dataset.grb; renderAll(); switchTab("tab-rebuild"); return; }
+  const del = e.target.closest("[data-gdel]");
+  if (!del) return;
+  if (!confirm("刪除這個課題與它的所有元素、重建方案？")) return;
+  db.goals = db.goals.filter(g => g.id !== del.dataset.gdel);
+  db.elems = db.elems.filter(x => x.gid !== del.dataset.gdel);
+  db.plans = db.plans.filter(x => x.gid !== del.dataset.gdel);
+  if (curGoal === del.dataset.gdel) curGoal = db.goals.length ? db.goals[0].id : null;
+  saveAll(); renderAll(); toast("已刪除課題");
+});
+
+/* ---- elems ---- */
+function renderGoalSel(sel){
+  $(sel).innerHTML = db.goals.map(g =>
+    '<option value="' + g.id + '"' + (g.id === curGoal ? ' selected' : '') + '>' + esc(g.title) + '</option>'
+  ).join("");
+  $(sel).style.display = db.goals.length ? "block" : "none";
+}
+
+$("elemChips").innerHTML = ELEM_TPLS.map((t, i) => '<button class="template-btn" data-etpl="' + i + '">' + esc(t) + '</button>').join("");
+$("elemChips").addEventListener("click", e => {
+  const btn = e.target.closest("[data-etpl]");
+  if (!btn) return;
+  $("elText").value = ELEM_TPLS[btn.dataset.etpl];
+  $("elText").focus();
+});
+
+function addElem(){
+  const g = getGoal();
+  if (!g) { toast("請先建立課題"); return; }
+  const text = $("elText").value.trim();
+  if (!text) { toast("寫下一個不能再簡化的基本元素"); return; }
+  db.elems.unshift({ id: uid(), gid: g.id, text, type: "", why: "", date: today() });
+  saveAll();
+  $("elText").value = "";
+  $("elText").focus();
+  renderAll();
+  toast("已加入（第 " + goalElems(g.id).length + " 項）——列完再標記事實／假設");
+}
+$("addElemBtn").addEventListener("click", addElem);
+$("elText").addEventListener("keydown", e => {
+  if (e.key === "Enter") { e.preventDefault(); addElem(); }
+});
+
+function renderElems(){
+  renderGoalSel("elGoalSel");
+  const g = getGoal();
+  $("elEmpty").style.display = g ? "none" : "block";
+  $("elTitle").textContent = g ? "課題：" + g.title : "選擇課題";
+  const elems = g ? goalElems(g.id) : [];
+  $("elList").innerHTML = elems.map(x => {
+    const cls = x.type === "fact" ? " fact" : x.type === "assump" ? " assump" : "";
+    const tag = x.type === "fact" ? '<span class="tag done">事實</span>'
+      : x.type === "assump" ? '<span class="tag warn">假設</span>'
+      : '<span class="tag">未分類</span>';
+    return '<div class="el-card' + cls + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(x.text) + '</div>' +
+      '<div class="item-meta">' + x.date + '</div></div>' + tag + '</div>' +
+      '<div class="seg mini">' + TYPES.map(t =>
+        '<button data-typ="' + x.id + ':' + t.k + '" class="' + (x.type === t.k ? t.cls : '') + '">' + t.t + '</button>'
+      ).join("") + '<button data-edel="' + x.id + '" style="flex:none;width:44px;color:var(--red)">×</button></div>' +
+      (x.type === "assump"
+        ? '<div class="why-box"><label class="form-label">追問為什麼（3–5 次後的真正原因／可重新設計點）</label>' +
+          '<input type="text" data-why="' + x.id + '" placeholder="例如：其實只是排班表十年沒改過" value="' + esc(x.why) + '"></div>'
+        : '') +
+      '</div>';
+  }).join("");
+}
+$("elGoalSel").addEventListener("change", () => { curGoal = $("elGoalSel").value; renderAll(); });
+$("elList").addEventListener("click", e => {
+  const typ = e.target.closest("[data-typ]");
+  if (typ) {
+    const parts = typ.dataset.typ.split(":");
+    const x = db.elems.find(i => i.id === parts[0]);
+    if (!x) return;
+    x.type = x.type === parts[1] ? "" : parts[1];
+    saveAll();
+    renderElems(); renderGoals(); renderReview();
+    if (x.type === "assump") toast("標成假設——追問為什麼，這裡就是重新設計的空間");
+    else if (x.type === "fact") toast("事實確立——重建時以它為地基");
+    return;
+  }
+  const del = e.target.closest("[data-edel]");
+  if (!del) return;
+  db.elems = db.elems.filter(x => x.id !== del.dataset.edel);
+  saveAll(); renderAll(); toast("已刪除元素");
+});
+$("elList").addEventListener("change", e => {
+  const why = e.target.closest("[data-why]");
+  if (!why) return;
+  const x = db.elems.find(i => i.id === why.dataset.why);
+  if (x) { x.why = why.value.trim(); saveAll(); renderGoals(); }
+});
+
+/* ---- rebuild ---- */
+$("addPlanBtn").addEventListener("click", () => {
+  const g = getGoal();
+  if (!g) { toast("請先建立課題"); return; }
+  const desc = $("rbDesc").value.trim();
+  if (!desc) { toast("寫下從零重建的方案"); return; }
+  db.plans.unshift({ id: uid(), gid: g.id, desc, plan: "", metric: "", result: "", date: today() });
+  saveAll();
+  $("rbDesc").value = "";
+  renderAll();
+  toast("已加入重建方案——用最小可行版本驗證");
+});
+
+function renderRebuild(){
+  renderGoalSel("rbGoalSel");
+  const g = getGoal();
+  $("rbTitle").textContent = g ? "課題：" + g.title : "如果今天重新建立，我會怎麼設計？";
+  const plans = g ? goalPlans(g.id) : [];
+  $("rbEmpty").style.display = plans.length ? "none" : "block";
+  $("rbList").innerHTML = plans.map(p => {
+    const cls = p.result === "valid" ? " valid" : p.result === "invalid" ? " invalid" : "";
+    const tag = p.result === "valid" ? '<span class="tag done">驗證有效</span>'
+      : p.result === "invalid" ? '<span class="tag bad">假設被推翻</span>'
+      : p.result === "testing" ? '<span class="tag acc">試行中</span>'
+      : '<span class="tag acc">待驗證</span>';
+    return '<div class="rb-card' + cls + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(p.desc) + '</div>' +
+      '<div class="item-meta">' + p.date + '</div></div>' + tag + '</div>' +
+      '<div class="exp-box">' +
+      '<label class="form-label">最小可行版本：先在哪裡、用多小的規模驗證？</label>' +
+      '<input type="text" data-plan="' + p.id + '" placeholder="例如：先用試算表模擬一週的到院分布" value="' + esc(p.plan) + '">' +
+      '<label class="form-label">核心指標：改善了什麼數字才算成立？</label>' +
+      '<input type="text" data-metric="' + p.id + '" placeholder="例如：尖峰時段平均等待分鐘" value="' + esc(p.metric) + '">' +
+      '<div class="seg">' + RESULTS.map(r =>
+        '<button data-res="' + p.id + ':' + r.k + '" class="' + (p.result === r.k ? r.cls : '') + '">' + r.t + '</button>'
+      ).join("") + '</div></div>' +
+      '<div class="actions"><button class="del" data-pdel="' + p.id + '" style="flex:none;width:44px">×</button></div></div>';
+  }).join("");
+}
+$("rbGoalSel").addEventListener("change", () => { curGoal = $("rbGoalSel").value; renderAll(); });
+$("rbList").addEventListener("click", e => {
+  const res = e.target.closest("[data-res]");
+  if (res) {
+    const parts = res.dataset.res.split(":");
+    const p = db.plans.find(x => x.id === parts[0]);
+    if (!p) return;
+    p.result = p.result === parts[1] ? "" : parts[1];
+    saveAll(); renderRebuild(); renderGoals(); renderReview();
+    if (p.result === "valid") toast("驗證有效 🎉 評估是否擴大");
+    else if (p.result === "invalid") toast("假設被推翻也是收穫——回到事實重新推導");
+    return;
+  }
+  const del = e.target.closest("[data-pdel]");
+  if (!del) return;
+  db.plans = db.plans.filter(p => p.id !== del.dataset.pdel);
+  saveAll(); renderAll(); toast("已刪除重建方案");
+});
+$("rbList").addEventListener("change", e => {
+  const plan = e.target.closest("[data-plan]");
+  if (plan) {
+    const p = db.plans.find(x => x.id === plan.dataset.plan);
+    if (p) { p.plan = plan.value.trim(); saveAll(); }
+    return;
+  }
+  const metric = e.target.closest("[data-metric]");
+  if (metric) {
+    const p = db.plans.find(x => x.id === metric.dataset.metric);
+    if (p) { p.metric = metric.value.trim(); saveAll(); }
+  }
+});
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvGoals").textContent = String(db.goals.length);
+  $("rvElems").textContent = String(db.elems.length);
+  $("rvAssump").textContent = String(db.elems.filter(x => x.type === "assump").length);
+  $("rvValid").textContent = String(db.plans.filter(p => p.result === "valid").length);
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "first-principles-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.goals) && Array.isArray(data.elems) && Array.isArray(data.plans)) {
+        db = { goals:data.goals, elems:data.elems, plans:data.plans };
+        curGoal = db.goals.length ? db.goals[0].id : null;
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有課題、元素與重建方案嗎？此動作無法復原。")) return;
+  db = { goals:[], elems:[], plans:[] };
+  curGoal = null;
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-elems") renderElems();
+  if (id === "tab-rebuild") renderRebuild();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderGoals();
+  renderElems();
+  renderRebuild();
+  renderReview();
+}
+renderAll();
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("../sw.js").catch(function(){});
+  /* 背景更新拿到新版時顯示「重新整理」提示（訊息來自 sw.js，比對 etag 才發） */
+  navigator.serviceWorker.addEventListener("message", function(e){
+    var d = e.data || {};
+    if (d.type !== "sw-updated") return;
+    var norm = function(p){ return p.replace(/index\.html$/, ""); };
+    try { if (norm(new URL(d.url).pathname) !== norm(location.pathname)) return; } catch (err) { return; }
+    if (document.getElementById("swUpdateBar")) return;
+    var bar = document.createElement("div");
+    bar.id = "swUpdateBar";
+    bar.setAttribute("role", "status");
+    bar.style.cssText = "position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:max-content;z-index:9999;display:flex;align-items:center;gap:10px;background:#2B2823;color:#FBFAF6;padding:10px 14px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:92vw;white-space:nowrap";
+    var txt = document.createElement("span");
+    txt.textContent = "此頁有新版本";
+    var btn = document.createElement("button");
+    btn.textContent = "重新整理";
+    btn.style.cssText = "border:1px solid rgba(251,250,246,.5);background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px 10px;border-radius:8px;cursor:pointer";
+    btn.addEventListener("click", function(){ location.reload(); });
+    var close = document.createElement("button");
+    close.textContent = "✕";
+    close.setAttribute("aria-label", "關閉更新提示");
+    close.style.cssText = "border:0;background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px;cursor:pointer;opacity:.7";
+    close.addEventListener("click", function(){ bar.remove(); });
+    bar.appendChild(txt); bar.appendChild(btn); bar.appendChild(close);
+    document.body.appendChild(bar);
+  });
+  if (navigator.serviceWorker.startMessages) navigator.serviceWorker.startMessages();
+}
+</script>
+</body>
+</html>

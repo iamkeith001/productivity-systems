@@ -23,6 +23,7 @@ const PRECACHE = [
   "./energy-blocking/",
   "./energy-first/",
   "./energy-matrix/",
+  "./first-principles/",
   "./flow-triggers/",
   "./habit-stacking/",
   "./identity-driven/",
