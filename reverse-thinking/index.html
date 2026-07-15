@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="逆向思維">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%234F7D2A' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%234F7D2A'%3E逆%3C/text%3E%3C/svg%3E">
+<title>逆向思維 · Reverse Thinking</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#4F7D2A; --acc-soft:#EAF0E3;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --grid:rgba(79,125,42,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#93C25E; --acc-soft:#26301C;
+    --grid:rgba(147,194,94,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  textarea{resize:vertical;min-height:64px}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px;text-align:left}
+  .template-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+  .hint-box .vs{display:block;margin-top:2px}
+  .hint-box .vs s{opacity:.62}
+
+  .goal-card,.rk-card,.gd-card{background:var(--paper);border:1px solid var(--hairline-soft);border-left:4px solid var(--acc);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .rk-card.hot,.gd-card.hot{border-left-color:var(--red)}
+  .gd-card.done{border-left-color:var(--green)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .invq-line{font-size:12.5px;color:var(--acc);font-weight:700;margin-top:5px;line-height:1.55}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em;white-space:nowrap}
+  .tag.done{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.bad{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+
+  .facets{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .facet-btn{border:1px solid var(--hairline);background:var(--paper2);color:var(--pencil);padding:6px 10px;border-radius:4px;font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:32px;letter-spacing:.04em}
+  .facet-btn.on{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .facet-btn.del-rk{margin-left:auto;color:var(--red)}
+
+  .exp-box{margin-top:10px;background:var(--acc-soft);border-radius:6px;padding:10px 12px}
+  .exp-box .form-label{margin-top:0;color:var(--acc)}
+  .exp-box input[type=text]{margin-bottom:8px;font-size:13px}
+  .guard-btn{width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);border-radius:6px;padding:9px 4px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:38px}
+  .guard-btn.on{background:var(--green-soft);color:var(--green);border-color:transparent}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">逆</text></svg>
+      <div>
+        <h1>逆向思維</h1>
+        <small>REVERSE THINKING</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-goals">
+    <div class="hero">
+      <p class="eyebrow">逆向思維</p>
+      <div class="hero-title serif">反過來想，<br>總是反過來想。</div>
+      <p class="hero-text">數學家 Jacobi 的座右銘「Invert, always invert」，被 Charlie Munger 帶進決策世界：與其問「如何成功？」，不如先問「怎樣一定會失敗？」。人們容易忽略錯誤，而避免重大錯誤，本身就是成功的重要來源——很多真正重要的改善，不是新增更多事情，而是停止做錯的事情。流程：定義真正目標 → 反向提問 → 大量列出失敗因素 → 轉成改善策略 → 鎖定高風險因子 → 建立防呆系統。</p>
+      <div class="quote-line serif">先排除最差答案，剩下的往往就是最好的選擇。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">新課題</p>
+      <h2>定義目標，反向提問</h2>
+      <p class="sub">先別急著想方法。「提高論文產出」太模糊——是提高投稿成功率、還是縮短完成時間？目標越明確，逆向分析越有效。定好目標後，把問題完全反過來問。</p>
+      <div class="templates-list" id="goalTpls"></div>
+      <label class="form-label" for="goalTitle">真正目標 *</label>
+      <input type="text" id="goalTitle" placeholder="例如：提高論文投稿成功率">
+      <label class="form-label" for="invqText">反向提問（怎樣一定會失敗？點句式帶入）*</label>
+      <div class="templates-list" id="invqTpls"></div>
+      <input type="text" id="invqText" placeholder="例如：怎樣一定會讓投稿被拒？">
+      <button class="btn" id="addGoalBtn">建立課題</button>
+    </div>
+
+    <div id="goalEmpty" class="empty"><span class="zh">還沒有課題</span>挑一個你正在追求的目標，反過來問。</div>
+    <div id="goalList"></div>
+  </section>
+
+  <section class="tab" id="tab-risks">
+    <div class="card">
+      <p class="eyebrow">失敗清單</p>
+      <h2 id="rkTitle">選擇課題</h2>
+      <select id="rkGoalSel" aria-label="選擇課題"></select>
+      <div class="hint-box"><b>先別評估，全部寫下來。</b>通常五分鐘就能列出二、三十項。列完再回頭替每一項標記：影響大嗎？容易發生嗎？<b>兩者都中的就是高風險因子</b>——那就是逆向思維真正的價值。</div>
+      <label class="form-label">常見失敗因素（點一下帶入）</label>
+      <div class="templates-list" id="failChips"></div>
+      <label class="form-label" for="rkText">怎樣一定會失敗？ *</label>
+      <input type="text" id="rkText" placeholder="例如：投稿前沒有人幫忙審稿（Enter 快速新增）">
+      <button class="btn" id="addRiskBtn">加入失敗因素</button>
+    </div>
+
+    <div id="rkEmpty" class="empty"><span class="zh">還沒有課題</span>先到「課題」分頁建立一個。</div>
+    <div id="rkList"></div>
+  </section>
+
+  <section class="tab" id="tab-guard">
+    <div class="card">
+      <p class="eyebrow">防呆系統</p>
+      <h2 id="gdTitle">讓錯誤不容易發生</h2>
+      <select id="gdGoalSel" aria-label="選擇課題"></select>
+      <p class="sub" style="margin-bottom:0">不要依靠「大家小心一點」，要建立讓錯誤不容易發生的機制：條碼掃描、雙人確認、自動提醒、SOP、Checklist、AI 預警。高風險因子（紅邊）排最前面，優先處理。逆向思考最後一定會走向系統設計。</p>
+    </div>
+
+    <div id="gdEmpty" class="empty"><span class="zh">還沒有失敗因素</span>先到「失敗」分頁狂列至少一輪。</div>
+    <div id="gdList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>課題</h3><div class="cnt" id="rvGoals">0</div><div class="desc">已反向提問的目標。</div></div>
+      <div class="mini-card"><h3>失敗因素</h3><div class="cnt" id="rvRisks">0</div><div class="desc">列出來的失敗方法。</div></div>
+      <div class="mini-card"><h3>高風險因子</h3><div class="cnt" id="rvHot">0</div><div class="desc">影響大 × 容易發生。</div></div>
+      <div class="mini-card"><h3>已建立防呆</h3><div class="cnt" id="rvDone">0</div><div class="desc">錯誤已不容易發生。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>六步驟逆向思考法</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>六步驟：定義真正目標 → 反向提問 → 大量列出失敗因素（先別評估）→ 轉成改善策略 → 鎖定「影響最大 × 最容易發生」→ 建立防呆系統。</li>
+          <li>防呆不要依靠「大家小心一點」，要讓錯誤不容易發生：條碼掃描、雙人確認、自動提醒、SOP、Checklist、AI 預警。</li>
+          <li>Munger：「我只想知道我將來會死在哪裡，那我就永遠不要去那裡。」成熟的成功，很多時候只是持續避免犯大錯。</li>
+          <li>逆向思維不是唱反調，而是刻意站到相反的位置重新觀察問題——與其追求最佳答案，不如先排除最差答案。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../premortem-thinking/">情境預演</a> · <a href="../pre-decision/">預先決策</a> · <a href="../constraint-driven/">約束驅動創新</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/></svg><span>課題</span></button>
+    <button class="tabbtn" data-tab="tab-risks"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg><span>失敗</span></button>
+    <button class="tabbtn" data-tab="tab-guard"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg><span>防呆</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "reverse_thinking_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"goals":[],"risks":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+/* ---- constants ---- */
+const GOAL_TPLS = ["提高論文投稿成功率", "降低檢驗報告錯誤", "提高每天的深度工作時間", "讓團隊合作更順暢"];
+const INVQ_TPLS = [
+  "怎樣一定會讓◯◯徹底失敗？",
+  "什麼事情最浪費◯◯？",
+  "哪些因素最容易造成◯◯錯誤？",
+  "今天哪些事一定會毀掉◯◯？"
+];
+const FAIL_TPLS = ["沒有時程管理", "資料品質差", "一直被打斷", "投稿前沒人審稿", "題目太多、每篇都重新開始", "資訊不透明、沒有人負責"];
+const FACETS = [
+  { k:"impact", t:"影響大" },
+  { k:"likely", t:"容易發生" }
+];
+
+let curGoal = db.goals.length ? db.goals[0].id : null;
+
+function getGoal(){ return db.goals.find(g => g.id === curGoal) || null; }
+function goalRisks(gid){ return db.risks.filter(r => r.gid === gid); }
+function isHot(r){ return r.impact && r.likely; }
+/* 防呆分頁排序：高風險在前、已防呆在後 */
+function sortedRisks(gid){
+  return goalRisks(gid).slice().sort((a, b) => (isHot(b) - isHot(a)) || (a.done - b.done));
+}
+
+/* ---- goals ---- */
+$("goalTpls").innerHTML = GOAL_TPLS.map((t, i) => '<button class="template-btn" data-gtpl="' + i + '">' + esc(t) + '</button>').join("");
+$("goalTpls").addEventListener("click", e => {
+  const btn = e.target.closest("[data-gtpl]");
+  if (!btn) return;
+  $("goalTitle").value = GOAL_TPLS[btn.dataset.gtpl];
+});
+$("invqTpls").innerHTML = INVQ_TPLS.map((t, i) => '<button class="template-btn" data-itpl="' + i + '">' + esc(t) + '</button>').join("");
+$("invqTpls").addEventListener("click", e => {
+  const btn = e.target.closest("[data-itpl]");
+  if (!btn) return;
+  $("invqText").value = INVQ_TPLS[btn.dataset.itpl];
+  $("invqText").focus();
+});
+
+$("addGoalBtn").addEventListener("click", () => {
+  const title = $("goalTitle").value.trim();
+  const invq = $("invqText").value.trim();
+  if (!title) { toast("先寫真正目標——越明確，逆向分析越有效"); return; }
+  if (!invq) { toast("把問題反過來問——怎樣一定會失敗？"); return; }
+  db.goals.unshift({ id: uid(), title, invq, createdAt: today() });
+  curGoal = db.goals[0].id;
+  saveAll();
+  $("goalTitle").value = "";
+  $("invqText").value = "";
+  renderAll();
+  toast("已建立課題——去「失敗」花五分鐘狂列失敗因素");
+});
+
+function renderGoals(){
+  $("goalEmpty").style.display = db.goals.length ? "none" : "block";
+  $("goalList").innerHTML = db.goals.map(g => {
+    const risks = goalRisks(g.id);
+    const hot = risks.filter(isHot).length;
+    const done = risks.filter(r => r.done).length;
+    return '<div class="goal-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(g.title) + '</div>' +
+      '<div class="invq-line">⟲ ' + esc(g.invq) + '</div>' +
+      '<div class="item-meta">' + g.createdAt + ' · 失敗因素 ' + risks.length + ' · 高風險 ' + hot + '</div></div>' +
+      (done ? '<span class="tag done">防呆 ' + done + '</span>' : '<span class="tag acc">逆想中</span>') + '</div>' +
+      '<div class="actions"><button data-grk="' + g.id + '">失敗</button><button data-ggd="' + g.id + '">防呆</button><button class="del" data-gdel="' + g.id + '">×</button></div></div>';
+  }).join("");
+}
+$("goalList").addEventListener("click", e => {
+  const rk = e.target.closest("[data-grk]");
+  if (rk) { curGoal = rk.dataset.grk; renderAll(); switchTab("tab-risks"); return; }
+  const gd = e.target.closest("[data-ggd]");
+  if (gd) { curGoal = gd.dataset.ggd; renderAll(); switchTab("tab-guard"); return; }
+  const del = e.target.closest("[data-gdel]");
+  if (!del) return;
+  if (!confirm("刪除這個課題與它的所有失敗因素？")) return;
+  db.goals = db.goals.filter(g => g.id !== del.dataset.gdel);
+  db.risks = db.risks.filter(r => r.gid !== del.dataset.gdel);
+  if (curGoal === del.dataset.gdel) curGoal = db.goals.length ? db.goals[0].id : null;
+  saveAll(); renderAll(); toast("已刪除課題");
+});
+
+/* ---- risks ---- */
+function renderGoalSel(sel){
+  $(sel).innerHTML = db.goals.map(g =>
+    '<option value="' + g.id + '"' + (g.id === curGoal ? ' selected' : '') + '>' + esc(g.title) + '</option>'
+  ).join("");
+  $(sel).style.display = db.goals.length ? "block" : "none";
+}
+
+$("failChips").innerHTML = FAIL_TPLS.map((t, i) => '<button class="template-btn" data-ftpl="' + i + '">' + esc(t) + '</button>').join("");
+$("failChips").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ftpl]");
+  if (!btn) return;
+  $("rkText").value = FAIL_TPLS[btn.dataset.ftpl];
+  $("rkText").focus();
+});
+
+function addRisk(){
+  const g = getGoal();
+  if (!g) { toast("請先建立課題"); return; }
+  const text = $("rkText").value.trim();
+  if (!text) { toast("寫下一種一定會失敗的方法"); return; }
+  db.risks.unshift({ id: uid(), gid: g.id, text, impact:false, likely:false, fix:"", guard:"", done:false, date: today() });
+  saveAll();
+  $("rkText").value = "";
+  $("rkText").focus();
+  renderAll();
+  toast("已加入（第 " + goalRisks(g.id).length + " 項）——先別評估，繼續列");
+}
+$("addRiskBtn").addEventListener("click", addRisk);
+$("rkText").addEventListener("keydown", e => {
+  if (e.key === "Enter") { e.preventDefault(); addRisk(); }
+});
+
+function renderRisks(){
+  renderGoalSel("rkGoalSel");
+  const g = getGoal();
+  $("rkEmpty").style.display = g ? "none" : "block";
+  $("rkTitle").textContent = g ? "課題：" + g.title : "選擇課題";
+  const risks = g ? goalRisks(g.id) : [];
+  $("rkList").innerHTML = risks.map(r => {
+    const hot = isHot(r);
+    return '<div class="rk-card' + (hot ? ' hot' : '') + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(r.text) + '</div>' +
+      '<div class="item-meta">' + r.date + '</div></div>' +
+      (hot ? '<span class="tag bad">高風險</span>' : r.done ? '<span class="tag done">已防呆</span>' : '') + '</div>' +
+      '<div class="facets">' + FACETS.map(f =>
+        '<button class="facet-btn' + (r[f.k] ? ' on' : '') + '" data-fct="' + r.id + ':' + f.k + '">' + f.t + '</button>'
+      ).join("") + '<button class="facet-btn del-rk" data-rdel="' + r.id + '">×</button></div></div>';
+  }).join("");
+}
+$("rkGoalSel").addEventListener("change", () => { curGoal = $("rkGoalSel").value; renderAll(); });
+$("rkList").addEventListener("click", e => {
+  const fct = e.target.closest("[data-fct]");
+  if (fct) {
+    const parts = fct.dataset.fct.split(":");
+    const r = db.risks.find(x => x.id === parts[0]);
+    if (!r) return;
+    const before = isHot(r);
+    r[parts[1]] = !r[parts[1]];
+    saveAll();
+    renderRisks(); renderGoals(); renderReview();
+    if (isHot(r) && !before) toast("高風險因子！優先到「防呆」處理");
+    return;
+  }
+  const del = e.target.closest("[data-rdel]");
+  if (!del) return;
+  db.risks = db.risks.filter(r => r.id !== del.dataset.rdel);
+  saveAll(); renderAll(); toast("已刪除失敗因素");
+});
+
+/* ---- guard ---- */
+function renderGuard(){
+  renderGoalSel("gdGoalSel");
+  const g = getGoal();
+  $("gdTitle").textContent = g ? "課題：" + g.title : "讓錯誤不容易發生";
+  const risks = g ? sortedRisks(g.id) : [];
+  $("gdEmpty").style.display = risks.length ? "none" : "block";
+  $("gdList").innerHTML = risks.map(r => {
+    const hot = isHot(r);
+    const cls = r.done ? " done" : hot ? " hot" : "";
+    const tag = r.done ? '<span class="tag done">已防呆</span>'
+      : hot ? '<span class="tag bad">高風險</span>'
+      : '<span class="tag acc">待處理</span>';
+    return '<div class="gd-card' + cls + '">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(r.text) + '</div>' +
+      '<div class="item-meta">' + esc(g ? g.title : '') + '</div></div>' + tag + '</div>' +
+      '<div class="exp-box">' +
+      '<label class="form-label">改善策略：反過來，該做什麼？</label>' +
+      '<input type="text" data-fix="' + r.id + '" placeholder="例如：投稿前固定請兩位同儕審稿" value="' + esc(r.fix) + '">' +
+      '<label class="form-label">防呆設計：什麼機制讓錯誤不容易發生？</label>' +
+      '<input type="text" data-guard="' + r.id + '" placeholder="例如：投稿 Checklist 加入「已完成同儕審稿」必勾項" value="' + esc(r.guard) + '">' +
+      '<button class="guard-btn' + (r.done ? ' on' : '') + '" data-done="' + r.id + '">' + (r.done ? '✓ 防呆已建立' : '標記：防呆已建立') + '</button>' +
+      '</div></div>';
+  }).join("");
+}
+$("gdGoalSel").addEventListener("change", () => { curGoal = $("gdGoalSel").value; renderAll(); });
+$("gdList").addEventListener("click", e => {
+  const done = e.target.closest("[data-done]");
+  if (!done) return;
+  const r = db.risks.find(x => x.id === done.dataset.done);
+  if (!r) return;
+  r.done = !r.done;
+  saveAll(); renderGuard(); renderGoals(); renderRisks(); renderReview();
+  if (r.done) toast("防呆已建立 🎉 錯誤將不容易發生");
+});
+$("gdList").addEventListener("change", e => {
+  const fix = e.target.closest("[data-fix]");
+  if (fix) {
+    const r = db.risks.find(x => x.id === fix.dataset.fix);
+    if (r) { r.fix = fix.value.trim(); saveAll(); }
+    return;
+  }
+  const guard = e.target.closest("[data-guard]");
+  if (guard) {
+    const r = db.risks.find(x => x.id === guard.dataset.guard);
+    if (r) { r.guard = guard.value.trim(); saveAll(); }
+  }
+});
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvGoals").textContent = String(db.goals.length);
+  $("rvRisks").textContent = String(db.risks.length);
+  $("rvHot").textContent = String(db.risks.filter(isHot).length);
+  $("rvDone").textContent = String(db.risks.filter(r => r.done).length);
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "reverse-thinking-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.goals) && Array.isArray(data.risks)) {
+        db = { goals:data.goals, risks:data.risks };
+        curGoal = db.goals.length ? db.goals[0].id : null;
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有課題與失敗因素嗎？此動作無法復原。")) return;
+  db = { goals:[], risks:[] };
+  curGoal = null;
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-risks") renderRisks();
+  if (id === "tab-guard") renderGuard();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderGoals();
+  renderRisks();
+  renderGuard();
+  renderReview();
+}
+renderAll();
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("../sw.js").catch(function(){});
+  /* 背景更新拿到新版時顯示「重新整理」提示（訊息來自 sw.js，比對 etag 才發） */
+  navigator.serviceWorker.addEventListener("message", function(e){
+    var d = e.data || {};
+    if (d.type !== "sw-updated") return;
+    var norm = function(p){ return p.replace(/index\.html$/, ""); };
+    try { if (norm(new URL(d.url).pathname) !== norm(location.pathname)) return; } catch (err) { return; }
+    if (document.getElementById("swUpdateBar")) return;
+    var bar = document.createElement("div");
+    bar.id = "swUpdateBar";
+    bar.setAttribute("role", "status");
+    bar.style.cssText = "position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:max-content;z-index:9999;display:flex;align-items:center;gap:10px;background:#2B2823;color:#FBFAF6;padding:10px 14px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:92vw;white-space:nowrap";
+    var txt = document.createElement("span");
+    txt.textContent = "此頁有新版本";
+    var btn = document.createElement("button");
+    btn.textContent = "重新整理";
+    btn.style.cssText = "border:1px solid rgba(251,250,246,.5);background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px 10px;border-radius:8px;cursor:pointer";
+    btn.addEventListener("click", function(){ location.reload(); });
+    var close = document.createElement("button");
+    close.textContent = "✕";
+    close.setAttribute("aria-label", "關閉更新提示");
+    close.style.cssText = "border:0;background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px;cursor:pointer;opacity:.7";
+    close.addEventListener("click", function(){ bar.remove(); });
+    bar.appendChild(txt); bar.appendChild(btn); bar.appendChild(close);
+    document.body.appendChild(bar);
+  });
+  if (navigator.serviceWorker.startMessages) navigator.serviceWorker.startMessages();
+}
+</script>
+</body>
+</html>

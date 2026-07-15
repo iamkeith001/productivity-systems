@@ -50,3 +50,5 @@
 - 知識複製 SOP：https://iamkeith001.github.io/productivity-systems/knowledge-sop/
 - 創新組合思維：https://iamkeith001.github.io/productivity-systems/innovation-combo/
 - 跨域類比遷移：https://iamkeith001.github.io/productivity-systems/analogy-transfer/
+- 約束驅動創新：https://iamkeith001.github.io/productivity-systems/constraint-driven/
+- 逆向思維：https://iamkeith001.github.io/productivity-systems/reverse-thinking/

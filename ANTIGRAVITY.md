@@ -23,7 +23,7 @@
 - 版面：方格紙 hero、印章式 SVG seal（單一漢字）、底部四分頁 tabbar、深淺色主題（`prefers-color-scheme` + 手動切換）。
 - 無障礙：44px 觸控熱區、`focus-visible`、`prefers-reduced-motion`。
 
-## 🧩 工具清單（入口頁 40 張卡）
+## 🧩 工具清單（入口頁 42 張卡）
 
 | 目錄 | 名稱 | 印章 | 分類 | accent |
 |------|------|:---:|------|--------|
@@ -67,6 +67,8 @@
 | `knowledge-sop/` | 知識複製 SOP | 範 | 知識與學習 | steel |
 | `innovation-combo/` | 創新組合思維 | 組 | 決策與思維 | citrine |
 | `analogy-transfer/` | 跨域類比遷移 | 遷 | 決策與思維 | harbor |
+| `constraint-driven/` | 約束驅動創新 | 創 | 決策與思維 | flint |
+| `reverse-thinking/` | 逆向思維 | 逆 | 決策與思維 | moss |
 
 > 入口 `index.html` 提供：搜尋（比對中文標題／英文副標／描述）、四分類篩選（決策與思維 `decide` / 知識與學習 `knowledge` / 專注與能量 `focus` / 習慣與行動 `action`）、釘選（★，localStorage）、格狀/清單檢視切換。「全部工具＋無搜尋」時顯示分類段落標題（`.cat-head`，卡片以 CSS `order` 依分類群組、釘選永遠最前）。新增工具＝在 index.html 加一組 accent CSS 變數＋一張 `.card`（含 `data-category`、`data-id`）。
 

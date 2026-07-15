@@ -60,6 +60,8 @@
     --steel:#3E5A6E; --steel-soft:rgba(62,90,110,0.08);
     --citrine:#96851C; --citrine-soft:rgba(150,133,28,0.08);
     --harbor:#2E6C80; --harbor-soft:rgba(46,108,128,0.08);
+    --moss:#4F7D2A; --moss-soft:rgba(79,125,42,0.08);
+    --flint:#3B6064; --flint-soft:rgba(59,96,100,0.08);
   }
   html[data-theme="dark"]{
     --desk:#12110D; --paper:#1D1B16; --paper2:#24221C;
@@ -109,6 +111,8 @@
     --steel:#9FB9CC; --steel-soft:rgba(159,185,204,0.16);
     --citrine:#CDBE55; --citrine-soft:rgba(205,190,85,0.16);
     --harbor:#7FB7C9; --harbor-soft:rgba(127,183,201,0.16);
+    --moss:#93C25E; --moss-soft:rgba(147,194,94,0.16);
+    --flint:#86B8BE; --flint-soft:rgba(134,184,190,0.16);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
@@ -1035,6 +1039,32 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
+    <a class="card" style="--c:var(--flint); --c-soft:var(--flint-soft)" href="./constraint-driven/" data-category="decide" data-id="constraint-driven" data-keywords="約束 限制 創新 瓶頸 精實 節儉 沒錢 沒人 沒時間 資源不足 期限">
+      <button class="pin-btn" title="釘選常用">★</button>
+      <div class="mark">創</div>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>約束驅動創新</h2>
+          <span class="en">CONSTRAINT-DRIVEN INNOVATION</span>
+        </div>
+        <p>資源有限不是做得更辛苦，而是重新設計方法：定義真正目標、找出核心限制、把限制改寫成設計條件，用刪除／簡化／合併／替代／自動化重組流程，再以最小可行方案驗證。</p>
+      </div>
+      <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </a>
+
+    <a class="card" style="--c:var(--moss); --c-soft:var(--moss-soft)" href="./reverse-thinking/" data-category="decide" data-id="reverse-thinking" data-keywords="逆向 反向 失敗 防呆 風險 蒙格 Munger 反過來 避錯 checklist 反問">
+      <button class="pin-btn" title="釘選常用">★</button>
+      <div class="mark">逆</div>
+      <div class="card-body">
+        <div class="card-header-texts">
+          <h2>逆向思維</h2>
+          <span class="en">REVERSE THINKING</span>
+        </div>
+        <p>別只問如何成功，先問怎樣一定會失敗：定義真正目標、反向提問、五分鐘狂列失敗因素，標記「影響大×易發生」鎖定高風險因子，再建立防呆系統讓錯誤不容易發生。</p>
+      </div>
+      <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </a>
+
     <div class="empty-hint" id="emptyHint">沒有找到符合搜尋條件的工具。</div>
   </main>
 
@@ -1380,10 +1410,10 @@ updatePinnedUI();
 (function(){
   const BK_EXACT = [
     /* 新式骨架（STORE = "..."，主題共用 "theme"） */
-    "analogy_transfer_v1","compound_action_flywheel_v1","compounding_life_v1","constraint_reframing_v1",
+    "analogy_transfer_v1","compound_action_flywheel_v1","compounding_life_v1","constraint_driven_v1","constraint_reframing_v1",
     "decision_fatigue_management_v1","energy_matrix_v1","flow_triggers_v1","identity_driven_v1",
     "innovation_combo_v1","knowledge_compression_v1","knowledge_sop_v1","learning_pyramid_v1",
-    "life_leverage_v1","low_dependency_v1","mvo_output_v1","strategic_optionality_v1",
+    "life_leverage_v1","low_dependency_v1","mvo_output_v1","reverse_thinking_v1","strategic_optionality_v1",
     "system_boundary_v1","task_batching_v1","task_switching_cost_v1","value_recovery_v1",
     "visual_note_taking_v1","theme",
     /* 中期骨架（storeKey / themeKey 成對） */

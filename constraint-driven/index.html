@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="約束創新">
+<meta name="theme-color" content="#ECE9E2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23FBFAF6'/%3E%3Crect x='38' y='38' width='104' height='104' rx='14' fill='none' stroke='%233B6064' stroke-width='10'/%3E%3Ctext x='90' y='118' text-anchor='middle' font-family='Songti TC,serif' font-size='72' font-weight='900' fill='%233B6064'%3E創%3C/text%3E%3C/svg%3E">
+<title>約束驅動創新 · Constraint-Driven Innovation</title>
+<style>
+  :root{
+    --desk:#ECE9E2; --paper:#FBFAF6; --paper2:#F3F1EA;
+    --ink:#2B2823; --pencil:#6E6858;
+    --blue:#2F5AA8; --blue-soft:#E9EEF7;
+    --red:#C03A2B; --red-soft:#F7E9E6;
+    --amber:#8A6012; --amber-soft:#F4ECDA;
+    --green:#3E7C4F; --green-soft:#E7F0E8;
+    --acc:#3B6064; --acc-soft:#E7EDED;
+    --hairline:rgba(43,40,35,.16); --hairline-soft:rgba(43,40,35,.09);
+    --grid:rgba(59,96,100,.06);
+    --shadow:0 1px 0 rgba(43,40,35,.05),0 5px 18px rgba(43,40,35,.07);
+  }
+  html[data-theme="dark"]{
+    --desk:#191712; --paper:#232019; --paper2:#2A2720;
+    --ink:#EAE4D6; --pencil:#9C9689;
+    --hairline:rgba(234,228,214,.18); --hairline-soft:rgba(234,228,214,.09);
+    --blue:#8AABE8; --blue-soft:#252C3C;
+    --red:#D96A55; --red-soft:#3A2723;
+    --amber:#CB9A46; --amber-soft:#382E1F;
+    --green:#7CAE8B; --green-soft:#213224;
+    --acc:#86B8BE; --acc-soft:#1F2E2F;
+    --grid:rgba(134,184,190,.08);
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--desk);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));font-size:14.5px;
+  }
+  .serif{font-family:"Songti TC","Noto Serif TC","PMingLiU",Georgia,serif}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  a{color:var(--acc)}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+  header{background:var(--desk);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20}
+  .head{max-width:640px;margin:0 auto;padding:14px 16px calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .seal{width:34px;height:34px;flex:none}
+  .brand h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:20px;font-weight:900;margin:0;letter-spacing:.06em}
+  .brand small{display:block;color:var(--pencil);font-size:10.5px;font-weight:500;letter-spacing:.14em;margin-top:1px}
+  .icon-btn{border:1px solid var(--hairline);background:var(--paper);color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;display:grid;place-items:center;flex:none}
+  .icon-btn:active{transform:scale(.94)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--pencil);margin:0 0 3px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:700;letter-spacing:.04em}
+  .sub{color:var(--pencil);font-size:12.5px;margin:0 0 14px}
+  .hero{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;opacity:.58}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{color:var(--acc)}
+  .hero-title{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-size:27px;font-weight:900;letter-spacing:.05em;margin:4px 0 8px;line-height:1.35}
+  .hero-text{font-size:13.5px;color:var(--ink);opacity:.86;line-height:1.82;margin-bottom:14px}
+  .quote-line{border-top:1px solid var(--hairline-soft);padding-top:12px;margin-top:14px;font-family:"Songti TC","Noto Serif TC",serif;font-size:16.5px;font-weight:900;color:var(--acc);letter-spacing:.04em}
+
+  section.tab{display:none}
+  section.tab.active{display:block;animation:settle .3s ease}
+  @keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  label.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--pencil);margin:8px 0 4px;letter-spacing:.04em}
+  input[type=text],select,textarea{
+    width:100%;border:1px solid var(--hairline);background:var(--paper);color:var(--ink);border-radius:6px;
+    padding:10px 12px;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+  textarea{resize:vertical;min-height:64px}
+  .btn{width:100%;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--acc);color:var(--paper);letter-spacing:.08em;font-family:inherit;display:inline-block;text-align:center;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--acc-soft);color:var(--acc)}
+  .btn.line{background:transparent;border:1px solid var(--hairline);color:var(--ink)}
+  .btn.danger{background:transparent;border:1px solid var(--hairline);color:var(--red)}
+  .mini-row{display:flex;gap:9px}
+  .mini-row .btn{padding:11px;font-size:13.5px;flex:1}
+
+  .templates-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .template-btn{background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);padding:6px 11px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;min-height:32px;text-align:left}
+  .template-btn.active{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .hint-box{background:var(--acc-soft);border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-bottom:12px}
+  .hint-box b{color:var(--acc)}
+  .hint-box .vs{display:block;margin-top:2px}
+  .hint-box .vs s{opacity:.62}
+
+  .goal-card,.mv-card,.vf-card{background:var(--paper);border:1px solid var(--hairline-soft);border-left:4px solid var(--acc);border-radius:6px;padding:15px;box-shadow:var(--shadow);margin-bottom:11px}
+  .vf-card.valid{border-left-color:var(--green)}
+  .vf-card.invalid{border-left-color:var(--red)}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .item-title{font-weight:800;font-size:14.5px;line-height:1.45}
+  .item-meta{font-size:11.5px;color:var(--pencil);margin-top:4px}
+  .reframe-line{font-size:12.5px;color:var(--acc);font-weight:700;margin-top:5px;line-height:1.55}
+  .cons-line{font-size:12.5px;color:var(--pencil);margin-top:5px;line-height:1.55}
+  .cons-line b{color:var(--ink)}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:4px;padding:2px 7px;background:var(--paper2);border:1px solid var(--hairline-soft);color:var(--pencil);letter-spacing:.04em;white-space:nowrap}
+  .tag.done{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .tag.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+  .tag.bad{background:var(--red-soft);color:var(--red);border-color:transparent}
+  .actions{display:flex;gap:7px;margin-top:12px}
+  .actions button{flex:1;border:1px solid var(--hairline);background:var(--paper2);color:var(--ink);border-radius:6px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .actions button.del{flex:none;width:44px;color:var(--red)}
+
+  .exp-box{margin-top:10px;background:var(--acc-soft);border-radius:6px;padding:10px 12px}
+  .exp-box .form-label{margin-top:0;color:var(--acc)}
+  .exp-box input[type=text]{margin-bottom:8px;font-size:13px}
+  .seg{display:flex;gap:6px}
+  .seg button{flex:1;border:1px solid var(--hairline);background:var(--paper);color:var(--pencil);border-radius:6px;padding:8px 4px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;min-height:36px}
+  .seg button.on-testing{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+  .seg button.on-valid{background:var(--green-soft);color:var(--green);border-color:transparent}
+  .seg button.on-invalid{background:var(--red-soft);color:var(--red);border-color:transparent}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .mini-card{background:var(--paper);border:1px solid var(--hairline-soft);border-radius:6px;padding:12px;box-shadow:var(--shadow)}
+  .mini-card h3{font-size:12.5px;margin:0 0 4px;font-weight:800}
+  .mini-card .cnt{font-family:"Songti TC","Noto Serif TC",serif;font-size:23px;font-weight:900;line-height:1}
+  .mini-card .desc{font-size:10.5px;color:var(--pencil);margin-top:4px;line-height:1.45}
+
+  .empty{color:var(--pencil);text-align:center;padding:34px 12px;font-size:13px;line-height:1.9;border:1px dashed var(--hairline);border-radius:6px;background:var(--paper);margin-bottom:16px}
+  .empty .zh{font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:900;display:block;margin-bottom:4px;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--desk);padding:10px 20px;border-radius:4px;font-size:13px;font-weight:600;opacity:0;transition:.28s;z-index:60;pointer-events:none;letter-spacing:.06em}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;color:var(--pencil);font-size:11px;padding:10px 0 4px;line-height:1.9;letter-spacing:.05em}
+
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--paper);border-top:1px solid var(--hairline);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .tabbtn{position:relative;border:none;background:none;color:var(--pencil);padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;font-family:inherit;letter-spacing:.1em}
+  .tabbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tabbtn.active{color:var(--acc)}
+  .tabbtn.active::after{content:"";position:absolute;bottom:2px;width:18px;height:3px;border-radius:2px;background:var(--acc)}
+  @media (max-width:420px){.grid2{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="5" fill="none" stroke="var(--acc)" stroke-width="2.6"/><text x="20" y="27.5" text-anchor="middle" font-family="Songti TC,serif" font-size="19" font-weight="900" fill="var(--acc)">創</text></svg>
+      <div>
+        <h1>約束驅動創新</h1>
+        <small>CONSTRAINT-DRIVEN INNOVATION</small>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" title="切換深淺色" aria-label="切換深淺色">
+      <svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="tab active" id="tab-goals">
+    <div class="hero">
+      <p class="eyebrow">約束驅動創新</p>
+      <div class="hero-title serif">限制不是敵人，<br>是設計條件。</div>
+      <p class="hero-text">二戰時的工程師因材料短缺，被迫減少零件、尋找替代材料，反而促成輕量化設計；精實生產與限制理論也都指出：當資源不能無限增加，真正重要的是辨識瓶頸、重新設計流程。限制本身不會自動帶來創新——真正產生創新的，是你如何重新定義限制：限制 → 聚焦 → 打破慣性 → 重新組合 → 產生新解法。</p>
+      <div class="quote-line serif">不是把原本的方法做得更辛苦，而是重新設計完成目標的方法。</div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">新課題</p>
+      <h2>定義目標與核心限制</h2>
+      <p class="sub">資源充足時，人們習慣加功能、加流程、加人力；限制明確時，才會被迫回答「哪個結果最重要？」。先寫最終一定要達成的結果，再找出真正影響成果的那一項核心限制——不要同時處理所有問題。</p>
+      <div class="templates-list" id="goalTpls"></div>
+      <label class="form-label" for="goalTitle">真正目標（最終一定要達成的結果）*</label>
+      <input type="text" id="goalTitle" placeholder="例如：將抽血等待時間降至十分鐘內">
+      <label class="form-label">核心限制類型（點一下看對應策略）</label>
+      <div class="templates-list" id="ctypeChips"></div>
+      <div class="hint-box" id="ctypeHint" style="display:none"></div>
+      <label class="form-label" for="consText">核心限制描述（目前不能任意改變的條件）*</label>
+      <input type="text" id="consText" placeholder="例如：檢驗人力只有兩人，短期內不可能增加">
+      <button class="btn" id="addGoalBtn">建立課題</button>
+    </div>
+
+    <div id="goalEmpty" class="empty"><span class="zh">還沒有課題</span>從一個「資源不夠、時間不夠」的真實困境開始。</div>
+    <div id="goalList"></div>
+  </section>
+
+  <section class="tab" id="tab-design">
+    <div class="card">
+      <p class="eyebrow">設計條件</p>
+      <h2 id="dsTitle">選擇課題</h2>
+      <select id="dsGoalSel" aria-label="選擇課題"></select>
+      <div class="hint-box">語言的改變，會讓思考從抱怨轉向設計：
+        <span class="vs"><s>「我們只有兩個人，做不到。」</s>→<b>「在只能使用兩個人的條件下，流程必須如何設計？」</b></span>
+        <span class="vs"><s>「沒有預算建立新平台。」</s>→<b>「只能使用現有軟體時，如何先驗證核心功能？」</b></span>
+      </div>
+      <label class="form-label" for="dReframe">把限制改寫成設計條件（點句式帶入）</label>
+      <div class="templates-list" id="reframeTpls"></div>
+      <input type="text" id="dReframe" placeholder="例如：在只能使用兩個人的條件下，流程必須如何設計？">
+      <label class="form-label">重新設計手法（先選一種）*</label>
+      <div class="templates-list" id="kindChips"></div>
+      <div class="hint-box" id="kindHint" style="display:none"></div>
+      <label class="form-label" for="dDesc">設計方案 *</label>
+      <input type="text" id="dDesc" placeholder="例如：檢體先分流，人員只處理異常與高風險案例">
+      <button class="btn" id="addMoveBtn">加入設計方案</button>
+    </div>
+
+    <div id="dsEmpty" class="empty"><span class="zh">還沒有課題</span>先到「課題」分頁建立一個。</div>
+    <div id="moveList"></div>
+  </section>
+
+  <section class="tab" id="tab-verify">
+    <div class="card">
+      <p class="eyebrow">最小可行方案</p>
+      <h2 id="vfTitle">小規模驗證</h2>
+      <select id="vfGoalSel" aria-label="選擇課題"></select>
+      <p class="sub" style="margin-bottom:0">先建立能驗證關鍵假設的最小版本：先用試算表模擬、先在一個單位試行、先處理最常見的案例、先建立單一自動化、或先用人工流程驗證需求——小型實驗可以避免投入大量資源後，才發現方向錯誤。</p>
+    </div>
+
+    <div id="vfEmpty" class="empty"><span class="zh">還沒有可驗證的設計方案</span>先到「設計」分頁建立至少一筆。</div>
+    <div id="vfList"></div>
+  </section>
+
+  <section class="tab" id="tab-review">
+    <div class="grid2">
+      <div class="mini-card"><h3>課題</h3><div class="cnt" id="rvGoals">0</div><div class="desc">已定義目標與核心限制。</div></div>
+      <div class="mini-card"><h3>設計方案</h3><div class="cnt" id="rvMoves">0</div><div class="desc">刪除／簡化／合併／替代／自動化。</div></div>
+      <div class="mini-card"><h3>試行中</h3><div class="cnt" id="rvTesting">0</div><div class="desc">最小可行方案進行中。</div></div>
+      <div class="mini-card"><h3>驗證有效</h3><div class="cnt" id="rvValid">0</div><div class="desc">小規模實驗證實可行。</div></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">備份</p>
+      <h2>本機資料備份 / 還原</h2>
+      <p class="sub">所有資料只存在這台裝置的瀏覽器。換裝置或清快取前，請先下載備份。</p>
+      <div class="mini-row">
+        <button class="btn ghost" id="exportBtn">下載備份</button>
+        <button class="btn line" id="importBtn">還原備份</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="wipeBtn" style="margin-top:10px">清空所有資料</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">方法摘要</p>
+      <h2>六步驟約束創新法</h2>
+      <div class="body" style="padding:0;font-size:13px;color:var(--pencil);line-height:1.8">
+        <ul>
+          <li>六步驟：定義真正目標 → 找出關鍵限制 → 改寫成設計條件 → 刪除／簡化／合併／替代／自動化 → 最小可行方案 → 根據結果持續優化。</li>
+          <li>清楚的限制產生三種效果：提高聚焦（確認最重要的成果）、打破慣性（原方法不可行就必須換路）、降低複雜度（減少不必要的功能與決策）。最有價值的創新常常不是增加新功能，而是移除不必要的複雜度。</li>
+          <li>試行後五問：達成核心目標了嗎？產生新的瓶頸嗎？哪些限制可以解除？哪些反而值得保留？可以擴大到其他場景嗎？</li>
+          <li>限制必須適度：過度限制會造成品質下降、耗竭與安全風險。約束驅動創新不是永遠「少資源多做事」，而是利用明確邊界，找到更聰明、更簡潔的設計。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <a href="../">回到提升生產力系統入口</a><br>
+      相關工具：<a href="../constraint-reframing/">限制條件重構</a> · <a href="../innovation-combo/">創新組合思維</a> · <a href="../mvo/">最小可行輸出</a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <div class="tabbar-inner">
+    <button class="tabbtn active" data-tab="tab-goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/></svg><span>課題</span></button>
+    <button class="tabbtn" data-tab="tab-design"><svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M15 4.5v5M4 17h3M11 17h9M9 14.5v5"/></svg><span>設計</span></button>
+    <button class="tabbtn" data-tab="tab-verify"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8M20 12v5.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11A2.5 2.5 0 0 1 6.5 4H15"/></svg><span>實驗</span></button>
+    <button class="tabbtn" data-tab="tab-review"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg><span>回顧</span></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = "constraint_driven_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = s => String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+let db = JSON.parse(localStorage.getItem(STORE) || '{"goals":[],"moves":[]}');
+
+function saveAll(){ localStorage.setItem(STORE, JSON.stringify(db)); }
+function toast(msg){
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1800);
+}
+function applyTheme(){
+  const saved = localStorage.getItem("theme");
+  const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeIcon").innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M20 12.5A8 8 0 1 1 11.5 4a6.5 6.5 0 0 0 8.5 8.5z"/>';
+}
+$("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme();
+});
+applyTheme();
+
+/* ---- constants ---- */
+const GOAL_TPLS = ["將等待時間降至十分鐘內", "降低報告判讀錯誤", "讓新人在兩週內獨立操作", "縮短資料整理時間"];
+const CTYPES = [
+  { k:"time",   t:"時間限制", d:"縮小範圍、設定優先順序，先完成最有價值的部分。" },
+  { k:"budget", t:"預算限制", d:"優先使用既有設備、開源工具、共享資源與低成本原型。" },
+  { k:"people", t:"人力限制", d:"簡化流程、重新分工、導入自動化、減少不必要的交接。" },
+  { k:"rule",   t:"制度限制", d:"法規、倫理與規範不能移除，但可以在合規範圍內重新設計流程尋找彈性。" },
+  { k:"tech",   t:"技術限制", d:"改變問題範圍、採用替代指標，或先建立較簡單的解決方案。" }
+];
+const REFRAME_TPLS = [
+  "在只能使用◯◯的條件下，流程必須如何設計？",
+  "只能使用現有工具時，如何先驗證核心功能？",
+  "如果人力不能增加，哪些步驟必須消失？",
+  "在◯◯的期限內，最重要的一件事是什麼？"
+];
+const KINDS = [
+  { k:"del",   t:"刪除",   q:"這一步真的需要嗎？" },
+  { k:"simp",  t:"簡化",   q:"能否減少欄位、審核或交接？" },
+  { k:"merge", t:"合併",   q:"兩個步驟能否一次完成？" },
+  { k:"sub",   t:"替代",   q:"能否用現有工具取代昂貴方案？" },
+  { k:"auto",  t:"自動化", q:"哪些重複性工作可以交給系統？" }
+];
+const RESULTS = [
+  { k:"testing", t:"試行中", cls:"on-testing" },
+  { k:"valid",   t:"有效",   cls:"on-valid" },
+  { k:"invalid", t:"無效",   cls:"on-invalid" }
+];
+
+let curGoal = db.goals.length ? db.goals[0].id : null;
+let curCtype = "";
+let curKind = "";
+
+function getGoal(){ return db.goals.find(g => g.id === curGoal) || null; }
+function goalMoves(gid){ return db.moves.filter(m => m.gid === gid); }
+function ctypeOf(key){ return CTYPES.find(c => c.k === key) || null; }
+function kindOf(key){ return KINDS.find(k => k.k === key) || null; }
+
+/* ---- goals ---- */
+$("goalTpls").innerHTML = GOAL_TPLS.map((t, i) => '<button class="template-btn" data-gtpl="' + i + '">' + esc(t) + '</button>').join("");
+$("goalTpls").addEventListener("click", e => {
+  const btn = e.target.closest("[data-gtpl]");
+  if (!btn) return;
+  $("goalTitle").value = GOAL_TPLS[btn.dataset.gtpl];
+});
+$("ctypeChips").innerHTML = CTYPES.map(c => '<button class="template-btn" data-ctype="' + c.k + '">' + esc(c.t) + '</button>').join("");
+$("ctypeChips").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ctype]");
+  if (!btn) return;
+  curCtype = curCtype === btn.dataset.ctype ? "" : btn.dataset.ctype;
+  document.querySelectorAll("#ctypeChips .template-btn").forEach(b => b.classList.toggle("active", b.dataset.ctype === curCtype));
+  const c = ctypeOf(curCtype);
+  $("ctypeHint").style.display = c ? "block" : "none";
+  if (c) $("ctypeHint").innerHTML = '<b>' + esc(c.t) + '</b>的典型策略：' + esc(c.d);
+});
+
+$("addGoalBtn").addEventListener("click", () => {
+  const title = $("goalTitle").value.trim();
+  const cons = $("consText").value.trim();
+  if (!title) { toast("先寫真正目標——最終一定要達成的結果"); return; }
+  if (!cons) { toast("請描述核心限制——目前不能任意改變的條件"); return; }
+  db.goals.unshift({ id: uid(), title, ctype: curCtype, cons, reframe: "", createdAt: today() });
+  curGoal = db.goals[0].id;
+  saveAll();
+  $("goalTitle").value = "";
+  $("consText").value = "";
+  renderAll();
+  toast("已建立課題，去「設計」把限制改寫成設計條件");
+});
+
+function renderGoals(){
+  $("goalEmpty").style.display = db.goals.length ? "none" : "block";
+  $("goalList").innerHTML = db.goals.map(g => {
+    const moves = goalMoves(g.id);
+    const valid = moves.filter(m => m.result === "valid").length;
+    const c = ctypeOf(g.ctype);
+    return '<div class="goal-card">' +
+      '<div class="item-top"><div><div class="item-title">' + esc(g.title) + '</div>' +
+      '<div class="cons-line">⛓ ' + (c ? '<b>' + esc(c.t) + '</b> · ' : '') + esc(g.cons) + '</div>' +
+      (g.reframe ? '<div class="reframe-line">≒ ' + esc(g.reframe) + '</div>' : '') +
+      '<div class="item-meta">' + g.createdAt + ' · 設計方案 ' + moves.length + '</div></div>' +
+      (valid ? '<span class="tag done">驗證有效 ' + valid + '</span>' : '<span class="tag acc">探索中</span>') + '</div>' +
+      '<div class="actions"><button data-gds="' + g.id + '">設計</button><button data-gvf="' + g.id + '">實驗</button><button class="del" data-gdel="' + g.id + '">×</button></div></div>';
+  }).join("");
+}
+$("goalList").addEventListener("click", e => {
+  const ds = e.target.closest("[data-gds]");
+  if (ds) { curGoal = ds.dataset.gds; renderAll(); switchTab("tab-design"); return; }
+  const vf = e.target.closest("[data-gvf]");
+  if (vf) { curGoal = vf.dataset.gvf; renderAll(); switchTab("tab-verify"); return; }
+  const del = e.target.closest("[data-gdel]");
+  if (!del) return;
+  if (!confirm("刪除這個課題與它的所有設計方案？")) return;
+  db.goals = db.goals.filter(g => g.id !== del.dataset.gdel);
+  db.moves = db.moves.filter(m => m.gid !== del.dataset.gdel);
+  if (curGoal === del.dataset.gdel) curGoal = db.goals.length ? db.goals[0].id : null;
+  saveAll(); renderAll(); toast("已刪除課題");
+});
+
+/* ---- design ---- */
+function renderGoalSel(sel){
+  $(sel).innerHTML = db.goals.map(g =>
+    '<option value="' + g.id + '"' + (g.id === curGoal ? ' selected' : '') + '>' + esc(g.title) + '</option>'
+  ).join("");
+  $(sel).style.display = db.goals.length ? "block" : "none";
+}
+
+$("reframeTpls").innerHTML = REFRAME_TPLS.map((t, i) => '<button class="template-btn" data-rtpl="' + i + '">' + esc(t) + '</button>').join("");
+$("reframeTpls").addEventListener("click", e => {
+  const btn = e.target.closest("[data-rtpl]");
+  if (!btn) return;
+  $("dReframe").value = REFRAME_TPLS[btn.dataset.rtpl];
+  /* 程式填值不會觸發 change，這裡直接存進當前課題 */
+  const g = getGoal();
+  if (g) { g.reframe = $("dReframe").value; saveAll(); renderGoals(); }
+  $("dReframe").focus();
+});
+$("dReframe").addEventListener("change", () => {
+  const g = getGoal();
+  if (!g) return;
+  g.reframe = $("dReframe").value.trim();
+  saveAll(); renderGoals();
+});
+
+$("kindChips").innerHTML = KINDS.map(k => '<button class="template-btn" data-kind="' + k.k + '">' + esc(k.t) + '</button>').join("");
+$("kindChips").addEventListener("click", e => {
+  const btn = e.target.closest("[data-kind]");
+  if (!btn) return;
+  curKind = curKind === btn.dataset.kind ? "" : btn.dataset.kind;
+  document.querySelectorAll("#kindChips .template-btn").forEach(b => b.classList.toggle("active", b.dataset.kind === curKind));
+  const k = kindOf(curKind);
+  $("kindHint").style.display = k ? "block" : "none";
+  if (k) $("kindHint").innerHTML = '<b>' + esc(k.t) + '</b>要問的是：' + esc(k.q);
+});
+
+$("addMoveBtn").addEventListener("click", () => {
+  const g = getGoal();
+  if (!g) { toast("請先建立課題"); return; }
+  const desc = $("dDesc").value.trim();
+  if (!curKind) { toast("先選一種重新設計手法"); return; }
+  if (!desc) { toast("請輸入設計方案"); return; }
+  db.moves.unshift({
+    id: uid(), gid: g.id, kind: curKind, desc,
+    plan: "", metric: "", result: "",
+    date: today()
+  });
+  saveAll();
+  $("dDesc").value = "";
+  renderAll();
+  toast("已加入設計方案——去「實驗」小規模驗證");
+});
+
+function renderDesign(){
+  renderGoalSel("dsGoalSel");
+  const g = getGoal();
+  $("dsEmpty").style.display = g ? "none" : "block";
+  $("dsTitle").textContent = g ? "課題：" + g.title : "選擇課題";
+  $("dReframe").value = g ? g.reframe : "";
+  const moves = g ? goalMoves(g.id) : [];
+  $("moveList").innerHTML = moves.map(m => {
+    const k = kindOf(m.kind);
+    const tag = m.result === "valid" ? '<span class="tag done">有效</span>'
+      : m.result === "invalid" ? '<span class="tag bad">無效</span>'
+      : m.result === "testing" ? '<span class="tag acc">試行中</span>'
+      : '<span class="tag acc">' + (k ? esc(k.t) : '設計') + '</span>';
+    return '<div class="mv-card">' +
+      '<div class="item-top"><div><div class="item-title">' + (k ? esc(k.t) + '：' : '') + esc(m.desc) + '</div>' +
+      '<div class="item-meta">' + m.date + (k ? ' · ' + esc(k.q) : '') + '</div></div>' + tag + '</div>' +
+      '<div class="actions"><button data-mvf="' + m.id + '">去實驗</button><button class="del" data-mdel="' + m.id + '">×</button></div></div>';
+  }).join("");
+}
+$("dsGoalSel").addEventListener("change", () => { curGoal = $("dsGoalSel").value; renderAll(); });
+$("moveList").addEventListener("click", e => {
+  const vf = e.target.closest("[data-mvf]");
+  if (vf) { switchTab("tab-verify"); return; }
+  const del = e.target.closest("[data-mdel]");
+  if (!del) return;
+  db.moves = db.moves.filter(m => m.id !== del.dataset.mdel);
+  saveAll(); renderAll(); toast("已刪除設計方案");
+});
+
+/* ---- verify ---- */
+function renderVerify(){
+  renderGoalSel("vfGoalSel");
+  const g = getGoal();
+  $("vfTitle").textContent = g ? "課題：" + g.title : "小規模驗證";
+  const moves = g ? goalMoves(g.id) : [];
+  $("vfEmpty").style.display = moves.length ? "none" : "block";
+  $("vfList").innerHTML = moves.map(m => {
+    const k = kindOf(m.kind);
+    const cls = m.result === "valid" ? " valid" : m.result === "invalid" ? " invalid" : "";
+    const tag = m.result === "valid" ? '<span class="tag done">驗證有效</span>'
+      : m.result === "invalid" ? '<span class="tag bad">此路不通</span>'
+      : m.result === "testing" ? '<span class="tag acc">試行中</span>'
+      : '<span class="tag acc">待實驗</span>';
+    return '<div class="vf-card' + cls + '">' +
+      '<div class="item-top"><div><div class="item-title">' + (k ? esc(k.t) + '：' : '') + esc(m.desc) + '</div>' +
+      '<div class="item-meta">' + esc(g ? g.cons : '') + '</div></div>' + tag + '</div>' +
+      '<div class="exp-box">' +
+      '<label class="form-label">最小實驗：先在哪裡、用多小的規模試？</label>' +
+      '<input type="text" data-plan="' + m.id + '" placeholder="例如：先在夜班試行一週，只處理常規檢體" value="' + esc(m.plan) + '">' +
+      '<label class="form-label">明確指標：導入前後比較什麼？</label>' +
+      '<input type="text" data-metric="' + m.id + '" placeholder="例如：平均等待分鐘、每日加班時數" value="' + esc(m.metric) + '">' +
+      '<div class="seg">' + RESULTS.map(r =>
+        '<button data-res="' + m.id + ':' + r.k + '" class="' + (m.result === r.k ? r.cls : '') + '">' + r.t + '</button>'
+      ).join("") + '</div></div></div>';
+  }).join("");
+}
+$("vfGoalSel").addEventListener("change", () => { curGoal = $("vfGoalSel").value; renderAll(); });
+$("vfList").addEventListener("click", e => {
+  const res = e.target.closest("[data-res]");
+  if (!res) return;
+  const parts = res.dataset.res.split(":");
+  const m = db.moves.find(x => x.id === parts[0]);
+  if (!m) return;
+  m.result = m.result === parts[1] ? "" : parts[1];
+  saveAll(); renderVerify(); renderGoals(); renderDesign(); renderReview();
+  if (m.result === "valid") toast("驗證有效 🎉 想想哪些限制可以解除、哪些值得保留");
+  else if (m.result === "invalid") toast("無效也是收穫——回「設計」換一種手法");
+});
+$("vfList").addEventListener("change", e => {
+  const plan = e.target.closest("[data-plan]");
+  if (plan) {
+    const m = db.moves.find(x => x.id === plan.dataset.plan);
+    if (m) { m.plan = plan.value.trim(); saveAll(); }
+    return;
+  }
+  const metric = e.target.closest("[data-metric]");
+  if (metric) {
+    const m = db.moves.find(x => x.id === metric.dataset.metric);
+    if (m) { m.metric = metric.value.trim(); saveAll(); }
+  }
+});
+
+/* ---- review ---- */
+function renderReview(){
+  $("rvGoals").textContent = String(db.goals.length);
+  $("rvMoves").textContent = String(db.moves.length);
+  $("rvTesting").textContent = String(db.moves.filter(m => m.result === "testing").length);
+  $("rvValid").textContent = String(db.moves.filter(m => m.result === "valid").length);
+}
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(Object.assign({}, db, { exportedAt: new Date().toISOString() }), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "constraint-driven-backup-" + today() + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (Array.isArray(data.goals) && Array.isArray(data.moves)) {
+        db = { goals:data.goals, moves:data.moves };
+        curGoal = db.goals.length ? db.goals[0].id : null;
+        saveAll(); renderAll(); toast("備份還原成功！");
+      } else {
+        toast("備份檔格式不符！");
+      }
+    } catch (err) {
+      toast("讀取備份檔案失敗！");
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("wipeBtn").addEventListener("click", () => {
+  if (!confirm("確定要清空所有課題與設計方案嗎？此動作無法復原。")) return;
+  db = { goals:[], moves:[] };
+  curGoal = null;
+  saveAll(); renderAll(); toast("資料已全數清除");
+});
+
+function switchTab(id){
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  if (id === "tab-design") renderDesign();
+  if (id === "tab-verify") renderVerify();
+  if (id === "tab-review") renderReview();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tabbtn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderAll(){
+  renderGoals();
+  renderDesign();
+  renderVerify();
+  renderReview();
+}
+renderAll();
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("../sw.js").catch(function(){});
+  /* 背景更新拿到新版時顯示「重新整理」提示（訊息來自 sw.js，比對 etag 才發） */
+  navigator.serviceWorker.addEventListener("message", function(e){
+    var d = e.data || {};
+    if (d.type !== "sw-updated") return;
+    var norm = function(p){ return p.replace(/index\.html$/, ""); };
+    try { if (norm(new URL(d.url).pathname) !== norm(location.pathname)) return; } catch (err) { return; }
+    if (document.getElementById("swUpdateBar")) return;
+    var bar = document.createElement("div");
+    bar.id = "swUpdateBar";
+    bar.setAttribute("role", "status");
+    bar.style.cssText = "position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:max-content;z-index:9999;display:flex;align-items:center;gap:10px;background:#2B2823;color:#FBFAF6;padding:10px 14px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:92vw;white-space:nowrap";
+    var txt = document.createElement("span");
+    txt.textContent = "此頁有新版本";
+    var btn = document.createElement("button");
+    btn.textContent = "重新整理";
+    btn.style.cssText = "border:1px solid rgba(251,250,246,.5);background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px 10px;border-radius:8px;cursor:pointer";
+    btn.addEventListener("click", function(){ location.reload(); });
+    var close = document.createElement("button");
+    close.textContent = "✕";
+    close.setAttribute("aria-label", "關閉更新提示");
+    close.style.cssText = "border:0;background:transparent;color:inherit;font:inherit;font-size:13px;padding:4px;cursor:pointer;opacity:.7";
+    close.addEventListener("click", function(){ bar.remove(); });
+    bar.appendChild(txt); bar.appendChild(btn); bar.appendChild(close);
+    document.body.appendChild(bar);
+  });
+  if (navigator.serviceWorker.startMessages) navigator.serviceWorker.startMessages();
+}
+</script>
+</body>
+</html>
