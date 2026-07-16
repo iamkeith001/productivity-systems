@@ -560,7 +560,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--blue); --c-soft:var(--blue-soft)" href="./premortem-thinking/" data-category="decide" data-id="premortem-thinking" data-keywords="風險 失敗 預防 事前驗屍 悲觀演練">
+    <a class="card" style="--c:var(--blue); --c-soft:var(--blue-soft)" href="./premortem-thinking/" data-category="decide" data-id="premortem-thinking" data-keywords="風險 失敗 預防 事前驗屍 悲觀演練 人力調整 組織變動 改組">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">預</div>
       <div class="card-body">
@@ -573,7 +573,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--purple); --c-soft:var(--purple-soft)" href="./decision-journal/" data-category="decide" data-id="decision-journal" data-keywords="決策 記錄 覆盤 回顧 判斷">
+    <a class="card" style="--c:var(--purple); --c-soft:var(--purple-soft)" href="./decision-journal/" data-category="decide" data-id="decision-journal" data-keywords="決策 記錄 覆盤 回顧 判斷 取捨 人事">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">誌</div>
       <div class="card-body">
@@ -729,7 +729,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--emerald); --c-soft:var(--emerald-soft)" href="./decision-tree/" data-category="decide" data-id="decision-tree" data-keywords="決策樹 分岔 期望值 選項 機率">
+    <a class="card" style="--c:var(--emerald); --c-soft:var(--emerald-soft)" href="./decision-tree/" data-category="decide" data-id="decision-tree" data-keywords="決策樹 分岔 期望值 選項 機率 人力 人手 取捨 調整 方案比較">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">樹</div>
       <div class="card-body">
@@ -859,7 +859,7 @@
       <div class="open">開啟工具 <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </a>
 
-    <a class="card" style="--c:var(--midnight); --c-soft:var(--midnight-soft)" href="./constraint-reframing/" data-category="decide" data-id="constraint-reframing" data-keywords="限制 重構 翻轉 資源不足 沒時間 沒錢">
+    <a class="card" style="--c:var(--midnight); --c-soft:var(--midnight-soft)" href="./constraint-reframing/" data-category="decide" data-id="constraint-reframing" data-keywords="限制 重構 翻轉 資源不足 沒時間 沒錢 人力 人手 裁減 縮編">
       <button class="pin-btn" title="釘選常用">★</button>
       <div class="mark">限</div>
       <div class="card-body">
@@ -1343,7 +1343,56 @@ updatePinnedUI();
         { seal:'觸', name:'行動觸發', note:'設觸發點', href:'./action-trigger/', c:'teal' },
         { seal:'輪', name:'複利行動飛輪', note:'累積動能', href:'./compound-flywheel/', c:'saffron' }
       ],
-      next:'把那件事縮到「小到不可能失敗」的第一步，今天做掉。' }
+      next:'把那件事縮到「小到不可能失敗」的第一步，今天做掉。' },
+    { key:'lowenergy', label:'整天沒電・提不起勁',
+      steps:[
+        { seal:'能', name:'能量儀表板', note:'先讀狀態', href:'./energy-first/', c:'green' },
+        { seal:'矩', name:'能量管理矩陣', note:'配對任務', href:'./energy-matrix/', c:'coral' },
+        { seal:'律', name:'能量區塊優化', note:'排進節律', href:'./energy-blocking/', c:'olive' }
+      ],
+      next:'記錄現在的能量狀態，把最重要的事移到你的黃金時段。' },
+    { key:'habit', label:'習慣總是養不成',
+      steps:[
+        { seal:'疊', name:'微習慣堆疊', note:'掛上舊習慣', href:'./habit-stacking/', c:'coffee' },
+        { seal:'觸', name:'行動觸發', note:'設觸發點', href:'./action-trigger/', c:'teal' },
+        { seal:'身', name:'身份驅動系統', note:'成為那種人', href:'./identity-driven/', c:'mauve' }
+      ],
+      next:'把新習慣掛在一個既有習慣後面，縮小到兩分鐘內能完成。' },
+    { key:'fatigue', label:'小事也想半天・決定到累',
+      steps:[
+        { seal:'策', name:'預先決策', note:'訂成規則', href:'./pre-decision/', c:'cerulean' },
+        { seal:'疲', name:'決策疲勞管理', note:'減少消耗', href:'./decision-fatigue/', c:'inkstone' },
+        { seal:'循', name:'選擇迴圈', note:'該收斂就收斂', href:'./choice-loop/', c:'amber' }
+      ],
+      next:'挑一個每天重複的小決定，訂成固定規則，從此不用再想。' },
+    { key:'infoglut', label:'滑不停・越看越焦慮',
+      steps:[
+        { seal:'食', name:'資訊飲食管理', note:'先減量', href:'./info-diet/', c:'plum' },
+        { seal:'荷', name:'認知負荷管理', note:'清出腦容量', href:'./cognitive-load/', c:'rust' },
+        { seal:'萃', name:'知識蒸餾法', note:'只留精華', href:'./knowledge-distill/', c:'indigo' }
+      ],
+      next:'退訂三個你其實不看的來源，給資訊入口減量。' },
+    { key:'apply', label:'學了一堆・用不出來',
+      steps:[
+        { seal:'塔', name:'學習金字塔', note:'用輸出學', href:'./learning-pyramid/', c:'ochre' },
+        { seal:'遷', name:'跨域類比遷移', note:'借到別處用', href:'./analogy-transfer/', c:'harbor' },
+        { seal:'範', name:'知識複製SOP', note:'變成流程', href:'./knowledge-sop/', c:'steel' }
+      ],
+      next:'把最近學的東西講給一個人聽，或寫成一頁教學。' },
+    { key:'noresult', label:'忙整天・看不到累積',
+      steps:[
+        { seal:'出', name:'最小可行輸出', note:'先變成作品', href:'./mvo/', c:'wine' },
+        { seal:'收', name:'價值回收機制', note:'舊作再利用', href:'./value-recovery/', c:'sage' },
+        { seal:'複', name:'複利人生系統', note:'滾入長期', href:'./compounding-life/', c:'copper' }
+      ],
+      next:'把今天做的事變成一個可重用的小輸出：筆記、範本或分享。' },
+    { key:'constrained', label:'資源變少・被現實卡死',
+      steps:[
+        { seal:'限', name:'限制條件重構', note:'翻轉限制', href:'./constraint-reframing/', c:'midnight' },
+        { seal:'樹', name:'決策樹思維', note:'攤開選項', href:'./decision-tree/', c:'emerald' },
+        { seal:'預', name:'情境預演', note:'先想最壞', href:'./premortem-thinking/', c:'blue' }
+      ],
+      next:'寫下卡住你的限制，問：這個限制反而逼我放掉什麼？' }
   ];
 
   const chipsEl = document.getElementById('sitChips');
