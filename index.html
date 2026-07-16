@@ -406,6 +406,9 @@
   .sit-ask input:focus-visible{outline:2px solid var(--amber);outline-offset:1px;border-color:var(--amber)}
   .sit-ask input::placeholder{color:var(--pencil)}
   .sit-miss{font-size:12px;color:var(--pencil);margin:0}
+  .sem-area{margin-top:10px}
+  .sem-btn{min-height:40px;padding:8px 14px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper);color:var(--ink);font-size:12.5px;font-family:inherit;cursor:pointer;transition:border-color .2s}
+  .sem-btn:hover{border-color:var(--pencil)}
   .sit-path{margin-top:15px;padding-top:15px;border-top:1px solid var(--hairline-soft);display:none}
   .sit-path.show{display:block}
   .sit-path-hint{font-size:11.5px;color:var(--pencil);margin:0 0 12px}
@@ -1447,21 +1450,23 @@ updatePinnedUI();
     pathEl.querySelectorAll('.path-step').forEach(a => a.addEventListener('click', () => recordVisit(a.dataset.id)));
   }
 
-  /* --- 自由描述比對：先對 13 個情境的同義詞，沒中再推薦最接近的工具卡 --- */
+  /* --- 自由描述比對：先對 13 個情境的同義詞，沒中再推薦最接近的工具卡 ---
+   * 同義詞條目為「可能出現在使用者句子裡的短片段」（2~6 字為主），英文一律小寫（查詢會先 toLowerCase）。
+   * 新增情境時記得：SITUATIONS、SIT_KW、scripts/build-semantic-index.mjs 三處同步。 */
   const SIT_KW = {
-    overwhelm:['太多事','忙不過來','焦頭爛額','待辦','塞爆','心很亂','喘不過氣','堆爆','腦子很滿','爆炸'],
-    decide:['難決定','抉擇','兩難','猶豫','要不要','選哪個','人事','方案','重大決定'],
-    restless:['分心','靜不下','坐不住','浮躁','無法專注','專注不了','定不下來','心浮'],
-    forget:['記不住','一直忘','忘記','記憶','學過就忘','背不起來'],
-    interrupt:['打斷','干擾','切斷','訊息','會議','雜事','插單','中斷','被打擾'],
-    procrastinate:['拖延','不想做','開始不了','遲遲','死線','光想','一直沒動','寫不出來','做不出來','生不出來','動不了筆'],
-    lowenergy:['沒電','好累','疲倦','沒力','沒精神','倦怠','想睡','提不起勁','虛'],
-    habit:['習慣','持續不了','堅持不住','三分鐘熱度','半途而廢','自律','養不成'],
-    fatigue:['決策疲勞','想半天','小事','糾結','選擇太多','決定到累','選擇障礙'],
-    infoglut:['滑手機','資訊爆炸','短影音','訂閱','資訊過載','雜訊','滑不停','越看越'],
-    apply:['用不出來','學以致用','應用','輸出','實作','用不上','只會理論'],
-    noresult:['瞎忙','沒成果','沒累積','白忙','空轉','看不到進度','原地踏步'],
-    constrained:['資源','限制','預算','人力','人手','裁員','縮編','被迫','沒錢','沒時間','砍掉','調整人數']
+    overwhelm:['太多事','事情太多','忙不過來','焦頭爛額','待辦','塞爆','心很亂','喘不過氣','堆爆','腦子很滿','爆炸','一團亂','千頭萬緒','不知道從哪','從何開始','理不出','頭緒','好多事','一堆事','事情一堆','忙翻','忙死','壓力山大','壓力好大','快瘋了','腦袋快炸','炸掉','燒腦','亂成一團','手忙腳亂','應接不暇','分身乏術','顧此失彼','排山倒海','積了一堆','清單爆','爆量','overload','雜念','煩惱很多','想太多','小劇場'],
+    decide:['難決定','抉擇','兩難','猶豫','要不要','選哪個','人事','方案','重大決定','決定不了','下不了決心','拿不定主意','舉棋不定','左右為難','難以取捨','怎麼選','選項','權衡','利弊','評估','轉職','離職','跳槽','要不要換','買不買','去不去','答不答應','接不接','賭一把','孤注一擲','轉換跑道','十字路口','岔路','重要選擇','關鍵決定','做決策','抵擋不住'],
+    restless:['分心','靜不下','坐不住','浮躁','無法專注','專注不了','定不下來','心浮','心神不寧','煩躁','焦躁','沉不住氣','心猿意馬','神遊','恍神','發呆','沒辦法專心','不能專心','專心不了','一直想別的','思緒亂飄','飄走','坐立難安','躁動','靜心','收心','無法靜','注意力渙散','渙散','靜不住'],
+    forget:['記不住','一直忘','忘記','學過就忘','背不起來','忘光','還給老師','左耳進右耳出','過目就忘','記性差','健忘','記不起來','想不起來','學了就忘','看過就忘','讀過就忘','聽過就忘','吸收不了','記憶力','複習','遺忘','忘得一乾二淨','金魚腦','記不牢'],
+    interrupt:['打斷','干擾','切斷','插單','中斷','被打擾','line','slack','email','通知','一直有人找','一直被叫','臨時交辦','臨時任務','突發','救火','被抓去','開會開不完','會議太多','一直開會','敲我','tag我','插進來','被切','切來切去','做到一半','無法連續','零碎','碎片化','訊息一直來','已讀','群組'],
+    procrastinate:['拖延','不想做','開始不了','遲遲','死線','光想','一直沒動','寫不出來','做不出來','生不出來','動不了筆','拖著','一拖再拖','擺爛','躺平','明天再說','晚點再','起不了頭','起頭難','萬事起頭','跨不出','踏不出','行動力','執行力','只出一張嘴','想很多做很少','眼高手低','完美主義','不敢開始','害怕失敗','逃避','deadline','死到臨頭','火燒屁股','最後一刻','臨時抱佛腳','遲遲無法','無法開始'],
+    lowenergy:['沒電','好累','疲倦','沒力','沒精神','倦怠','想睡','提不起勁','累爆','累死','累壞','精疲力盡','筋疲力盡','身心俱疲','burnout','燃燒殆盡','耗盡','低電量','沒能量','能量不足','無力','疲勞','疲憊','昏昏欲睡','沒動力','懶洋洋','提不起精神','萎靡','虛脫','透支','過勞','內耗','心累','心好累','沒勁'],
+    habit:['習慣','持續不了','堅持不住','三分鐘熱度','半途而廢','自律','養不成','持之以恆','恆心','毅力','無法持續','維持不了','斷斷續續','無法堅持','堅持不下去','又放棄','總是放棄','持續力','打卡','連續紀錄','破功','復胖','戒不掉','改不掉','老毛病','故態復萌','運動習慣','早起','晨型','閱讀習慣','寫日記','存錢習慣','無法養成'],
+    fatigue:['決策疲勞','想半天','糾結','選擇太多','決定到累','選擇障礙','選擇困難','午餐吃什麼','吃什麼','穿什麼','選來選去','挑來挑去','反覆想','想東想西','優柔寡斷','磨很久','耗很久','芝麻小事','雞毛蒜皮','每天都要決定','太多決定','大小事都要','小事也要想','小事情'],
+    infoglut:['滑手機','資訊爆炸','短影音','訂閱','資訊過載','雜訊','滑不停','越看越','ig','youtube','抖音','tiktok','threads','臉書','fb','社群','滑到停不下','無限滑','無腦滑','資訊焦慮','fomo','怕錯過','跟不上','追劇','追不完','看不完','讀不完','收藏了沒看','稍後閱讀','囤積','資訊太多','雜訊太多','演算法','推播','轟炸','停不下來'],
+    apply:['用不出來','學以致用','應用','輸出','實作','用不上','只會理論','不會用','派不上用場','學了沒用','紙上談兵','光說不練','落地','轉化不了','內化','活用','舉一反三','融會貫通','學用落差','知易行難','知道做不到','懂了但','不知道怎麼用'],
+    noresult:['瞎忙','沒成果','沒累積','白忙','空轉','看不到進度','原地踏步','窮忙','徒勞','做白工','沒產出','沒進展','停滯','沒有成長','沒長進','忙了半天','忙一整天','一事無成','沒有作品','交不出','拿不出','沒成就感','越忙越','越做越沒','累積不了'],
+    constrained:['資源','限制','預算','人力','人手','裁員','縮編','被迫','沒錢','沒時間','砍掉','調整人數','砍預算','刪預算','經費','缺人','少人','人不夠','不夠人','缺錢','錢不夠','時間不夠','不夠用','巧婦難為','捉襟見肘','吃緊','緊縮','精簡','重組','組織調整','改組','減人','減編','遇缺不補','離職潮','被抽走','支援不足','受限','綁手綁腳','施展不開','條件差','人數調整','幾個人']
   };
 
   const TOOLS = Array.from(document.querySelectorAll('.card[data-id]')).map(c => {
@@ -1470,9 +1475,10 @@ updatePinnedUI();
     return {
       id: c.dataset.id, href: c.getAttribute('href'),
       name: h2 ? h2.textContent.trim() : '',
+      nameL: h2 ? h2.textContent.trim().toLowerCase() : '',
       seal: mark ? mark.textContent.trim() : '',
-      kw: (c.dataset.keywords || '').split(/\s+/).filter(Boolean),
-      desc: p ? p.textContent : '',
+      kw: (c.dataset.keywords || '').toLowerCase().split(/\s+/).filter(Boolean),
+      desc: p ? p.textContent.toLowerCase() : '',
       c: m ? m[1] : 'amber'
     };
   }).filter(t => t.href && t.seal && t.name);
@@ -1494,13 +1500,30 @@ updatePinnedUI();
         if (q.includes(k)) sc += k.length * 3;
         else if (g.some(x => k.includes(x))) sc += 1;
       });
-      if (q.includes(t.name)) sc += 10;
-      g.forEach(x => { if (t.name.includes(x)) sc += 2; if (t.desc.includes(x)) sc += 1; });
+      if (q.includes(t.nameL)) sc += 10;
+      g.forEach(x => { if (t.nameL.includes(x)) sc += 2; if (t.desc.includes(x)) sc += 1; });
       return { t, sc };
     }).filter(r => r.sc >= 3).sort((a, b) => b.sc - a.sc).slice(0, 3);
   }
 
+  function renderToolRow(tools, hint){
+    let steps = '';
+    tools.forEach(t => {
+      steps += '<a class="path-step" href="' + t.href + '" data-id="' + t.id + '">' +
+        '<span class="seal-sm" style="background:var(--' + t.c + '-soft);color:var(--' + t.c + ')">' + t.seal + '</span>' +
+        '<span class="path-step-name">' + t.name + '</span></a>';
+    });
+    pathEl.innerHTML =
+      '<p class="sit-path-hint">' + hint + '</p>' +
+      '<div class="path-row">' + steps + '</div>';
+    pathEl.classList.add('show');
+    pathEl.querySelectorAll('.path-step').forEach(a => a.addEventListener('click', () => recordVisit(a.dataset.id)));
+  }
+
+  let lastMiss = '';
+
   function renderAsk(q){
+    lastMiss = '';
     let best = null, bestScore = 0;
     SITUATIONS.forEach(s => {
       let sc = 0;
@@ -1512,22 +1535,92 @@ updatePinnedUI();
     activeKey = null;
     chipsEl.querySelectorAll('.sit-chip').forEach(c => c.classList.remove('active'));
     const hits = matchTools(q);
-    if (!hits.length){
-      pathEl.innerHTML = '<p class="sit-miss">還對不上現成路徑——換個說法試試，或用下方分類與搜尋逛逛。</p>';
-      pathEl.classList.add('show');
-      return;
-    }
-    let steps = '';
-    hits.forEach(({ t }) => {
-      steps += '<a class="path-step" href="' + t.href + '" data-id="' + t.id + '">' +
-        '<span class="seal-sm" style="background:var(--' + t.c + '-soft);color:var(--' + t.c + ')">' + t.seal + '</span>' +
-        '<span class="path-step-name">' + t.name + '</span></a>';
-    });
+    if (hits.length){ renderToolRow(hits.map(r => r.t), '跟你的狀況最接近的工具 →'); return; }
+    lastMiss = q;
+    renderMiss(q);
+  }
+
+  /* --- 沒對上：記錄失手查詢（prod_portal_misses，之後拿來養字典），並提供智慧比對入口 --- */
+  function logMiss(q){
+    try {
+      const arr = JSON.parse(localStorage.getItem('prod_portal_misses')) || [];
+      if (arr.some(m => m.q === q)) return;
+      arr.push({ q, ts: Date.now() });
+      while (arr.length > 200) arr.shift();
+      localStorage.setItem('prod_portal_misses', JSON.stringify(arr));
+    } catch(e){}
+  }
+
+  const SEM_FLAG = 'prod_portal_semantic_on';
+  function semEnabled(){ try { return localStorage.getItem(SEM_FLAG) === '1'; } catch(e){ return false; } }
+
+  function renderMiss(q){
+    const btn = semEnabled() ? '' :
+      '<button type="button" class="sem-btn" id="semBtn">試試智慧比對（首次需下載約 25MB 模型）</button>';
     pathEl.innerHTML =
-      '<p class="sit-path-hint">跟你的狀況最接近的工具 →</p>' +
-      '<div class="path-row">' + steps + '</div>';
+      '<p class="sit-miss">還對不上現成路徑——換個說法試試，或用下方分類與搜尋逛逛。</p>' +
+      '<div class="sem-area" id="semArea">' + btn + '</div>';
     pathEl.classList.add('show');
-    pathEl.querySelectorAll('.path-step').forEach(a => a.addEventListener('click', () => recordVisit(a.dataset.id)));
+    const b = document.getElementById('semBtn');
+    if (b) b.addEventListener('click', () => {
+      try { localStorage.setItem(SEM_FLAG, '1'); } catch(e){}
+      runSemantic(q);
+    });
+    else if (semEnabled()) runSemantic(q);
+  }
+
+  /* --- 智慧比對（可選增強）：瀏覽器內跑 bge-small-zh 向量模型，索引在 semantic-index.json。
+   * 模型由 transformers.js 快取、索引由 service worker 快取，下載一次後即可離線使用。
+   * 索引重生：node scripts/build-semantic-index.mjs（新增情境或工具後要跑）。 --- */
+  let semPipe = null, semIndex = null, semLoading = null;
+
+  function loadSem(){
+    if (semPipe && semIndex) return Promise.resolve();
+    if (semLoading) return semLoading;
+    semLoading = (async () => {
+      const T = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+      T.env.allowLocalModels = false;
+      const [pipe, idx] = await Promise.all([
+        T.pipeline('feature-extraction', 'Xenova/bge-small-zh-v1.5', { quantized: true }),
+        fetch('./semantic-index.json').then(r => { if (!r.ok) throw new Error('no index'); return r.json(); })
+      ]);
+      semPipe = pipe; semIndex = idx;
+    })();
+    semLoading.catch(() => { semLoading = null; });
+    return semLoading;
+  }
+
+  function setSemStatus(msg){
+    const a = document.getElementById('semArea');
+    if (a) a.innerHTML = '<p class="sit-miss">' + msg + '</p>';
+  }
+
+  function dot(a, b){ let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; }
+
+  async function runSemantic(q){
+    setSemStatus(semPipe ? '智慧比對中…' : '下載模型中…首次使用約需一分鐘，之後可離線使用。');
+    try { await loadSem(); } catch(e){ setSemStatus('模型載入失敗——請確認網路後再點一次。'); return; }
+    let v;
+    try { v = (await semPipe(q, { pooling: 'mean', normalize: true })).data; }
+    catch(e){ setSemStatus('比對失敗，請再試一次。'); return; }
+    if (askEl && askEl.value.trim().toLowerCase() !== q) return; /* 使用者已改字，丟棄舊結果 */
+    /* 情境判定：夠高直接採用；中等分數要明顯領先第二名（邊際規則，擋住模稜兩可的錯配） */
+    let bestKey = null, bestS = -1, secondS = -1;
+    semIndex.situations.forEach(s => {
+      const sc = dot(v, s.v);
+      if (sc > bestS){ secondS = bestS; bestS = sc; bestKey = s.key; }
+      else if (sc > secondS){ secondS = sc; }
+    });
+    const th = semIndex.th;
+    const sitHit = bestS >= th.sit || (bestS >= (th.sitLow || th.sit) && bestS - secondS >= (th.gap || 0));
+    if (sitHit && SITUATIONS.some(x => x.key === bestKey)){ activeKey = bestKey; render(); return; }
+    const hits = semIndex.tools
+      .map(t => ({ id: t.id, sc: dot(v, t.v) }))
+      .sort((a, b) => b.sc - a.sc).slice(0, 3)
+      .filter(h => h.sc >= th.tool)
+      .map(h => TOOLS.find(t => t.id === h.id)).filter(Boolean);
+    if (!hits.length){ setSemStatus('智慧比對也沒把握——換個說法再試試。'); return; }
+    renderToolRow(hits, '智慧比對：跟你的狀況最接近的工具 →');
   }
 
   const askEl = document.getElementById('sitAsk');
@@ -1536,11 +1629,15 @@ updatePinnedUI();
     askEl.addEventListener('input', () => {
       clearTimeout(tm);
       tm = setTimeout(() => {
-        const q = askEl.value.trim();
+        const q = askEl.value.trim().toLowerCase();
         if (q) renderAsk(q);
         else { activeKey = null; render(); }
       }, 220);
     });
+    /* 只在使用者離開輸入框或按 Enter 時記錄失手，避免打字中途的半句話進 log */
+    const commitMiss = () => { const q = askEl.value.trim().toLowerCase(); if (q && q === lastMiss) logMiss(q); };
+    askEl.addEventListener('blur', commitMiss);
+    askEl.addEventListener('keydown', e => { if (e.key === 'Enter') commitMiss(); });
     chipsEl.addEventListener('click', e => { if (e.target.closest('.sit-chip')) askEl.value = ''; });
   }
 })();
@@ -1593,7 +1690,8 @@ updatePinnedUI();
     "distill_v1","distill_theme","mvp_v1","mvp_theme","pareto_v1","pareto_theme",
     "predecision_v1","predecision_theme","timeblock_v1","timeblock_theme","twomin_v1","twomin_theme",
     /* 入口頁 */
-    "prod_portal_pinned","prod_portal_streak","prod_portal_theme","prod_portal_view","prod_portal_visits","prod_portal_last_backup"
+    "prod_portal_pinned","prod_portal_streak","prod_portal_theme","prod_portal_view","prod_portal_visits","prod_portal_last_backup",
+    "prod_portal_misses","prod_portal_semantic_on"
   ];
   /* 早期骨架（動態 key 固定前綴）：action-trigger / choice-loop / decision-journal / energy-first / mental-models / mind-offload / premortem-thinking */
   const BK_PREFIX = ["at_","ecc_","dj_","em_","mm_","co_","pm_"];
