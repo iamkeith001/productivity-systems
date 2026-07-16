@@ -400,6 +400,12 @@
   .sit-chip{display:flex;align-items:center;min-height:44px;padding:9px 12px;border:1px solid var(--hairline);background:var(--paper);border-radius:10px;color:var(--ink);font-size:12.5px;font-family:inherit;cursor:pointer;text-align:left;line-height:1.4;transition:border-color .2s,background .2s}
   .sit-chip:hover{border-color:var(--pencil)}
   .sit-chip.active{border:2px solid var(--amber);background:var(--amber-soft);color:var(--amber);font-weight:700;padding:8px 11px}
+  .sit-ask{margin-top:10px}
+  .sit-ask input{width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper);color:var(--ink);font-size:13px;font-family:inherit;transition:border-color .2s}
+  .sit-ask input:hover{border-color:var(--pencil)}
+  .sit-ask input:focus-visible{outline:2px solid var(--amber);outline-offset:1px;border-color:var(--amber)}
+  .sit-ask input::placeholder{color:var(--pencil)}
+  .sit-miss{font-size:12px;color:var(--pencil);margin:0}
   .sit-path{margin-top:15px;padding-top:15px;border-top:1px solid var(--hairline-soft);display:none}
   .sit-path.show{display:block}
   .sit-path-hint{font-size:11.5px;color:var(--pencil);margin:0 0 12px}
@@ -466,6 +472,10 @@
     <p class="eyebrow">從這裡開始</p>
     <div class="starter-title">我現在卡在哪？</div>
     <div class="sit-chips" id="sitChips"></div>
+    <div class="sit-ask">
+      <input id="sitAsk" type="search" autocomplete="off" aria-label="用一句話描述你的狀況"
+        placeholder="以上都不是？用一句話描述你的狀況，例如：人力要調整、報告一直寫不出來…">
+    </div>
     <div class="sit-path" id="sitPath"></div>
   </section>
 
@@ -1435,6 +1445,103 @@ updatePinnedUI();
       '<div class="ns-body"><b>具體下一步</b><br>' + s.next + '</div></div>';
     pathEl.classList.add('show');
     pathEl.querySelectorAll('.path-step').forEach(a => a.addEventListener('click', () => recordVisit(a.dataset.id)));
+  }
+
+  /* --- 自由描述比對：先對 13 個情境的同義詞，沒中再推薦最接近的工具卡 --- */
+  const SIT_KW = {
+    overwhelm:['太多事','忙不過來','焦頭爛額','待辦','塞爆','心很亂','喘不過氣','堆爆','腦子很滿','爆炸'],
+    decide:['難決定','抉擇','兩難','猶豫','要不要','選哪個','人事','方案','重大決定'],
+    restless:['分心','靜不下','坐不住','浮躁','無法專注','專注不了','定不下來','心浮'],
+    forget:['記不住','一直忘','忘記','記憶','學過就忘','背不起來'],
+    interrupt:['打斷','干擾','切斷','訊息','會議','雜事','插單','中斷','被打擾'],
+    procrastinate:['拖延','不想做','開始不了','遲遲','死線','光想','一直沒動','寫不出來','做不出來','生不出來','動不了筆'],
+    lowenergy:['沒電','好累','疲倦','沒力','沒精神','倦怠','想睡','提不起勁','虛'],
+    habit:['習慣','持續不了','堅持不住','三分鐘熱度','半途而廢','自律','養不成'],
+    fatigue:['決策疲勞','想半天','小事','糾結','選擇太多','決定到累','選擇障礙'],
+    infoglut:['滑手機','資訊爆炸','短影音','訂閱','資訊過載','雜訊','滑不停','越看越'],
+    apply:['用不出來','學以致用','應用','輸出','實作','用不上','只會理論'],
+    noresult:['瞎忙','沒成果','沒累積','白忙','空轉','看不到進度','原地踏步'],
+    constrained:['資源','限制','預算','人力','人手','裁員','縮編','被迫','沒錢','沒時間','砍掉','調整人數']
+  };
+
+  const TOOLS = Array.from(document.querySelectorAll('.card[data-id]')).map(c => {
+    const m = (c.getAttribute('style') || '').match(/--c:var\(--([a-z]+)\)/);
+    const h2 = c.querySelector('h2'), mark = c.querySelector('.mark'), p = c.querySelector('p');
+    return {
+      id: c.dataset.id, href: c.getAttribute('href'),
+      name: h2 ? h2.textContent.trim() : '',
+      seal: mark ? mark.textContent.trim() : '',
+      kw: (c.dataset.keywords || '').split(/\s+/).filter(Boolean),
+      desc: p ? p.textContent : '',
+      c: m ? m[1] : 'amber'
+    };
+  }).filter(t => t.href && t.seal && t.name);
+
+  function grams(q){
+    const g = [];
+    for (let i = 0; i < q.length - 1; i++){
+      const s = q.slice(i, i + 2);
+      if (/^[一-鿿]{2}$/.test(s)) g.push(s);
+    }
+    return g;
+  }
+
+  function matchTools(q){
+    const g = grams(q);
+    return TOOLS.map(t => {
+      let sc = 0;
+      t.kw.forEach(k => {
+        if (q.includes(k)) sc += k.length * 3;
+        else if (g.some(x => k.includes(x))) sc += 1;
+      });
+      if (q.includes(t.name)) sc += 10;
+      g.forEach(x => { if (t.name.includes(x)) sc += 2; if (t.desc.includes(x)) sc += 1; });
+      return { t, sc };
+    }).filter(r => r.sc >= 3).sort((a, b) => b.sc - a.sc).slice(0, 3);
+  }
+
+  function renderAsk(q){
+    let best = null, bestScore = 0;
+    SITUATIONS.forEach(s => {
+      let sc = 0;
+      (SIT_KW[s.key] || []).forEach(k => { if (q.includes(k)) sc += k.length; });
+      if (sc > bestScore){ bestScore = sc; best = s; }
+    });
+    if (best){ activeKey = best.key; render(); return; }
+
+    activeKey = null;
+    chipsEl.querySelectorAll('.sit-chip').forEach(c => c.classList.remove('active'));
+    const hits = matchTools(q);
+    if (!hits.length){
+      pathEl.innerHTML = '<p class="sit-miss">還對不上現成路徑——換個說法試試，或用下方分類與搜尋逛逛。</p>';
+      pathEl.classList.add('show');
+      return;
+    }
+    let steps = '';
+    hits.forEach(({ t }) => {
+      steps += '<a class="path-step" href="' + t.href + '" data-id="' + t.id + '">' +
+        '<span class="seal-sm" style="background:var(--' + t.c + '-soft);color:var(--' + t.c + ')">' + t.seal + '</span>' +
+        '<span class="path-step-name">' + t.name + '</span></a>';
+    });
+    pathEl.innerHTML =
+      '<p class="sit-path-hint">跟你的狀況最接近的工具 →</p>' +
+      '<div class="path-row">' + steps + '</div>';
+    pathEl.classList.add('show');
+    pathEl.querySelectorAll('.path-step').forEach(a => a.addEventListener('click', () => recordVisit(a.dataset.id)));
+  }
+
+  const askEl = document.getElementById('sitAsk');
+  if (askEl){
+    let tm;
+    askEl.addEventListener('input', () => {
+      clearTimeout(tm);
+      tm = setTimeout(() => {
+        const q = askEl.value.trim();
+        if (q) renderAsk(q);
+        else { activeKey = null; render(); }
+      }, 220);
+    });
+    chipsEl.addEventListener('click', e => { if (e.target.closest('.sit-chip')) askEl.value = ''; });
   }
 })();
 
